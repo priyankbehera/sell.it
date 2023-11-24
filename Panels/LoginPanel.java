@@ -1,5 +1,8 @@
 package Panels;
 
+import Objects.Customer;
+import Objects.User;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,7 +41,8 @@ public class LoginPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 String email = usernameText.getText();
                 String password = Arrays.toString(passwordField.getPassword());
-                if (main.addLogin)
+                User user = new User(email);
+
 
             }
         });

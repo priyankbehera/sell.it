@@ -244,14 +244,50 @@ public class User {
         }
     }
 
+    // Checks the validity of the email by searching the email files
+    // @TODO Modify so that ensures user includes an "@" symbol
+    public static boolean verifyEmail(String email, String filename) {
+        boolean isValid = true;
+        ArrayList<String> list = new ArrayList<>();
+        String line;
 
-    // Main method for testing
-    public static void main(String[] args) throws IOException {
-        User user1 = new User("beatrix");
-        user1.LogConversation("testFile.txt");
-        System.out.println(user1.hasConversationHistory);
-        System.out.println(user1.getConversationHistoryFile());
-        System.out.println(user1.getEmail());
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            while ((line = bfr.readLine()) != null) {
+                list.add(line);
+            }
+            for (String s : list) {
+                String[] temp = s.split("-");
+                if (email.trim().equals(temp[0].trim())) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            isValid = false;
+        }
+        return isValid;
     }
 
+    /*
+    Checks the login details inputted by the user
+    Returns true if the details match what is on file
+     */
+    public static boolean checkLogin(String email, String password, String filename) {
+        ArrayList<String> list = new ArrayList<>();
+        String line;
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            while ((line = bfr.readLine()) != null) {
+                list.add(line);
+            }
+            for (String s : list) {
+                String[] temp = s.split("-");
+                if (temp[0].equals(email) && temp[1].equals(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return false;
+    }
 }
