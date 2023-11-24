@@ -43,6 +43,10 @@ public class LoginPanel extends JPanel {
                 String password = Arrays.toString(passwordField.getPassword());
                 User user = new User(email);
 
+                if (User.isValidLogin(email, password, "customerNames.txt")) {
+                    Customer existingCustomer = new Customer(email);
+                }
+
 
             }
         });

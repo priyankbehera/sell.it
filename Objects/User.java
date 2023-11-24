@@ -272,7 +272,7 @@ public class User {
     Checks the login details inputted by the user
     Returns true if the details match what is on file
      */
-    public static boolean checkLogin(String email, String password, String filename) {
+    public static boolean isValidLogin(String email, String password, String filename) {
         ArrayList<String> list = new ArrayList<>();
         String line;
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
