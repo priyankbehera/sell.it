@@ -1,6 +1,7 @@
 package Panels;
 
 import Objects.Customer;
+import Objects.Seller;
 import Objects.User;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 
 public class LoginPanel extends JPanel {
     private final JButton continueButton;
+    private boolean isLoggedIn;
 
     public LoginPanel() {
         // Set the layout manager for this panel
@@ -36,6 +38,10 @@ public class LoginPanel extends JPanel {
         this.continueButton.setBounds(10, 80, 125, 25);
         add(this.continueButton);
 
+        JLabel successMessage = new JLabel("");
+        successMessage.setBounds(10, 110, 300, 25);
+        add(successMessage);
+
         continueButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,15 +51,26 @@ public class LoginPanel extends JPanel {
 
                 if (User.isValidLogin(email, password, "customerNames.txt")) {
                     Customer existingCustomer = new Customer(email);
+                    successMessage.setText("Login successful!");
+                    isLoggedIn = true;
+                } else if (User.isValidLogin(email, password, "sellerNames.txt")) {
+                    Seller existingSeller = new Seller(email);
+                    successMessage.setText("Login successful!");
+                    isLoggedIn = true;
+                } else {
+                    successMessage.setText("Login attempt failed.");
+                    isLoggedIn = false;
                 }
-
-
             }
         });
     }
 
-    // Allows other classes to access buttons
+    // Allows other classes to access elements
     public JButton getContinueButton() {
         return this.continueButton;
+    }
+
+    public boolean isLoggedIn() {
+        return this.isLoggedIn;
     }
 }
