@@ -1,7 +1,9 @@
+import Panels.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Random;
+
 public class Main {
     public static void main(String[] args) {
       SwingUtilities.invokeLater(() -> {
@@ -23,38 +25,38 @@ public class Main {
           SellerPanel sellerPanel = new SellerPanel();
           MyAccountPanel myAccountPanel = new MyAccountPanel();
 
-          // Set the WelcomePanel as the content pane of the main frame
+          // Set the Panels.WelcomePanel as the content pane of the main frame
           mainframe.setContentPane(welcomePanel);
 
-          // Listens "Login" button on WelcomePanel
+          // Listens "Login" button on Panels.WelcomePanel
           welcomePanel.getLoginButton().addActionListener(e -> {
               mainframe.setContentPane(loginPanel); // Resets the content pane
               mainframe.revalidate(); // Reorders components
               mainframe.repaint(); // Repaints components
           });
 
-          // Listens for "Create Account" button on WelcomePanel
+          // Listens for "Create Account" button on Panels.WelcomePanel
           welcomePanel.getCreateAccButton().addActionListener(e -> {
               mainframe.setContentPane(createAccPanel);
               mainframe.revalidate();
               mainframe.repaint();
           });
 
-          // Listens for "Continue" button on LoginPanel
+          // Listens for "Continue" button on Panels.LoginPanel
           loginPanel.getContinueButton().addActionListener(e -> {
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();
           });
 
-          // Listens for "Continue" button on CreateAccPanel
+          // Listens for "Continue" button on Panels.CreateAccPanel
           createAccPanel.getContinueButton().addActionListener(e -> {
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();
           });
 
-          // Listens for "Send Message" button on HomePanel
+          // Listens for "Send Objects.Message" button on Panels.HomePanel
           homePanel.getSendMessageButton().addActionListener(new ActionListener() {
               @Override
               public void actionPerformed(ActionEvent e) {
@@ -64,7 +66,7 @@ public class Main {
               }
           });
 
-          // Listens for "My Account" button on HomePanel
+          // Listens for "My Account" button on Panels.HomePanel
           homePanel.getMyAccountButton().addActionListener(e -> {
               mainframe.setContentPane(myAccountPanel);
               mainframe.revalidate();

@@ -1,3 +1,5 @@
+package Objects;
+
 import java.io.*;
 import java.util.ArrayList;
 
@@ -58,7 +60,7 @@ public class User {
     /*
     The following method takes in a user object as a parameter, and then searches
     for the users' email in the list of customers and list of sellers.
-    The method returns "src.Customer" if the user is a customer and "src.Seller" if the
+    The method returns "src.Objects.Customer" if the user is a customer and "src.Objects.Seller" if the
     user is a seller. Otherwise, it returns null.
      */
     public String isCustomerOrSeller(User user) {
@@ -67,7 +69,7 @@ public class User {
             while ((line = br.readLine()) != null) {
                 // @TODO Determine if this is the most efficient method
                 if (line.contains(user.getEmail())) {
-                    return "Customer";
+                    return "Objects.Customer";
                 }
             }
         } catch (IOException e) {
@@ -78,7 +80,7 @@ public class User {
             String line;
             while ((line = br.readLine()) != null) {
                 if (line.contains(user.getEmail())) {
-                    return "Seller";
+                    return "Objects.Seller";
                 }
             }
 
@@ -151,7 +153,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Objects.User{" +
                 "email='" + email + '\'' +
                 ", hasConversationHistory=" + hasConversationHistory +
                 ", ConversationHistoryFile='" + ConversationHistoryFile + '\'' +
@@ -238,7 +240,7 @@ public class User {
             otherUser.becomeInvisible();
             System.out.println("You are now invisible to " + otherUser.getEmail());
         } else {
-            System.out.println("Error: Unable to make user invisible. User is blocked.");
+            System.out.println("Error: Unable to make user invisible. Objects.User is blocked.");
         }
     }
 

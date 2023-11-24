@@ -1,3 +1,5 @@
+package Panels;
+
 import javax.swing.*;
 
 public class HomePanel extends JPanel {
@@ -13,7 +15,7 @@ public class HomePanel extends JPanel {
         this.myAccountButton.setBounds(450, 20, 125, 25);
         add(this.myAccountButton);
 
-        this.sendMessageButton = new JButton("Send Message");
+        this.sendMessageButton = new JButton("Send Objects.Message");
         this.sendMessageButton.setBounds(300, 200, 125, 25);
         add(this.sendMessageButton);
     }

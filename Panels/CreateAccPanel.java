@@ -1,3 +1,5 @@
+package Panels;
+
 import javax.swing.*;
 
 public class CreateAccPanel extends JPanel {
