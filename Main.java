@@ -3,6 +3,9 @@ import Panels.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class Main {
     public static void main(String[] args) {
@@ -28,7 +31,7 @@ public class Main {
           // Set the Panels.WelcomePanel as the content pane of the main frame
           mainframe.setContentPane(welcomePanel);
 
-          // Listens "Login" button on Panels.WelcomePanel
+          // Listens for "Login" button on Panels.WelcomePanel
           welcomePanel.getLoginButton().addActionListener(e -> {
               mainframe.setContentPane(loginPanel); // Resets the content pane
               mainframe.revalidate(); // Reorders components
@@ -78,4 +81,13 @@ public class Main {
       });
     }
 
+    // Adds the user's login credentials to the specified file
+    public static boolean addLoginDetails(String email, String password, String filename) {
+        try (PrintWriter printWriter = new PrintWriter(new FileWriter(filename, true))) {
+            printWriter.println(email + "-" + password);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }

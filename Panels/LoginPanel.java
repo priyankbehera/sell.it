@@ -1,17 +1,21 @@
 package Panels;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 
 public class LoginPanel extends JPanel {
     private final JButton continueButton;
+
     public LoginPanel() {
         // Set the layout manager for this panel
         setLayout(null);
 
         // Create components
-        JLabel userLabel = new JLabel("Username:");
-        userLabel.setBounds(10, 20, 80 , 25);
-        add(userLabel);
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(10, 20, 80 , 25);
+        add(emailLabel);
 
         JTextField usernameText = new JTextField(20);
         usernameText.setBounds(100, 20, 165, 25);
@@ -28,6 +32,16 @@ public class LoginPanel extends JPanel {
         this.continueButton = new JButton("Continue");
         this.continueButton.setBounds(10, 80, 125, 25);
         add(this.continueButton);
+
+        continueButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String email = usernameText.getText();
+                String password = Arrays.toString(passwordField.getPassword());
+                if (main.addLogin)
+
+            }
+        });
     }
 
     // Allows other classes to access buttons
