@@ -19,6 +19,8 @@ public class Main {
           LoginPanel loginPanel = new LoginPanel();
           CreateAccPanel createAccPanel = new CreateAccPanel();
           HomePanel homePanel = new HomePanel();
+          CustomerPanel customerPanel = new CustomerPanel();
+          SellerPanel sellerPanel = new SellerPanel();
           MyAccountPanel myAccountPanel = new MyAccountPanel();
 
           // Set the WelcomePanel as the content pane of the main frame
@@ -50,6 +52,16 @@ public class Main {
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();
+          });
+
+          // Listens for "Send Message" button on HomePanel
+          homePanel.getSendMessageButton().addActionListener(new ActionListener() {
+              @Override
+              public void actionPerformed(ActionEvent e) {
+                  mainframe.setContentPane(customerPanel);
+                  mainframe.revalidate();
+                  mainframe.repaint();
+              }
           });
 
           // Listens for "My Account" button on HomePanel
