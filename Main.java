@@ -63,17 +63,19 @@ public class Main {
 
           // Listens for "Continue" button on Panels.LoginPanel
           loginPanel.getContinueButton().addActionListener(e -> {
-              mainframe.setContentPane(homePanel);
-              mainframe.revalidate();
-              mainframe.repaint();
+              if (loginPanel.isLoggedIn()) {
+                  mainframe.setContentPane(homePanel);
+                  mainframe.revalidate();
+                  mainframe.repaint();
+              }
           });
 
-          // Listens for "Continue" button on Panels.CreateAccPanel
-          createAccPanel.getContinueButton().addActionListener(e -> {
-              mainframe.setContentPane(homePanel);
-              mainframe.revalidate();
-              mainframe.repaint();
-          });
+//          // Listens for "Continue" button on Panels.CreateAccPanel
+//          createAccPanel.getContinueButton().addActionListener(e -> {
+//              mainframe.setContentPane(homePanel);
+//              mainframe.revalidate();
+//              mainframe.repaint();
+//          });
 
           // Listens for "Send Objects.Message" button on Panels.HomePanel
           homePanel.getSendMessageButton().addActionListener(new ActionListener() {
