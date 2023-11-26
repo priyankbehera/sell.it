@@ -6,9 +6,25 @@ import java.awt.event.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.*;
+import java.net.*;
+
 
 public class Main {
+
+    // Adjust portNumber and hostName if needed
+    public static final int portNumber = 4242;
+    public static final String hostName = "localhost";
     public static void main(String[] args) {
+        // Connects to server
+        try {
+            Socket socket = new Socket(hostName, portNumber);
+            // TODO: Remove print statements
+            System.out.println("Connected to server.");
+        } catch (IOException e) { // Throws error if unable to connect to server
+            System.out.println("Unable to connect to server.");
+            System.out.println(e.getMessage());
+        }
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
           Container content = mainframe.getContentPane();
@@ -90,4 +106,5 @@ public class Main {
             return false;
         }
     }
+
 }
