@@ -22,9 +22,9 @@ public class LoginPanel extends JPanel {
         emailLabel.setBounds(10, 20, 80 , 25);
         add(emailLabel);
 
-        JTextField usernameText = new JTextField(20);
-        usernameText.setBounds(100, 20, 165, 25);
-        add(usernameText);
+        JTextField emailText = new JTextField(20);
+        emailText.setBounds(100, 20, 165, 25);
+        add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(10, 50, 80, 25);
@@ -45,15 +45,16 @@ public class LoginPanel extends JPanel {
         continueButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String email = usernameText.getText();
-                String password = Arrays.toString(passwordField.getPassword());
-                User user = new User(email);
+                String email = emailText.getText();
+                String password = String.valueOf(passwordField.getPassword());
+                System.out.println(email);
+                System.out.println(password);
 
-                if (User.isValidLogin(email, password, "customerNames.txt")) {
+                if (User.isValidLogin(email, password, "Data/customerNames.txt")) {
                     Customer existingCustomer = new Customer(email);
                     successMessage.setText("Login successful!");
                     isLoggedIn = true;
-                } else if (User.isValidLogin(email, password, "sellerNames.txt")) {
+                } else if (User.isValidLogin(email, password, "Data/sellerNames.txt")) {
                     Seller existingSeller = new Seller(email);
                     successMessage.setText("Login successful!");
                     isLoggedIn = true;
