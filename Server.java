@@ -1,11 +1,11 @@
 import java.net.*;
 import java.io.*;
+import java.util.ArrayList;
 
 // Hostname: localhost
 // Port: 4242
 
 public class Server {
-
 
 
     public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class Server {
     returns true if user successfully logs in, false otherwise
     accountType: 0 = customer, 1 = seller
     */
-    public static synchronized boolean login (int accountType, String email, String password) {
+    public static synchronized boolean login(int accountType, String email, String password) {
         // Sets filename based on account type
         String filename = "";
         if (accountType == 0) {
@@ -58,4 +58,6 @@ public class Server {
         }
         return false;
     }
+
 }
+
