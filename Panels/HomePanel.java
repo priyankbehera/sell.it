@@ -1,12 +1,21 @@
 package Panels;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class HomePanel extends JPanel {
     private final JButton myAccountButton;
     private final JButton sendMessageButton;
+    private final MenuPanel menuPanel; //added this for the menu panel
 
     public HomePanel() {
+
+        setLayout(new BorderLayout());
+
+        menuPanel = new MenuPanel();
+        add(menuPanel, BorderLayout.NORTH);
+
+
         // Set the layout manager for this panel
         setLayout(null);
 
@@ -27,5 +36,9 @@ public class HomePanel extends JPanel {
 
     public JButton getSendMessageButton() {
         return this.sendMessageButton;
+    }
+
+    public MenuPanel getMenuPanel() {
+        return menuPanel;
     }
 }
