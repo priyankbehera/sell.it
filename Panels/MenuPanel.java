@@ -48,4 +48,21 @@ public class MenuPanel extends JPanel {
     public String getSearchText() {
         return searchField.getText();
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame testFrame = new JFrame("MenuPanel Test");
+            testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            MenuPanel menuPanel = new MenuPanel();
+
+            JLabel searchTextLabel = new JLabel("Search Text:");
+            testFrame.getContentPane().add(searchTextLabel, BorderLayout.NORTH);
+            testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
+
+            testFrame.setSize(400, 200);
+            testFrame.setLocationRelativeTo(null);
+            testFrame.setVisible(true);
+        });
+    }
 }
