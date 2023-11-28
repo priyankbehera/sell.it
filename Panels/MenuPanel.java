@@ -26,7 +26,6 @@ public class MenuPanel extends JPanel {
         viewStatisticsButton = new JButton("View Statistics");
         add(viewStatisticsButton);
 
-        // Add action listeners
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
