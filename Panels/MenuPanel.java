@@ -55,8 +55,6 @@ public class MenuPanel extends JPanel {
 
             MenuPanel menuPanel = new MenuPanel();
 
-            JLabel searchTextLabel = new JLabel("Search Text:");
-            testFrame.getContentPane().add(searchTextLabel, BorderLayout.NORTH);
             testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
 
             testFrame.setSize(400, 200);
