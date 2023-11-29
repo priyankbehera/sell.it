@@ -44,9 +44,6 @@ public class DisplayMessagesPanel extends JPanel {
 
         // Add the input panel to the bottom of the frame
         add(inputPanel, BorderLayout.SOUTH);
-
-        // Set the frame to be visible
-        setVisible(true);
     }
 
     // this method tries to add the conversation history to the panel
@@ -56,7 +53,9 @@ public class DisplayMessagesPanel extends JPanel {
     // if ifSeller == false, then the user is customer
     private void addConversationHistory(String seller, String customer, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
-        String filename = seller + "_" + customer + "_Messages.csv";
+        String folderName = "conversation_data";
+        String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
+
         try (BufferedReader bfr = new BufferedReader(new FileReader( filename ))) {
             String line;
             while ( ( line = bfr.readLine()) != null) {
@@ -74,19 +73,19 @@ public class DisplayMessagesPanel extends JPanel {
                 timeStamp[i] = messageArray[4];
             }
             for ( int i = 0; i < senderList.length; i++ ) {
-                String str = "You: " + messages[i] + "\t\t\t" +
-                        timeStamp[i] + " " + dateStamp[i];
+                String str = "You: " + messages[i] + "\t\t" +
+                        timeStamp[i] + " " + dateStamp[i] + "\n";
                 if ( ifSeller ) {
                     if ( senderList[i].equals(seller) ) {
                         conversationArea.append(str);
                     } else {
-                        conversationArea.append( customer + messages[i] + "\t\t\t" +
-                                timeStamp[i] + " " + dateStamp[i]);
+                        conversationArea.append( customer + ": " + messages[i] + "\t\t" +
+                                timeStamp[i] + " " + dateStamp[i] + "\n");
                     }
                 } else {
                     if ( senderList[i].equals(seller) ) {
-                        conversationArea.append( seller + messages[i] + "\t\t\t" +
-                                timeStamp[i] + " " + dateStamp[i]);
+                        conversationArea.append( seller + ": " + messages[i] + "\t\t" +
+                                timeStamp[i] + " " + dateStamp[i] + "\n");
                     } else {
                         conversationArea.append(str);
                     }
@@ -103,5 +102,18 @@ public class DisplayMessagesPanel extends JPanel {
             conversationArea.append("You: " + message + "\n");
             inputField.setText(""); // Clear the input field
         }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame frame = new JFrame("Display Messages Panel");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.getContentPane().add(new DisplayMessagesPanel("testSeller", "testCustomer", true));
+                frame.setSize(450, 500);
+                frame.setVisible(true);
+            }
+        });
     }
 }
