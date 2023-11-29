@@ -1,5 +1,8 @@
 package Panels;
 
+import Objects.Customer;
+import Objects.Seller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,7 +36,7 @@ public class DisplayMessagesPanel extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage();
+                sendMessage( seller, customer, ifSeller );
             }
         });
 
@@ -72,34 +75,45 @@ public class DisplayMessagesPanel extends JPanel {
                 dateStamp[i] = messageArray[3];
                 timeStamp[i] = messageArray[4];
             }
-            for ( int i = 0; i < senderList.length; i++ ) {
-                String str = "You: " + messages[i] + "\t\t" +
-                        timeStamp[i] + " " + dateStamp[i] + "\n";
-                if ( ifSeller ) {
-                    if ( senderList[i].equals(seller) ) {
-                        conversationArea.append(str);
+            for (int i = 0; i < senderList.length; i++) {
+                String str;
+                if (ifSeller) {
+                    if (senderList[i].equals(seller)) {
+                        str = "You: " + messages[i];
                     } else {
-                        conversationArea.append( customer + ": " + messages[i] + "\t\t" +
-                                timeStamp[i] + " " + dateStamp[i] + "\n");
+                        str = customer + ": " + messages[i];
                     }
                 } else {
-                    if ( senderList[i].equals(seller) ) {
-                        conversationArea.append( seller + ": " + messages[i] + "\t\t" +
-                                timeStamp[i] + " " + dateStamp[i] + "\n");
+                    if (senderList[i].equals(seller)) {
+                        str = seller + ": " + messages[i];
                     } else {
-                        conversationArea.append(str);
+                        str = "You: " + messages[i];
                     }
                 }
+                // Append the timestamp and datestamp to the right of the message
+                str += String.format("\t\t%1$-15s %2$s%n", timeStamp[i], dateStamp[i]);
+
+                conversationArea.append(str);
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error in Program, please refresh",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private void sendMessage() {
+    private void sendMessage( String seller, String customer, boolean ifSeller ) {
         String message = inputField.getText();
         if (!message.trim().isEmpty()) {
-            conversationArea.append("You: " + message + "\n");
+            conversationArea.setText("");
+            // if the user is a seller, then the seller will send the message
+            // implementing the seller message
+            if ( !ifSeller ) {
+                Seller existingSeller = new Seller(seller);
+                existingSeller.messageCustomer(seller, customer, message);
+            } else {
+                Customer existingCustomer = new Customer(customer);
+                existingCustomer.messageSeller(seller, customer, message);
+            }
+            addConversationHistory( seller, customer, ifSeller );
             inputField.setText(""); // Clear the input field
         }
     }
@@ -110,7 +124,7 @@ public class DisplayMessagesPanel extends JPanel {
             public void run() {
                 JFrame frame = new JFrame("Display Messages Panel");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.getContentPane().add(new DisplayMessagesPanel("testSeller", "testCustomer", true));
+                frame.getContentPane().add(new DisplayMessagesPanel("testSeller", "testCustomer", false));
                 frame.setSize(450, 500);
                 frame.setVisible(true);
             }
