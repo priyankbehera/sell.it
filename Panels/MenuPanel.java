@@ -13,17 +13,24 @@ public class MenuPanel extends JPanel {
 //    private final JButton viewStatisticsButton;
 
     public MenuPanel() {
+        // Set layout for panel
+        setLayout(new BorderLayout());
 
-        setLayout(new FlowLayout());
+        // Make new panel for buttons at the top
+        JPanel menuOptions = new JPanel();
+        menuOptions.setLayout(new BorderLayout());
 
         JLabel searchLabel = new JLabel("Enter Seller's Name:");
-        add(searchLabel);
+        menuOptions.add(searchLabel, BorderLayout.NORTH);
 
         searchField = new JTextField(20);
-        add(searchField);
+        menuOptions.add(searchField, BorderLayout.EAST);
 
-        searchButton = new JButton("Search Seller");
-        add(searchButton);
+        searchButton = new JButton("Search");
+        menuOptions.add(searchButton, BorderLayout.WEST);
+
+        // Add menuOptions panel
+        add(menuOptions, BorderLayout.NORTH);
 
 //        viewStatisticsButton = new JButton("View Statistics");
 //        add(viewStatisticsButton);
@@ -44,7 +51,7 @@ public class MenuPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(messageList);
 
         // Add the JScrollPane to the frame
-        add(scrollPane);
+        add(scrollPane, BorderLayout.CENTER);
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -101,10 +108,10 @@ public class MenuPanel extends JPanel {
             testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
             MenuPanel menuPanel = new MenuPanel();
+            testFrame.setSize(1024, 768);
+            testFrame.getContentPane().add(menuPanel, BorderLayout.WEST);
 
-            testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
 
-            testFrame.setSize(341, 768);
             testFrame.setLocationRelativeTo(null);
             testFrame.setVisible(true);
         });

@@ -17,9 +17,8 @@ public class DisplayMessagesPanel extends JPanel {
     private JTextField inputField;
 
     // constructor for display messages panel
-    public DisplayMessagesPanel( String seller, String customer, boolean ifSeller ) {
+    public DisplayMessagesPanel(String seller, String customer, boolean ifSeller) {
         JPanel displayMessages = new JPanel();
-        displayMessages.setSize(683,768);
         setLayout(new BorderLayout());
 
         // create conversation history area
@@ -31,12 +30,12 @@ public class DisplayMessagesPanel extends JPanel {
         // Create the input field for user messages
         inputField = new JTextField();
         JButton sendButton = new JButton("Send");
-        addConversationHistory( seller, customer, ifSeller );
+        addConversationHistory(seller, customer, ifSeller);
         // Add action listener to the button
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage( seller, customer, ifSeller );
+                sendMessage(seller, customer, ifSeller);
             }
         });
 
@@ -59,16 +58,16 @@ public class DisplayMessagesPanel extends JPanel {
         String folderName = "conversation_data";
         String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
 
-        try (BufferedReader bfr = new BufferedReader(new FileReader( filename ))) {
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
-            while ( ( line = bfr.readLine()) != null) {
+            while ((line = bfr.readLine()) != null) {
                 list.add(line);
             }
-            String[] messages = new String[ list.size() ];
-            String[] senderList = new String[ list.size() ];
-            String[] dateStamp = new String[ list.size() ];
-            String[] timeStamp = new String[ list.size() ];
-            for ( int i = 0; i < messages.length; i++ ) {
+            String[] messages = new String[list.size()];
+            String[] senderList = new String[list.size()];
+            String[] dateStamp = new String[list.size()];
+            String[] timeStamp = new String[list.size()];
+            for (int i = 0; i < messages.length; i++) {
                 String[] messageArray = list.get(i).split(",");
                 messages[i] = messageArray[2];
                 senderList[i] = messageArray[0];
@@ -100,34 +99,22 @@ public class DisplayMessagesPanel extends JPanel {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private void sendMessage( String seller, String customer, boolean ifSeller ) {
+
+    private void sendMessage(String seller, String customer, boolean ifSeller) {
         String message = inputField.getText();
         if (!message.trim().isEmpty()) {
             conversationArea.setText("");
             // if the user is a seller, then the seller will send the message
             // implementing the seller message
-            if ( !ifSeller ) {
+            if (!ifSeller) {
                 Seller existingSeller = new Seller(seller);
                 existingSeller.messageCustomer(seller, customer, message);
             } else {
                 Customer existingCustomer = new Customer(customer);
                 existingCustomer.messageSeller(seller, customer, message);
             }
-            addConversationHistory( seller, customer, ifSeller );
+            addConversationHistory(seller, customer, ifSeller);
             inputField.setText(""); // Clear the input field
         }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                JFrame frame = new JFrame("Display Messages Panel");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.getContentPane().add(new DisplayMessagesPanel("testSeller", "testCustomer", false));
-                frame.setSize(450, 500);
-                frame.setVisible(true);
-            }
-        });
     }
 }

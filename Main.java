@@ -70,30 +70,30 @@ public class Main {
               }
           });
 
-//          // Listens for "Continue" button on Panels.CreateAccPanel
-//          createAccPanel.getContinueButton().addActionListener(e -> {
-//              mainframe.setContentPane(homePanel);
-//              mainframe.revalidate();
-//              mainframe.repaint();
-//          });
-
-          // Listens for "Send Objects.Message" button on Panels.HomePanel
-          homePanel.getSendMessageButton().addActionListener(new ActionListener() {
-              @Override
-              public void actionPerformed(ActionEvent e) {
-                  mainframe.setContentPane(customerPanel);
-                  mainframe.revalidate();
-                  mainframe.repaint();
-              }
-          });
-
-          // Listens for "My Account" button on Panels.HomePanel
-          homePanel.getMyAccountButton().addActionListener(e -> {
-              mainframe.setContentPane(myAccountPanel);
+          // Listens for "Continue" button on Panels.CreateAccPanel
+          createAccPanel.getContinueButton().addActionListener(e -> {
+              mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();
           });
 
+          // Listens for "Send Objects.Message" button on Panels.HomePanel
+//          homePanel.getSendMessageButton().addActionListener(new ActionListener() {
+//              @Override
+//              public void actionPerformed(ActionEvent e) {
+//                  mainframe.setContentPane(customerPanel);
+//                  mainframe.revalidate();
+//                  mainframe.repaint();
+//              }
+//          });
+
+//          // Listens for "My Account" button on Panels.HomePanel
+//          homePanel.getMyAccountButton().addActionListener(e -> {
+//              mainframe.setContentPane(myAccountPanel);
+//              mainframe.revalidate();
+//              mainframe.repaint();
+//          });
+//
           // Makes the frame visible
           mainframe.setVisible(true);
       });
