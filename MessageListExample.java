@@ -6,7 +6,7 @@ public class MessageListExample extends JFrame {
     public MessageListExample() {
         setTitle("Message List Example");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(300, 200);
+        setSize(683, 768);
 
         // Sample data for the list (twenty names)
         String[] people = new String[20];

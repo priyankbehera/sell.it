@@ -19,7 +19,7 @@ public class DisplayMessagesPanel extends JPanel {
     // constructor for display messages panel
     public DisplayMessagesPanel( String seller, String customer, boolean ifSeller ) {
         JPanel displayMessages = new JPanel();
-        displayMessages.setSize(300,400);
+        displayMessages.setSize(683,768);
         setLayout(new BorderLayout());
 
         // create conversation history area

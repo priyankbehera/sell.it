@@ -31,7 +31,7 @@ public class Main {
           content.setLayout(new BorderLayout());
 
           // Sets  frame
-          mainframe.setSize(600, 400);
+          mainframe.setSize(1024, 768);
           mainframe.setLocationRelativeTo(null);
           mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
