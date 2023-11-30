@@ -75,11 +75,13 @@ public class DisplayMessagesPanel extends JPanel {
                 dateStamp[i] = messageArray[3];
                 timeStamp[i] = messageArray[4];
             }
+
             for (int i = 0; i < senderList.length; i++) {
                 String str;
                 if (ifSeller) {
                     if (senderList[i].equals(seller)) {
                         str = "You: " + messages[i];
+
                     } else {
                         str = customer + ": " + messages[i];
                     }
@@ -90,8 +92,10 @@ public class DisplayMessagesPanel extends JPanel {
                         str = "You: " + messages[i];
                     }
                 }
-                // Append the timestamp and datestamp to the right of the message
-                str += String.format("\t\t%1$-15s %2$s%n", timeStamp[i], dateStamp[i]);
+
+                // Adds time stamp above the message
+                String timeStampStr = timeStamp[i] + " " + dateStamp[i] + "\n";
+                str = timeStampStr + str + "\n\n";
 
                 conversationArea.append(str);
             }
