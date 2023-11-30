@@ -47,7 +47,7 @@ public class MenuPanel extends JPanel {
         moreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Show a popup menu with additional options
+
                 showStatistics(moreButton);
             }
         });
@@ -74,7 +74,7 @@ public class MenuPanel extends JPanel {
         popupMenu.add(messageStatisticsItem);
         // Add more items as needed...
 
-        // Show the popup menu
+
         popupMenu.show(component, 0, component.getHeight());
     }
 
