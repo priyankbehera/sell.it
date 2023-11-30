@@ -58,10 +58,11 @@ public class HomePanel extends JPanel {
 
                 // Create the MenuPanel
                 MenuPanel menuPanel = new MenuPanel();
+                menuPanel.setPreferredSize(new Dimension(256, 768));
 
                 // Create the DisplayMessagesPanel
                 DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel("testSeller", "testCustomer", false);
-
+                displayMessagesPanel.setPreferredSize(new Dimension(768, 768));
                 jFrame.add(menuPanel, BorderLayout.WEST);
                 jFrame.add(displayMessagesPanel, BorderLayout.EAST);
                 jFrame.setSize(1024, 768);
