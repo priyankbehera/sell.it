@@ -59,5 +59,29 @@ public class Server {
         return false;
     }
 
+    private synchronized void handleRequest(Request request, Socket socket) {
+        String method = request.getMethod();
+        Object[] args = request.getArgs();
+
+        // Checks name of methods
+        try {
+            if (method.equals("login")) {
+                // args[0] = accountType, args[1] = email, args[2] = password
+                boolean loginSuccess = login((int) args[0], (String) args[1], (String) args[2]);
+                System.out.println("Login successful: " + loginSuccess);
+
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject(loginSuccess);
+
+            } else if (method.equals("test")) {
+                System.out.println("Test successful");
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                objectOutputStream.writeObject("Test successful");
+            }
+        } catch(IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }
+
 
