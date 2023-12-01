@@ -29,12 +29,13 @@ public class Seller extends User {
         this.store = store;
     }
 
+
     public Seller(String email) {
         super(email);
     }
 
-    public Seller(String email, String store) {
-        super(email);
+    public Seller(String email, String store, String password) {
+        super(email, password);
         this.store = store;
     }
 
