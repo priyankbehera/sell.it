@@ -14,7 +14,7 @@ public class HomePanel extends JPanel {
         setLayout(new BorderLayout());
 
         // Add other panels
-        MenuPanel menuPanel = new MenuPanel(true);
+        MenuPanel menuPanel = new MenuPanel(false);
         // Formatting size
         menuPanel.setPreferredSize(new Dimension(400, 768));
 
@@ -58,13 +58,13 @@ public class HomePanel extends JPanel {
             @Override
             public void run() {
                 JFrame jFrame = new JFrame("HomePanel");
-                jFrame.setSize(1024, 768);
+                jFrame.setSize(1124, 768);
                 jFrame.setLayout(new BorderLayout());
                 jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
                 // Create the MenuPanel
                 MenuPanel menuPanel = new MenuPanel(true);
-                menuPanel.setPreferredSize(new Dimension(204, 768));
+                menuPanel.setPreferredSize(new Dimension(304, 768));
 
                 // Create the DisplayMessagesPanel
                 DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel("testSeller", "testCustomer", false);
