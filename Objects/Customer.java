@@ -26,6 +26,9 @@ public class Customer extends User {
         super(email);
     }
 
+    public Customer(String email, String password) {
+        super(email, password);
+    }
     public void messageSeller(String seller, String customer, String message) {
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");

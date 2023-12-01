@@ -1,4 +1,8 @@
 import Panels.*;
+import Objects.*;
+import customer_data.*;
+
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,10 +25,12 @@ public class Main {
             Socket socket = new Socket(hostName, portNumber);
             // TODO: Remove print statements
             System.out.println("Connected to server.");
-        } catch (IOException e) { // Throws error if unable to connect to server
-            System.out.println("Unable to connect to server.");
-            System.out.println(e.getMessage());
-        }
+
+            // Set up input and output streams for objects
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+
+
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
           Container content = mainframe.getContentPane();
@@ -56,6 +62,7 @@ public class Main {
 
           // Listens for "Create Account" button on Panels.WelcomePanel
           welcomePanel.getCreateAccButton().addActionListener(e -> {
+              // Creates account
               mainframe.setContentPane(createAccPanel);
               mainframe.revalidate();
               mainframe.repaint();
@@ -75,6 +82,18 @@ public class Main {
 
           // Listens for "Continue" button on Panels.CreateAccPanel
           createAccPanel.getContinueButton().addActionListener(e -> {
+              //Adds user
+              String userType = createAccPanel.getAccountType();
+              if (userType.equals("Customer")) {  // Create customer account
+                  Customer customer = new Customer(createAccPanel.getUsername(), createAccPanel.getPassword());
+              } else {
+                  // Pop up window for seller to add a store
+                  String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                  Seller seller = new Seller(createAccPanel.getUsername(), storeName, createAccPanel.getPassword());
+              }
+
+              // TODO: Create server requests to add user to database
+
               mainframe.setLayout(new BorderLayout());
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
@@ -101,6 +120,11 @@ public class Main {
           // Makes the frame visible
           mainframe.setVisible(true);
       });
+
+        } catch (IOException e) { // Throws error if unable to connect to server
+            System.out.println("Unable to connect to server.");
+            System.out.println(e.getMessage());
+        }
     }
 
     // Adds the user's login credentials to the specified file

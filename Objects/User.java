@@ -21,6 +21,8 @@ public class User {
     private ArrayList<String> blockedUsers;
     private boolean invisible;
 
+    private String password;
+
 
     public User(String email, boolean hasConversationLog, String ConversationHistoryFile) {
         this.email = email;
@@ -31,6 +33,15 @@ public class User {
         this.invisible = false;
     }
 
+    public User(String email, String password) {
+        this.email = email;
+        this.hasConversationHistory = false;
+        this.ConversationHistoryFile = null;
+        this.messages = new ArrayList<>();
+        this.blockedUsers = new ArrayList<>();
+        this.invisible = false;
+        this.password = password;
+    }
     public User(String email) {
         this.email = email;
         this.hasConversationHistory = false;
