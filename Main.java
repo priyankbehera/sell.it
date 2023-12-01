@@ -28,7 +28,7 @@ public class Main {
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
           Container content = mainframe.getContentPane();
-          content.setLayout(new BorderLayout());
+          mainframe.setLayout(new BorderLayout());
 
           // Sets  frame
           mainframe.setSize(1024, 768);
@@ -64,14 +64,18 @@ public class Main {
           // Listens for "Continue" button on Panels.LoginPanel
           loginPanel.getContinueButton().addActionListener(e -> {
               if (loginPanel.isLoggedIn()) {
+                  mainframe.getContentPane().removeAll();
                   mainframe.setContentPane(homePanel);
                   mainframe.revalidate();
                   mainframe.repaint();
+                  //print login success
+                    System.out.println("Login Successful");
               }
           });
 
           // Listens for "Continue" button on Panels.CreateAccPanel
           createAccPanel.getContinueButton().addActionListener(e -> {
+              mainframe.setLayout(new BorderLayout());
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();

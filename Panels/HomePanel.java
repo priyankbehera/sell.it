@@ -15,9 +15,14 @@ public class HomePanel extends JPanel {
 
         // Add other panels
         MenuPanel menuPanel = new MenuPanel();
+        // Formatting size
+        menuPanel.setPreferredSize(new Dimension(400, 768));
+
         add(menuPanel, BorderLayout.WEST);
 
         DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel("testSeller", "testCustomer", false);
+        // Formatting size
+        displayMessagesPanel.setPreferredSize(new Dimension(624, 768));
         add(displayMessagesPanel, BorderLayout.EAST);
 
         // Makes the panel visible
@@ -53,6 +58,7 @@ public class HomePanel extends JPanel {
             @Override
             public void run() {
                 JFrame jFrame = new JFrame("HomePanel");
+                jFrame.setSize(1024, 768);
                 jFrame.setLayout(new BorderLayout());
                 jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -65,7 +71,6 @@ public class HomePanel extends JPanel {
                 displayMessagesPanel.setPreferredSize(new Dimension(820, 768));
                 jFrame.add(menuPanel, BorderLayout.WEST);
                 jFrame.add(displayMessagesPanel, BorderLayout.EAST);
-                jFrame.setSize(1024, 768);
                 jFrame.setVisible(true);
             }
         });
