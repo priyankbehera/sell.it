@@ -30,6 +30,10 @@ public class Main {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
+        } catch (IOException e) { // Throws error if unable to connect to server
+            System.out.println("Unable to connect to server.");
+            System.out.println(e.getMessage());
+        }
 
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
@@ -121,10 +125,6 @@ public class Main {
           mainframe.setVisible(true);
       });
 
-        } catch (IOException e) { // Throws error if unable to connect to server
-            System.out.println("Unable to connect to server.");
-            System.out.println(e.getMessage());
-        }
     }
 
     // Adds the user's login credentials to the specified file
