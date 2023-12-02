@@ -22,8 +22,7 @@ public class MenuPanel extends JPanel {
 
     public MenuPanel(boolean ifSeller) {
         setLayout(new FlowLayout());
-
-        JLabel searchLabel = new JLabel("Enter Seller's Name:");
+        JLabel searchLabel = new JLabel("Enter User's Name:");
         add(searchLabel);
 
         searchField = new JTextField(20);
