@@ -1,3 +1,4 @@
+import Objects.Customer;
 import Panels.*;
 import Objects.*;
 import customer_data.*;

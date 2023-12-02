@@ -14,7 +14,7 @@ public class HomePanel extends JPanel {
 
         // creating menuPanel
         menuPanel = new MenuPanel(ifSeller);
-        menuPanel.setPreferredSize(new Dimension(304, 768));
+        menuPanel.setPreferredSize(new Dimension(500, 800));
 
         add(menuPanel, BorderLayout.WEST);
         setVisible(true);
@@ -26,7 +26,7 @@ public class HomePanel extends JPanel {
 
         // creating menuPanel
         menuPanel = new MenuPanel(ifSeller);
-        menuPanel.setPreferredSize(new Dimension(304, 768));
+        menuPanel.setPreferredSize(new Dimension(500, 800));
 
         add(menuPanel, BorderLayout.WEST);
         setVisible(true);
@@ -42,11 +42,11 @@ public class HomePanel extends JPanel {
 
                 if (ifSeller) {
                     DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(seller, selectedPerson, true);
-                    displayMessagesPanel.setPreferredSize(new Dimension(820, 768));
+                    displayMessagesPanel.setPreferredSize(new Dimension(900, 800));
                     add(displayMessagesPanel, BorderLayout.EAST);
                 } else {
                     DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(selectedPerson, customer, false);
-                    displayMessagesPanel.setPreferredSize(new Dimension(820, 768));
+                    displayMessagesPanel.setPreferredSize(new Dimension(900, 800));
                     add(displayMessagesPanel, BorderLayout.EAST);
                 }
                 revalidate();
@@ -61,7 +61,7 @@ public class HomePanel extends JPanel {
             public void run() {
                 HomePanel homePanel = new HomePanel(true);
                 JFrame jFrame = new JFrame("HomePanel");
-                jFrame.setSize(1124, 768);
+                jFrame.setSize(2000, 800);
                 jFrame.setLayout(new BorderLayout());
                 jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 jFrame.add(homePanel);
