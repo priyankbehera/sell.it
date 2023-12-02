@@ -41,7 +41,15 @@ public class Main {
           WelcomePanel welcomePanel = new WelcomePanel();
           LoginPanel loginPanel = new LoginPanel();
           CreateAccPanel createAccPanel = new CreateAccPanel();
-          HomePanel homePanel = new HomePanel();
+
+          // ifSeller tells us if it is a seller or customer using the app
+          // temporarily adding it as true, but will be changed accordingly
+          // again, temporarily adding the customer and seller, but will be changed accordingly
+          // will create a constructor for home panel such that it shows just menuPanel
+          boolean ifSeller = true;
+          String testCustomer = "testcustomer";
+          String testSeller = "testseller";
+          HomePanel homePanel = new HomePanel(testSeller, testCustomer, ifSeller);
           CustomerPanel customerPanel = new CustomerPanel();
           SellerPanel sellerPanel = new SellerPanel();
           MyAccountPanel myAccountPanel = new MyAccountPanel();

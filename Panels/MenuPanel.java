@@ -1,5 +1,6 @@
 package Panels;
 
+import javax.crypto.NullCipher;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,11 +9,18 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MenuPanel extends JPanel {
+    public JList getMessageList() {
+        return messageList;
+    }
+
+    private final JList messageList;
     private final JTextField searchField;
 
-    public MenuPanel( boolean ifSeller ) {
+    public MenuPanel(boolean ifSeller) {
         setLayout(new FlowLayout());
 
         JLabel searchLabel = new JLabel("Enter Seller's Name:");
@@ -21,7 +29,7 @@ public class MenuPanel extends JPanel {
         searchField = new JTextField(20);
         add(searchField);
 
-        JButton searchButton = new JButton("Search Seller");
+        JButton searchButton = new JButton("Search User");
         add(searchButton);
 
         JButton resetButton = new JButton("Reset");
@@ -29,12 +37,12 @@ public class MenuPanel extends JPanel {
 
         String[] people = null;
         try {
-            people = getList( ifSeller );
-        } catch ( NullPointerException e ) {
+            people = getList(ifSeller);
+        } catch (NullPointerException e) {
             JOptionPane.showMessageDialog(null, "Error - Null");
         }
         // creating a JList
-        JList<String> messageList = new JList<>(people);
+        messageList = new JList<>(people);
         messageList.setFixedCellHeight(40);
         messageList.setFixedCellWidth(300);
         messageList.setVisibleRowCount(16);
@@ -51,7 +59,7 @@ public class MenuPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = searchField.getText();
-                if ( searchUser( username, ifSeller ) ) {
+                if (searchUser(username, ifSeller)) {
                     scrollPane.setVisible(false);
                     String[] temp = {username};
                     createJList(temp);
@@ -76,21 +84,21 @@ public class MenuPanel extends JPanel {
     }
 
     // takes the name to be searched and if it's a seller
-    public boolean searchUser( String name, boolean ifSeller ) {
+    public boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
         String folderName;
-        if ( ifSeller ) {
+        if (ifSeller) {
             folderName = "customer_data";
             String filename = folderName + "/CustomersList.csv";
-            try ( BufferedReader bfr = new BufferedReader(new FileReader( filename) ) ) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
                 String line;
-                while ( ( line = bfr.readLine()) != null ) {
+                while ((line = bfr.readLine()) != null) {
                     list.add(line);
                 }
                 String[] usernames = new String[list.size()];
                 // read the file to get the list of customers
-                for ( int i = 0; i < list.size(); i++ ) {
+                for (int i = 0; i < list.size(); i++) {
                     String username = list.get(i).split(",")[0];
                     usernames[i] = username;
                 }
@@ -108,14 +116,14 @@ public class MenuPanel extends JPanel {
         } else {
             folderName = "seller_data";
             String filename = folderName + "/SellersList.csv";
-            try ( BufferedReader bfr = new BufferedReader(new FileReader( filename) ) ) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
                 String line;
-                while ( ( line = bfr.readLine()) != null ) {
+                while ((line = bfr.readLine()) != null) {
                     list.add(line);
                 }
                 String[] usernames = new String[list.size()];
                 // read the file to get the list of sellers
-                for ( int i = 0; i < list.size(); i++ ) {
+                for (int i = 0; i < list.size(); i++) {
                     String username = list.get(i).split(",")[0];
                     usernames[i] = username;
                 }
@@ -136,24 +144,24 @@ public class MenuPanel extends JPanel {
 
     // returns the list of usernames
     // if it can't get the list, then it returns null
-    public String[] getList( boolean ifSeller ) {
+    public String[] getList(boolean ifSeller) {
         ArrayList<String> menuList = new ArrayList<>();
-        if ( ifSeller ) {
+        if (ifSeller) {
             String folderName = "customer_data";
             String filename = folderName + "/" + "CustomersList.csv";
             try (BufferedReader bfr = new BufferedReader(
-                    new FileReader( filename) ) ) {
+                    new FileReader(filename))) {
                 String line;
-                while ( (line = bfr.readLine()) != null ) {
+                while ((line = bfr.readLine()) != null) {
                     menuList.add(line);
                 }
                 String[] menuArray = new String[menuList.size()];
-                for ( int i = 0; i < menuArray.length; i++ ) {
+                for (int i = 0; i < menuArray.length; i++) {
                     String customerName = menuList.get(i).split(",")[0];
                     menuArray[i] = customerName;
                 }
                 return menuArray;
-            } catch (IOException e ) {
+            } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "error");
                 return null;
             }
@@ -161,18 +169,18 @@ public class MenuPanel extends JPanel {
             String folderName = "seller_data";
             String filename = folderName + "/" + "SellersList.csv";
             try (BufferedReader bfr = new BufferedReader(
-                    new FileReader( filename) ) ) {
+                    new FileReader(filename))) {
                 String line;
-                while ( (line = bfr.readLine()) != null ) {
+                while ((line = bfr.readLine()) != null) {
                     menuList.add(line);
                 }
                 String[] menuArray = new String[menuList.size()];
-                for ( int i = 0; i < menuArray.length; i++ ) {
+                for (int i = 0; i < menuArray.length; i++) {
                     String customerName = menuList.get(i).split(",")[0];
                     menuArray[i] = customerName;
                 }
                 return menuArray;
-            } catch (IOException e ) {
+            } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "error");
                 return null;
             }
@@ -180,7 +188,7 @@ public class MenuPanel extends JPanel {
     }
 
     // create JList
-    public void createJList( String[] people ) {
+    public void createJList(String[] people) {
         //Create a JList with the array of people
         JList<String> messageList = new JList<>(people);
         messageList.setFixedCellHeight(40);
@@ -191,7 +199,7 @@ public class MenuPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(messageList);
         // Add the JScrollPane to the frame
         add(scrollPane);
-   }
+    }
 
     // this tests the menuPanel
     public static void main(String[] args) {
@@ -199,7 +207,7 @@ public class MenuPanel extends JPanel {
             JFrame testFrame = new JFrame("MenuPanel Test");
             testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-            MenuPanel menuPanel = new MenuPanel(true);
+            MenuPanel menuPanel = new MenuPanel( true);
 
             testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
 
