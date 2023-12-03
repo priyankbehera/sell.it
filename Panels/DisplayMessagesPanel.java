@@ -8,16 +8,16 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
 
     // constructor for display messages panel
-    public DisplayMessagesPanel( String seller, String customer, boolean ifSeller ) {
+    public DisplayMessagesPanel(String seller, String customer, boolean ifSeller) {
         JPanel displayMessages = new JPanel();
         displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
@@ -99,6 +99,8 @@ public class DisplayMessagesPanel extends JPanel {
 
                 conversationArea.append(str);
             }
+        } catch (FileNotFoundException e ) {
+            conversationArea.append("You have no message history with this user");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error in Program, please refresh",
                     "Error", JOptionPane.ERROR_MESSAGE);

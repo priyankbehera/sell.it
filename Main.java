@@ -1,4 +1,9 @@
+import Objects.Customer;
 import Panels.*;
+import Objects.*;
+import customer_data.*;
+
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,14 +26,12 @@ public class Main {
             Socket socket = new Socket(hostName, portNumber);
             // TODO: Remove print statements
             System.out.println("Connected to server.");
-        } catch (IOException e) { // Throws error if unable to connect to server
-            System.out.println("Unable to connect to server.");
-            System.out.println(e.getMessage());
-        }
+
+
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
           Container content = mainframe.getContentPane();
-          content.setLayout(new BorderLayout());
+          mainframe.setLayout(new BorderLayout());
 
           // Sets  frame
           mainframe.setSize(1024, 768);
@@ -39,7 +42,15 @@ public class Main {
           WelcomePanel welcomePanel = new WelcomePanel();
           LoginPanel loginPanel = new LoginPanel();
           CreateAccPanel createAccPanel = new CreateAccPanel();
-          HomePanel homePanel = new HomePanel();
+
+          // ifSeller tells us if it is a seller or customer using the app
+          // temporarily adding it as true, but will be changed accordingly
+          // again, temporarily adding the customer and seller, but will be changed accordingly
+          // will create a constructor for home panel such that it shows just menuPanel
+          boolean ifSeller = true;
+          String testCustomer = "testcustomer";
+          String testSeller = "testseller";
+          HomePanel homePanel = new HomePanel(testSeller, testCustomer, ifSeller);
           CustomerPanel customerPanel = new CustomerPanel();
           SellerPanel sellerPanel = new SellerPanel();
           MyAccountPanel myAccountPanel = new MyAccountPanel();
@@ -56,6 +67,7 @@ public class Main {
 
           // Listens for "Create Account" button on Panels.WelcomePanel
           welcomePanel.getCreateAccButton().addActionListener(e -> {
+              // Creates account
               mainframe.setContentPane(createAccPanel);
               mainframe.revalidate();
               mainframe.repaint();
@@ -64,14 +76,30 @@ public class Main {
           // Listens for "Continue" button on Panels.LoginPanel
           loginPanel.getContinueButton().addActionListener(e -> {
               if (loginPanel.isLoggedIn()) {
+                  mainframe.getContentPane().removeAll();
                   mainframe.setContentPane(homePanel);
                   mainframe.revalidate();
                   mainframe.repaint();
+                  //print login success
+                    System.out.println("Login Successful");
               }
           });
 
           // Listens for "Continue" button on Panels.CreateAccPanel
           createAccPanel.getContinueButton().addActionListener(e -> {
+              //Adds user
+              String userType = createAccPanel.getAccountType();
+              if (userType.equals("Customer")) {  // Create customer account
+                  Customer customer = new Customer(createAccPanel.getUsername(), createAccPanel.getPassword());
+              } else {
+                  // Pop up window for seller to add a store
+                  String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                  Seller seller = new Seller(createAccPanel.getUsername(), storeName, createAccPanel.getPassword());
+              }
+
+              // TODO: Create server requests to add user to database
+
+              mainframe.setLayout(new BorderLayout());
               mainframe.setContentPane(homePanel);
               mainframe.revalidate();
               mainframe.repaint();
@@ -97,6 +125,11 @@ public class Main {
           // Makes the frame visible
           mainframe.setVisible(true);
       });
+
+        } catch (IOException e) { // Throws error if unable to connect to server
+            System.out.println("Unable to connect to server.");
+            System.out.println("Make sure the server is running before starting the client.");
+        }
     }
 
     // Adds the user's login credentials to the specified file
