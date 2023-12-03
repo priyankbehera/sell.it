@@ -12,6 +12,8 @@ import java.util.Arrays;
 
 public class LoginPanel extends JPanel {
     private final JButton continueButton;
+    JTextField emailText;
+    JPasswordField passwordField;
     private boolean isLoggedIn;
 
     public LoginPanel() {
@@ -20,10 +22,10 @@ public class LoginPanel extends JPanel {
 
         // Create components
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(10, 20, 80 , 25);
+        emailLabel.setBounds(10, 20, 80, 25);
         add(emailLabel);
 
-        JTextField emailText = new JTextField(20);
+        emailText = new JTextField(20);
         emailText.setBounds(100, 20, 165, 25);
         add(emailText);
 
@@ -31,7 +33,7 @@ public class LoginPanel extends JPanel {
         passwordLabel.setBounds(10, 50, 80, 25);
         add(passwordLabel);
 
-        JPasswordField passwordField = new JPasswordField();
+        passwordField = new JPasswordField();
         passwordField.setBounds(100, 50, 165, 25);
         add(passwordField);
 
@@ -42,29 +44,6 @@ public class LoginPanel extends JPanel {
         JLabel successMessage = new JLabel("");
         successMessage.setBounds(10, 110, 300, 25);
         add(successMessage);
-
-        continueButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String email = emailText.getText();
-                String password = String.valueOf(passwordField.getPassword());
-                System.out.println(email);
-                System.out.println(password);
-
-                if (User.isValidLogin(email, password, "Data/customerNames.txt")) {
-                    Customer existingCustomer = new Customer(email);
-                    successMessage.setText("Login successful!");
-                    isLoggedIn = true;
-                } else if (User.isValidLogin(email, password, "Data/sellerNames.txt")) {
-                    Seller existingSeller = new Seller(email);
-                    successMessage.setText("Login successful!");
-                    isLoggedIn = true;
-                } else {
-                    successMessage.setText("Login attempt failed.");
-                    isLoggedIn = false;
-                }
-            }
-        });
     }
 
     // Allows other classes to access elements
@@ -74,5 +53,13 @@ public class LoginPanel extends JPanel {
 
     public boolean isLoggedIn() {
         return this.isLoggedIn;
+    }
+
+    public JTextField getEmailText() {
+        return this.emailText;
+    }
+
+    public JPasswordField getPasswordField() {
+        return this.passwordField;
     }
 }
