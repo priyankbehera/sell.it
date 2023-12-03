@@ -45,7 +45,7 @@ public class MenuPanel extends JPanel {
         String[] people = getList(ifSeller);
         DefaultListModel<String> listModel = new DefaultListModel<>();
         for ( int i = 0; i < people.length; i++ ) {
-            listModel.addElement( people[i]);
+            listModel.addElement(people[i]);
         }
         messageList = new JList<>(listModel);
         messageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
