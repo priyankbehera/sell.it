@@ -53,20 +53,6 @@ public class MenuPanel extends JPanel {
         messageList.setFixedCellWidth(300);
         messageList.setVisibleRowCount(16);
 
-//        messageList.addListSelectionListener(new ListSelectionListener() {
-//            @Override
-//            public void valueChanged(ListSelectionEvent e) {
-//                if (!e.getValueIsAdjusting()) {
-//                    // Perform action based on the selected item
-//                    int selectedIndex = messageList.getSelectedIndex();
-//                    if (selectedIndex != -1) {
-//                        String selectedItem = listModel.getElementAt(selectedIndex);
-//                        System.out.println("Selected item: " + selectedItem);
-//                    }
-//                }
-//            }
-//        });
-
         JScrollPane scrollPane = new JScrollPane(messageList);
         add(scrollPane, BorderLayout.CENTER);
 
