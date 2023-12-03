@@ -70,26 +70,22 @@ public class Main {
 
                 // Listens for successful login
                 loginPanel.getContinueButton().addActionListener(e -> {
-                    String email = emailText.getText();
-                    String password = String.valueOf(passwordField.getPassword());
-                    System.out.println(email);
-                    System.out.println(password);
+                    boolean isLoggedIn;
+                    String email = loginPanel.getEmailText().getText();
+                    String password = String.valueOf(loginPanel.getPasswordField().getPassword());
 
                     if (User.isValidLogin(email, password, "Data/customerNames.txt")) {
                         Customer existingCustomer = new Customer(email);
-                        successMessage.setText("Login successful!");
                         isLoggedIn = true;
                     } else if (User.isValidLogin(email, password, "Data/sellerNames.txt")) {
                         Seller existingSeller = new Seller(email);
-                        successMessage.setText("Login successful!");
                         isLoggedIn = true;
                     } else {
-                        successMessage.setText("Login attempt failed.");
                         isLoggedIn = false;
+                        loginPanel.getSuccessMessage().setText("Login unsuccessful. Please try again.");
                     }
 
-
-                    if (loginPanel.isLoggedIn()) {
+                    if (isLoggedIn) {
                         mainframe.setContentPane(homePanel);
                         mainframe.revalidate();
                         mainframe.repaint();

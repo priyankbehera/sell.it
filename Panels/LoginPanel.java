@@ -14,7 +14,7 @@ public class LoginPanel extends JPanel {
     private final JButton continueButton;
     JTextField emailText;
     JPasswordField passwordField;
-    private boolean isLoggedIn;
+    JLabel successMessage;
 
     public LoginPanel() {
         // Set the layout manager for this panel
@@ -41,7 +41,7 @@ public class LoginPanel extends JPanel {
         this.continueButton.setBounds(10, 80, 125, 25);
         add(this.continueButton);
 
-        JLabel successMessage = new JLabel("");
+        successMessage = new JLabel("");
         successMessage.setBounds(10, 110, 300, 25);
         add(successMessage);
     }
@@ -51,15 +51,15 @@ public class LoginPanel extends JPanel {
         return this.continueButton;
     }
 
-    public boolean isLoggedIn() {
-        return this.isLoggedIn;
-    }
-
     public JTextField getEmailText() {
         return this.emailText;
     }
 
     public JPasswordField getPasswordField() {
         return this.passwordField;
+    }
+
+    public JLabel getSuccessMessage() {
+        return this.successMessage;
     }
 }
