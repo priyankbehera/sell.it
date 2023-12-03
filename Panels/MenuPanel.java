@@ -1,6 +1,8 @@
 package Panels;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,10 +43,29 @@ public class MenuPanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
 
         String[] people = getList(ifSeller);
-        messageList = new JList<>(people);
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        for ( int i = 0; i < people.length; i++ ) {
+            listModel.addElement( people[i]);
+        }
+        messageList = new JList<>(listModel);
+        messageList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         messageList.setFixedCellHeight(40);
         messageList.setFixedCellWidth(300);
         messageList.setVisibleRowCount(16);
+
+//        messageList.addListSelectionListener(new ListSelectionListener() {
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                if (!e.getValueIsAdjusting()) {
+//                    // Perform action based on the selected item
+//                    int selectedIndex = messageList.getSelectedIndex();
+//                    if (selectedIndex != -1) {
+//                        String selectedItem = listModel.getElementAt(selectedIndex);
+//                        System.out.println("Selected item: " + selectedItem);
+//                    }
+//                }
+//            }
+//        });
 
         JScrollPane scrollPane = new JScrollPane(messageList);
         add(scrollPane, BorderLayout.CENTER);
