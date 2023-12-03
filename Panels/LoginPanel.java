@@ -20,30 +20,32 @@ public class LoginPanel extends JPanel {
         // Set the layout manager for this panel
         setLayout(new BorderLayout());
 
+        // Create panel for login components
+        JPanel loginComponents = new JPanel();
+        loginComponents.setLayout(new GridLayout(3, 2, 0, 10));
+        loginComponents.setPreferredSize(new Dimension(400, 300));
+
         // Create components
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(10, 20, 80, 25);
-        add(emailLabel);
+        loginComponents.add(emailLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(100, 20, 165, 25);
-        add(emailText);
+        loginComponents.add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(10, 50, 80, 25);
-        add(passwordLabel);
+        loginComponents.add(passwordLabel);
 
-        passwordField = new JPasswordField();
-        passwordField.setBounds(100, 50, 165, 25);
-        add(passwordField);
+        passwordField = new JPasswordField(20);
+        loginComponents.add(passwordField);
 
-        this.continueButton = new JButton("Continue");
-        this.continueButton.setBounds(10, 80, 125, 25);
-        add(this.continueButton);
+        continueButton = new JButton("Continue");
+        loginComponents.add(continueButton);
 
         successMessage = new JLabel("");
-        successMessage.setBounds(10, 110, 300, 25);
-        add(successMessage);
+        loginComponents.add(successMessage);
+
+        // Add loginComponents to the panel
+        add(loginComponents, BorderLayout.CENTER);
     }
 
     // Allows other classes to access elements
