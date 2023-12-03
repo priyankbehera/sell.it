@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 
 public class Main {
@@ -27,6 +28,9 @@ public class Main {
             // TODO: Remove print statements
             System.out.println("Connected to server.");
 
+            // creates scanner and printwriter
+            Scanner scanner = new Scanner(socket.getInputStream());
+            PrintWriter pw = new PrintWriter(socket.getOutputStream());
 
       SwingUtilities.invokeLater(() -> {
           JFrame mainframe = new JFrame("Send.it");
@@ -75,14 +79,11 @@ public class Main {
 
           // Listens for "Continue" button on Panels.LoginPanel
           loginPanel.getContinueButton().addActionListener(e -> {
-              if (loginPanel.isLoggedIn()) {
+              // create server login request
                   mainframe.getContentPane().removeAll();
                   mainframe.setContentPane(homePanel);
                   mainframe.revalidate();
                   mainframe.repaint();
-                  //print login success
-                    System.out.println("Login Successful");
-              }
           });
 
           // Listens for "Continue" button on Panels.CreateAccPanel
