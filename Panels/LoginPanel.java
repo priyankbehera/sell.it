@@ -5,6 +5,7 @@ import Objects.Seller;
 import Objects.User;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ public class LoginPanel extends JPanel {
 
     public LoginPanel() {
         // Set the layout manager for this panel
-        setLayout(null);
+        setLayout(new BorderLayout());
 
         // Create components
         JLabel emailLabel = new JLabel("Email:");
