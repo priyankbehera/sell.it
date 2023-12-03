@@ -26,7 +26,7 @@ public class HomePanel extends JPanel {
         setVisible(true);
     }
 
-    public HomePanel(String seller, String customer, boolean ifSeller) {
+    public HomePanel(String user, boolean ifSeller) {
         // setting the layout manager
         setLayout(new BorderLayout());
 
@@ -47,13 +47,13 @@ public class HomePanel extends JPanel {
         if ( ifSeller ) {
             String[] customers = getList(true);
             for (String s : customers) {
-                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(seller, s, true);
+                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(user, s, true);
                 cardPanel.add(displayMessagesPanel, s);
             }
         } else {
             String[] sellers = getList(false);
             for (String s : sellers) {
-                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(s, customer, false);
+                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(s, user, false);
                 cardPanel.add(displayMessagesPanel, s);
             }
         }
@@ -106,7 +106,7 @@ public class HomePanel extends JPanel {
                 jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                 jFrame.add(homePanel);
 
-                homePanel = new HomePanel("testseller", "testcustomer", true);
+                homePanel = new HomePanel("testseller", true);
                 jFrame.add(homePanel);
                 homePanel.setVisible(true);
                 jFrame.setVisible(true);
