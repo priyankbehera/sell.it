@@ -48,7 +48,8 @@ public class Main {
                 boolean ifSeller = true;
                 String testCustomer = "testcustomer";
                 String testSeller = "testseller";
-                HomePanel homePanel = new HomePanel(testSeller, testCustomer, ifSeller);
+
+                HomePanel homePanel = new HomePanel(testSeller, ifSeller);
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);
