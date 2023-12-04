@@ -13,13 +13,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 
 public class Main {
 
     // Adjust portNumber and hostName if needed
-    public static final int portNumber = 4242;
-    public static final String hostName = "localhost";
+    private static final int portNumber = 4242;
+   private static final String hostName = "localhost";
+
 
     public static void main(String[] args) {
         // Connects to server
@@ -27,6 +29,14 @@ public class Main {
             // TODO: Remove print statements
             System.out.println("Connected to server.");
 
+            // input & output for server
+            PrintWriter pw = new PrintWriter(socket.getOutputStream(), false);
+            BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
+
+            pw.println("Not null.");
+            pw.flush();
+            System.out.println(br.readLine());
+            // Creates the main frame
 
             SwingUtilities.invokeLater(() -> {
                 JFrame mainframe = new JFrame("Send.it");
@@ -71,26 +81,53 @@ public class Main {
 
                 // Listens for successful login
                 loginPanel.getContinueButton().addActionListener(e -> {
-                    boolean isLoggedIn;
+                    System.out.println("Here");
+                    boolean isLoggedIn = false;
                     String email = loginPanel.getEmailText().getText();
                     String password = String.valueOf(loginPanel.getPasswordField().getPassword());
+                    System.out.println("Email: " + email);
+                    System.out.println("Password: " + password);
 
-                    if (User.isValidLogin(email, password, "Data/customerNames.txt")) {
-                        Customer existingCustomer = new Customer(email);
-                        isLoggedIn = true;
-                    } else if (User.isValidLogin(email, password, "Data/sellerNames.txt")) {
-                        Seller existingSeller = new Seller(email);
-                        isLoggedIn = true;
-                    } else {
-                        isLoggedIn = false;
-                        loginPanel.getSuccessMessage().setText("Login unsuccessful. Please try again.");
+                    // Sends login credentials to server
+                    String request = "login,0,test@gmail.com,test_password\n";
+                    try {
+                        pw.println(request);
+                        pw.flush();
+                        System.out.println("Request sent: " + request);
+
+                        // Waits for response from server
+                        String response;
+
+                        response = br.readLine();
+                        System.out.println("Response received: " + response);
+                       /* String response = br.readLine();
+                        isLoggedIn = Boolean.parseBoolean(response);
+
+                        if (isLoggedIn) {
+                            mainframe.setContentPane(homePanel);
+                            mainframe.revalidate();
+                            mainframe.repaint();
+                        }
+
+                                    */
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                        System.out.println("Unable to send request to server.");
+                    } finally {
+                        try {
+                            if (br != null) {
+                                br.close();
+                            }
+                            if (pw != null) {
+                                pw.close();
+                            }
+                            socket.close();
+
+                        } catch (IOException ex) {
+                            System.out.println(ex.getMessage());
+                        }
                     }
 
-                    if (isLoggedIn) {
-                        mainframe.setContentPane(homePanel);
-                        mainframe.revalidate();
-                        mainframe.repaint();
-                    }
                 });
 
                 // Listens for "Continue" button on Panels.CreateAccPanel

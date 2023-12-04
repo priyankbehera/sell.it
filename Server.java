@@ -20,52 +20,56 @@ import java.util.Scanner;
  **/
 public class Server {
 
-
+    private static final int portNumber = 4242;
+    private static ServerSocket serverSocket;
+    private static clientManager clientManager;
+    private static Thread thread;
     public static void main(String[] args) {
-        do {
-            try {
-                ServerSocket serverSocket = new ServerSocket(4242);
-                System.out.println("Waiting for the client to connect...");
-                Socket socket = serverSocket.accept();
-                System.out.println("Client connected!");
 
-                // Handles requests from client
-                requests(socket);
-            } catch (IOException e) {
+        try {
+            serverSocket = new ServerSocket(portNumber);
+            System.out.println("Server started on port " + portNumber);
+
+            while (true) {
+                clientManager = new clientManager(serverSocket.accept());
+                thread = new Thread(clientManager);
+                thread.start();
+                // Creates a new thread for each client
+            }
+        }
+            catch (IOException e) {
                 System.out.println(e.getMessage());
             }
-        } while (true);
-    }
-
-    private synchronized static void requests(Socket socket) {
-        try {
-            Scanner scanner = new Scanner(socket.getInputStream());
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
-
-            // Reads request from client
-            String requestString = scanner.nextLine();
-            System.out.println("Request received: " + requestString);
-            // Split requests into parts
-            String[] requestParts = requestString.split(",");
-            String function = requestParts[0];
-            String[] args = new String[requestParts.length - 1];
-
-            // Performs different actions based on request
-            if (function.equals("checkLogin")) {  // Logs in user
-            // args[0] = accountType, args[1] = email, args[2] = password
-                int accountType = Integer.parseInt(args[0]);
-                boolean loginSuccess = login(accountType, args[1], args[2]);
-
-                // send response to client
-                if (loginSuccess) {
-                    printWriter.println("true");
-                } else {
-                    printWriter.println("false");
-                }
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
+
+
+
+    public static void requests(String request, PrintWriter printWriter) {
+        String [] requestArray = request.split(" ");
+        String functionRequest = requestArray[0];
+        String [] functionArgs = new String[requestArray.length - 1];
+        for (int i = 1; i < requestArray.length; i++) {
+            functionArgs[i - 1] = requestArray[i];
+        }
+        switch (functionRequest) {
+            case "login":
+                int accountType = Integer.parseInt(functionArgs[0]);
+                String email = functionArgs[1];
+                String password = functionArgs[2];
+
+                boolean success = login(accountType, email, password);
+                printWriter.println(success);
+                printWriter.flush();
+                break;
+
+            case "createAccount":
+                accountType = Integer.parseInt(functionArgs[0]);
+                email = functionArgs[1];
+                password = functionArgs[2];
+
+                success = createAccount(accountType, email, password);
+        }
+
     }
     /*
      "logs in" the user by verifying their credentials are correct
@@ -98,29 +102,77 @@ public class Server {
         return false;
     }
 
-    private synchronized void handleRequest(Request request, Socket socket) {
-        String method = request.getMethod();
-        Object[] args = request.getArgs();
+    // manages each client thread
 
-        // Checks name of methods
+    public static synchronized boolean createAccount(int accountType, String email, String password) {
+        // Sets filename based on account type
+        String filename = "";
+        if (accountType == 0) {
+            filename = "customer_data/customerNames.txt";
+        } else if (accountType == 1) {
+            filename = "seller_data/sellerNames.txt";
+        } else {
+            return false;
+        }
+
         try {
-            if (method.equals("login")) {
-                // args[0] = accountType, args[1] = email, args[2] = password
-                boolean loginSuccess = login((int) args[0], (String) args[1], (String) args[2]);
-                System.out.println("Login successful: " + loginSuccess);
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data[0].equals(email) && data[1].equals(password)) {
 
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                objectOutputStream.writeObject(loginSuccess);
-
-            } else if (method.equals("test")) {
-                System.out.println("Test successful");
-                ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                objectOutputStream.writeObject("Test successful");
+                    return true;
+                }
             }
-        } catch(IOException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            return false;
+        }
+        return false;
+    }
+    private static class clientManager implements Runnable {
+        private Socket socket;
+
+        public clientManager(Socket socket) {
+            this.socket = socket;
+        }
+
+
+
+        @Override
+        public void run() {
+            PrintWriter printWriter = null;
+            BufferedReader br = null;
+
+            try {
+                printWriter = new PrintWriter(socket.getOutputStream(), false);
+                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                printWriter.println("Connected to server thread.");
+                printWriter.flush();
+                String line;
+                System.out.println(br.readLine());
+                while ((line = br.readLine()) != null) {
+                    System.out.println("Received request: " + line);
+                    printWriter.println("Received request: " + line);
+                    printWriter.flush();
+                    requests(line, printWriter);
+                }
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            } finally {
+                try {
+                    if (printWriter != null) {
+                        printWriter.close();
+                    }
+                    if (br != null) {
+                        br.close();
+                    }
+                    socket.close();
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
     }
 }
-
 
