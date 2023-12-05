@@ -123,6 +123,7 @@ public class Main {
                     // display results
                     if (success) {
                         // send back to login
+                        JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                         mainframe.setContentPane(loginPanel);
                         mainframe.revalidate();
                         mainframe.repaint();
