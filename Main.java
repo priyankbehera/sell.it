@@ -25,17 +25,15 @@ public class Main {
 
     public static void main(String[] args) {
         // Connects to server
-        try (Socket socket = new Socket(hostName, portNumber)) {
+        try  {
             // TODO: Remove print statements
+            Socket socket = new Socket(hostName, portNumber);
             System.out.println("Connected to server.");
 
             // input & output for server
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), false);
             BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
 
-            pw.println("Not null.");
-            pw.flush();
-            System.out.println(br.readLine());
             // Creates the main frame
 
             SwingUtilities.invokeLater(() -> {
@@ -89,45 +87,19 @@ public class Main {
                     System.out.println("Password: " + password);
 
                     // Sends login credentials to server
-                    String request = "login,0,test@gmail.com,test_password\n";
-                    try {
-                        pw.println(request);
-                        pw.flush();
-                        System.out.println("Request sent: " + request);
+                    String request = "login," + "0," + email + "," + password;
 
-                        // Waits for response from server
-                        String response;
 
-                        response = br.readLine();
-                        System.out.println("Response received: " + response);
-                       /* String response = br.readLine();
-                        isLoggedIn = Boolean.parseBoolean(response);
+                    isLoggedIn = loginRequest(request, pw, br);
+                    System.out.println("Is logged in: " + isLoggedIn);
 
-                        if (isLoggedIn) {
-                            mainframe.setContentPane(homePanel);
-                            mainframe.revalidate();
-                            mainframe.repaint();
-                        }
-
-                                    */
-                    } catch (Exception ex) {
-                        System.out.println(ex.getMessage());
-                        System.out.println("Unable to send request to server.");
-                    } finally {
-                        try {
-                            if (br != null) {
-                                br.close();
-                            }
-                            if (pw != null) {
-                                pw.close();
-                            }
-                            socket.close();
-
-                        } catch (IOException ex) {
-                            System.out.println(ex.getMessage());
-                        }
+                    if (isLoggedIn) {
+                        mainframe.setContentPane(homePanel);
+                        mainframe.revalidate();
+                        mainframe.repaint();
+                    } else {
+                        loginPanel.getSuccessMessage().setText("Incorrect email or password.");
                     }
-
                 });
 
                 // Listens for "Continue" button on Panels.CreateAccPanel
@@ -187,5 +159,34 @@ public class Main {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public static boolean loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
+
+        // send request to server
+        pw.println(request);
+        pw.flush();
+        System.out.println("Request sent: " + request);
+
+        // get response from server
+        try {
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
+                }
+            }
+
+            System.out.println("Received request: " + line);
+            System.out.println(line);
+
+            return Boolean.parseBoolean(line);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
     }
 }

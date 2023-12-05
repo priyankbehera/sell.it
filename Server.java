@@ -21,53 +21,54 @@ import java.util.Scanner;
 public class Server {
 
     private static final int portNumber = 4242;
-    private static ServerSocket serverSocket;
-    private static clientManager clientManager;
-    private static Thread thread;
     public static void main(String[] args) {
 
         try {
-            serverSocket = new ServerSocket(portNumber);
+            ServerSocket serverSocket = new ServerSocket(portNumber);
             System.out.println("Server started on port " + portNumber);
 
             while (true) {
-                clientManager = new clientManager(serverSocket.accept());
-                thread = new Thread(clientManager);
+                Socket socket = serverSocket.accept();
+                System.out.println("Client connected at: " + socket.getInetAddress().getHostAddress());
+
+                // Creates client object and thread
+                clientManager client = new clientManager(socket);
+                Thread thread = new Thread(client);
                 thread.start();
-                // Creates a new thread for each client
+
+
             }
+
         }
             catch (IOException e) {
                 System.out.println(e.getMessage());
+
             }
         }
 
 
 
     public static void requests(String request, PrintWriter printWriter) {
-        String [] requestArray = request.split(" ");
-        String functionRequest = requestArray[0];
-        String [] functionArgs = new String[requestArray.length - 1];
-        for (int i = 1; i < requestArray.length; i++) {
-            functionArgs[i - 1] = requestArray[i];
-        }
-        switch (functionRequest) {
-            case "login":
-                int accountType = Integer.parseInt(functionArgs[0]);
-                String email = functionArgs[1];
-                String password = functionArgs[2];
+        String [] requestArray = request.split(",");
+        String function = requestArray[0];
+        System.out.println("Function: " + function);
+        String account = requestArray[1];
+        String email = requestArray[2];
+        String password = requestArray[3];
+        int accountType = Integer.parseInt(account);
 
+        switch (function) {
+            case "login":
                 boolean success = login(accountType, email, password);
                 printWriter.println(success);
                 printWriter.flush();
                 break;
 
             case "createAccount":
-                accountType = Integer.parseInt(functionArgs[0]);
-                email = functionArgs[1];
-                password = functionArgs[2];
-
                 success = createAccount(accountType, email, password);
+                printWriter.println(success);
+                printWriter.flush();
+                break;
         }
 
     }
@@ -91,7 +92,7 @@ public class Server {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
+                String[] data = line.split("-");
                 if (data[0].equals(email) && data[1].equals(password)) {
                     return true;
                 }
@@ -137,42 +138,27 @@ public class Server {
             this.socket = socket;
         }
 
-
-
         @Override
         public void run() {
-            PrintWriter printWriter = null;
-            BufferedReader br = null;
-
             try {
-                printWriter = new PrintWriter(socket.getOutputStream(), false);
-                br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                printWriter.println("Connected to server thread.");
-                printWriter.flush();
-                String line;
-                System.out.println(br.readLine());
-                while ((line = br.readLine()) != null) {
-                    System.out.println("Received request: " + line);
-                    printWriter.println("Received request: " + line);
-                    printWriter.flush();
-                    requests(line, printWriter);
+            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            // Read request from  client
+            String request;
+            while (true) {
+                request = br.readLine();
+                if (request != null) {
+                    if (!request.isEmpty()) break;
                 }
-            } catch (IOException e) {
+            }
+            System.out.println("Received request: " + request);
+            requests(request, printWriter);
+        } catch (IOException e) {
                 System.out.println(e.getMessage());
-            } finally {
-                try {
-                    if (printWriter != null) {
-                        printWriter.close();
-                    }
-                    if (br != null) {
-                        br.close();
-                    }
-                    socket.close();
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
-                }
             }
         }
     }
-}
+    }
+
 
