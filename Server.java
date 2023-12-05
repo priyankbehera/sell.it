@@ -88,6 +88,10 @@ public class Server {
                     printWriter.println(message);
                     printWriter.flush();
                 }
+                //prints end string to represent end of conversation
+                String endMarker = "!@#%#$!@#%^@#$";
+                printWriter.println(endMarker);
+                printWriter.flush();
         }
 
     }

@@ -7,20 +7,37 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
 
+    // button for refresh
+    private JButton refreshButton;
+
     // constructor for display messages panel
-    public DisplayMessagesPanel(String seller, String customer, boolean ifSeller) {
+    public DisplayMessagesPanel(String seller, String customer, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         JPanel displayMessages = new JPanel();
         displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
+
+        // creates the refresh button
+        refreshButton = new JButton("Refresh");
+        refreshButton.setBounds(10, 10, 80, 25);
+        add(refreshButton, BorderLayout.NORTH);
+
+        // refresh button action listener
+        refreshButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                conversationArea.setText("");
+                requestConversationHistory(seller, customer, ifSeller, br, pw);
+
+                //TODO: Reset menupanel
+
+            }
+        });
 
         // create conversation history area
         conversationArea = new JTextArea();
@@ -31,7 +48,8 @@ public class DisplayMessagesPanel extends JPanel {
         // Create the input field for user messages
         inputField = new JTextField();
         JButton sendButton = new JButton("Send");
-        addConversationHistory( seller, customer, ifSeller );
+        //sends request to server to get conversation history
+
         // Add action listener to the button
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -55,56 +73,33 @@ public class DisplayMessagesPanel extends JPanel {
     // if ifSeller == true, the user is seller
     // if ifSeller == false, then the user is customer
     private void addConversationHistory(String seller, String customer, boolean ifSeller) {
-        ArrayList<String> list = new ArrayList<>();
-        String folderName = "conversation_data";
-        String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
+    }
+    private void requestConversationHistory(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
+        // send request to server
+        String requestString = "getConversationHistory," + seller + "," + customer + "," + ifSeller;
+        pw.println(requestString);
+        pw.flush();
 
-        try (BufferedReader bfr = new BufferedReader(new FileReader( filename ))) {
+        // get response from server
+        ArrayList<String> messageList = new ArrayList<>();
+        try {
             String line;
-            while ( ( line = bfr.readLine()) != null) {
-                list.add(line);
-            }
-            String[] messages = new String[ list.size() ];
-            String[] senderList = new String[ list.size() ];
-            String[] dateStamp = new String[ list.size() ];
-            String[] timeStamp = new String[ list.size() ];
-            for ( int i = 0; i < messages.length; i++ ) {
-                String[] messageArray = list.get(i).split(",");
-                messages[i] = messageArray[2];
-                senderList[i] = messageArray[0];
-                dateStamp[i] = messageArray[3];
-                timeStamp[i] = messageArray[4];
-            }
-
-            for (int i = 0; i < senderList.length; i++) {
-                String str;
-                if (ifSeller) {
-                    if (senderList[i].equals(seller)) {
-                        str = "You: " + messages[i];
-
-                    } else {
-                        str = customer + ": " + messages[i];
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    if (line.equals("!@#%#$!@#%^@#$")) {
+                        break;
                     }
-                } else {
-                    if (senderList[i].equals(seller)) {
-                        str = seller + ": " + messages[i];
-                    } else {
-                        str = "You: " + messages[i];
-                    }
+                    messageList.add(line);
                 }
 
-                // Adds time stamp above the message
-                String timeStampStr = timeStamp[i] + " " + dateStamp[i] + "\n";
-                str = timeStampStr + str + "\n\n";
-
-                conversationArea.append(str);
             }
-        } catch (FileNotFoundException e ) {
-            conversationArea.append("You have no message history with this user");
+            for (String s : messageList) {
+                conversationArea.append(s + "\n");
+            }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error in Program, please refresh",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println(e.getMessage());
         }
+
     }
     private void sendMessage( String seller, String customer, boolean ifSeller ) {
         String message = inputField.getText();
@@ -124,7 +119,7 @@ public class DisplayMessagesPanel extends JPanel {
         }
     }
 
-    public static void main(String[] args) {
+ /*   public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -135,5 +130,5 @@ public class DisplayMessagesPanel extends JPanel {
                 frame.setVisible(true);
             }
         });
-    }
+    }*/
 }
