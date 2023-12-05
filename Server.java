@@ -116,20 +116,28 @@ public class Server {
             return false;
         }
 
+        // verifies account does not already exist
+        boolean accountExists = false;
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data[0].equals(email) && data[1].equals(password)) {
-
-                    return true;
+                String[] data = line.split("-");
+                if (data[0].equals(email)) {
+                    accountExists = true;
+                    return false;
                 }
             }
+            // account must not exist -- was not found in files; add to file
+            PrintWriter pw = new PrintWriter(new FileWriter(filename, true));
+            pw.println(email + "-" + password);
+            pw.close();
+            return true;
+
         } catch (IOException e) {
+            System.out.println("Error creating account");
             return false;
         }
-        return false;
     }
     private static class clientManager implements Runnable {
         private Socket socket;
@@ -140,22 +148,24 @@ public class Server {
 
         @Override
         public void run() {
-            try {
-            PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
-            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            // Read request from  client
-            String request;
             while (true) {
-                request = br.readLine();
-                if (request != null) {
-                    if (!request.isEmpty()) break;
+                try {
+                    PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+                    // Read request from  client
+                    String request;
+                    while (true) {
+                        request = br.readLine();
+                        if (request != null) {
+                            if (!request.isEmpty()) break;
+                        }
+                    }
+                    System.out.println("Received request: " + request);
+                    requests(request, printWriter);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
                 }
-            }
-            System.out.println("Received request: " + request);
-            requests(request, printWriter);
-        } catch (IOException e) {
-                System.out.println(e.getMessage());
             }
         }
     }

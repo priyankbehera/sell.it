@@ -10,6 +10,7 @@ public class CreateAccPanel extends JPanel {
     private JTextField usernameText;
     private JPasswordField passwordField;
 
+    JLabel successMessage;
     private JComboBox<String> accountType;
     private String accountTypeString;
     public CreateAccPanel() {
@@ -46,6 +47,12 @@ public class CreateAccPanel extends JPanel {
         this.continueButton = new JButton("Continue");
         this.continueButton.setBounds(10, 160, 125, 25);
         add(this.continueButton);
+
+        // success message
+        successMessage = new JLabel("");
+        successMessage.setBounds(10, 130, 300, 25);
+        add(successMessage);
+
         // Action listener
         getAccountType.addActionListener(new ActionListener() {
             @Override
@@ -75,6 +82,10 @@ public class CreateAccPanel extends JPanel {
 
     public String getPassword() {
         return String.valueOf(this.passwordField.getPassword());
+    }
+
+    public JLabel getSuccessMessage() {
+        return this.successMessage;
     }
 
 }

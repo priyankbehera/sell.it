@@ -88,8 +88,6 @@ public class Main {
 
                     // Sends login credentials to server
                     String request = "login," + "0," + email + "," + password;
-
-
                     isLoggedIn = loginRequest(request, pw, br);
                     System.out.println("Is logged in: " + isLoggedIn);
 
@@ -106,20 +104,38 @@ public class Main {
                 createAccPanel.getContinueButton().addActionListener(e -> {
                     //Adds user
                     String userType = createAccPanel.getAccountType();
+                    String accountType = "";
                     if (userType.equals("Customer")) {  // Create customer account
                         Customer customer = new Customer(createAccPanel.getUsername(), createAccPanel.getPassword());
+                        accountType = "0";
                     } else {
                         // Pop up window for seller to add a store
                         String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                         Seller seller = new Seller(createAccPanel.getUsername(), storeName, createAccPanel.getPassword());
+                        accountType = "1";
                     }
 
-                    // TODO: Create server requests to add user to database
+                    // send request to server
+                    String requestString = "createAccount," + accountType + "," + createAccPanel.getUsername() + "," + createAccPanel.getPassword();
+                    boolean success = createAccountRequest(requestString, pw, br);
+                    System.out.println("Account created: " + success);
 
-                    mainframe.setLayout(new BorderLayout());
-                    mainframe.setContentPane(homePanel);
-                    mainframe.revalidate();
-                    mainframe.repaint();
+                    // display results
+                    if (success) {
+                        // send back to login
+                        mainframe.setContentPane(loginPanel);
+                        mainframe.revalidate();
+                        mainframe.repaint();
+
+                    }
+                    else {
+                        createAccPanel.getSuccessMessage().setText("Account already exists. Try a different email.");
+                        mainframe.setContentPane(createAccPanel);
+                        mainframe.revalidate();
+                        mainframe.repaint();
+
+                    }
+
                 });
 
                 // Listens for "Send Objects.Message" button on Panels.HomePanel
@@ -138,7 +154,6 @@ public class Main {
 //              mainframe.revalidate();
 //              mainframe.repaint();
 //          });
-//
                 // Makes the frame visible
                 mainframe.setVisible(true);
             });
@@ -151,17 +166,32 @@ public class Main {
 
     }
 
-    // Adds the user's login credentials to the specified file
-    public static boolean addLoginDetails(String email, String password, String filename) {
-        try (PrintWriter printWriter = new PrintWriter(new FileWriter(filename, true))) {
-            printWriter.println(email + "-" + password);
-            return true;
+    public static boolean loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
+        // send request to server
+        pw.println(request);
+        pw.flush();
+        System.out.println("Request sent: " + request);
+
+        // get response from server
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
+                }
+            }
+            System.out.println("Receive response: " + line);
+            System.out.println(line);
+
+            return Boolean.parseBoolean(line);
         } catch (IOException e) {
-            return false;
+            System.out.println(e.getMessage());
         }
+        return false;
     }
 
-    public static boolean loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+    public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
         PrintWriter pw = printWriter;
 
         // send request to server
@@ -171,7 +201,6 @@ public class Main {
 
         // get response from server
         try {
-
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty()) {
@@ -179,8 +208,7 @@ public class Main {
                 }
             }
 
-            System.out.println("Received request: " + line);
-            System.out.println(line);
+            System.out.println("Received response: " + line);
 
             return Boolean.parseBoolean(line);
         } catch (IOException e) {
