@@ -115,7 +115,12 @@ public class MenuPanel extends JPanel {
     public String[] getList(boolean ifSeller) {
         ArrayList<String> menuList = new ArrayList<>();
         String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = folderName + "/CustomersList.csv";
+        String filename;
+        if (ifSeller) {
+            filename = folderName + "/CustomersList.csv";
+        } else {
+            filename = folderName + "/SellersList.csv";
+        }
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = bfr.readLine()) != null) {

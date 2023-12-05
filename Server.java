@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -52,23 +53,41 @@ public class Server {
         String [] requestArray = request.split(",");
         String function = requestArray[0];
         System.out.println("Function: " + function);
-        String account = requestArray[1];
-        String email = requestArray[2];
-        String password = requestArray[3];
-        int accountType = Integer.parseInt(account);
+        // create list of arguments
+        String[] args = new String[requestArray.length - 1];
+        for (int i = 1; i < requestArray.length; i++) {
+            args[i - 1] = requestArray[i];
+        }
 
         switch (function) {
             case "login":
+                int accountType = Integer.parseInt(args[0]);
+                String email = args[1];
+                String password = args[2];
+
                 boolean success = login(accountType, email, password);
                 printWriter.println(success);
                 printWriter.flush();
                 break;
 
             case "createAccount":
+                accountType = Integer.parseInt(args[0]);
+                email = args[1];
+                password = args[2];
                 success = createAccount(accountType, email, password);
                 printWriter.println(success);
                 printWriter.flush();
                 break;
+
+            case "getConversationHistory":
+                boolean ifSelller = Boolean.parseBoolean(args[2]);
+                String seller = args[0];
+                String customer = args[1];
+                ArrayList<String> messageList = getConversationHistory(seller, customer, ifSelller);
+                for (String message : messageList) {
+                    printWriter.println(message);
+                    printWriter.flush();
+                }
         }
 
     }
@@ -139,12 +158,72 @@ public class Server {
             return false;
         }
     }
+
+    // sends arraylist of messages to client
+    public static synchronized ArrayList<String> getConversationHistory(String seller, String customer, boolean ifSeller) {
+        ArrayList<String> list = new ArrayList<>();
+        ArrayList<String> messageList = new ArrayList<>(); // list of messages to be sent to client
+        String folderName = "conversation_data";
+        String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader( filename ))) {
+            String line;
+            while ( ( line = bfr.readLine()) != null) {
+                list.add(line);
+            }
+            String[] messages = new String[ list.size() ];
+            String[] senderList = new String[ list.size() ];
+            String[] dateStamp = new String[ list.size() ];
+            String[] timeStamp = new String[ list.size() ];
+            for ( int i = 0; i < messages.length; i++ ) {
+                String[] messageArray = list.get(i).split(",");
+                messages[i] = messageArray[2];
+                senderList[i] = messageArray[0];
+                dateStamp[i] = messageArray[3];
+                timeStamp[i] = messageArray[4];
+            }
+
+            for (int i = 0; i < senderList.length; i++) {
+                String str;
+                if (ifSeller) {
+                    if (senderList[i].equals(seller)) {
+                        str = "You: " + messages[i];
+
+                    } else {
+                        str = customer + ": " + messages[i];
+                    }
+                } else {
+                    if (senderList[i].equals(seller)) {
+                        str = seller + ": " + messages[i];
+                    } else {
+                        str = "You: " + messages[i];
+                    }
+                }
+
+                // Adds time stamp above the message
+                String timeStampStr = timeStamp[i] + " " + dateStamp[i] + "\n";
+                str = timeStampStr + str + "\n\n";
+
+                // write to client
+                messageList.add(str);
+
+            }
+        } catch (FileNotFoundException e ) {
+            messageList.add("You have no message history with this user");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error in Program, please refresh",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return messageList;
+    }
     private static class clientManager implements Runnable {
         private Socket socket;
 
         public clientManager(Socket socket) {
             this.socket = socket;
         }
+
+
 
         @Override
         public void run() {

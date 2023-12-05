@@ -6,9 +6,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class HomePanel extends JPanel {
@@ -26,7 +24,7 @@ public class HomePanel extends JPanel {
         setVisible(true);
     }
 
-    public HomePanel(String user, boolean ifSeller) {
+    public HomePanel(String user, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         // setting the layout manager
         setLayout(new BorderLayout());
 
@@ -47,13 +45,13 @@ public class HomePanel extends JPanel {
         if ( ifSeller ) {
             String[] customers = getList(true);
             for (String s : customers) {
-                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(user, s, true);
+                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(user, s, true, pw, br);
                 cardPanel.add(displayMessagesPanel, s);
             }
         } else {
             String[] sellers = getList(false);
             for (String s : sellers) {
-                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(s, user, false);
+                DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(s, user, false, pw, br);
                 cardPanel.add(displayMessagesPanel, s);
             }
         }
@@ -95,24 +93,6 @@ public class HomePanel extends JPanel {
 //        });
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                HomePanel homePanel = new HomePanel(true);
-                JFrame jFrame = new JFrame("HomePanel");
-                jFrame.setSize(2000, 800);
-                jFrame.setLayout(new BorderLayout());
-                jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                jFrame.add(homePanel);
-
-                homePanel = new HomePanel("testseller", true);
-                jFrame.add(homePanel);
-                homePanel.setVisible(true);
-                jFrame.setVisible(true);
-            }
-        });
-    }
     // getting the user list
     public String[] getList(boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();

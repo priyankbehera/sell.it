@@ -53,11 +53,11 @@ public class Main {
                 MyAccountPanel myAccountPanel = new MyAccountPanel();
 
                 // Creates an instance of the home panel with default parameters
-                boolean ifSeller = true;
+                boolean ifSeller = false;
                 String testCustomer = "testcustomer";
                 String testSeller = "testseller";
 
-                HomePanel homePanel = new HomePanel(testSeller, ifSeller);
+
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);
@@ -90,8 +90,8 @@ public class Main {
                     String request = "login," + "0," + email + "," + password;
                     isLoggedIn = loginRequest(request, pw, br);
                     System.out.println("Is logged in: " + isLoggedIn);
-
                     if (isLoggedIn) {
+                        HomePanel homePanel = new HomePanel(email, ifSeller, pw, br);
                         mainframe.setContentPane(homePanel);
                         mainframe.revalidate();
                         mainframe.repaint();
