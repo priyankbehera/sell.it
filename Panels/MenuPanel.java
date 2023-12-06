@@ -1,5 +1,7 @@
 package Panels;
 
+import Objects.Customer;
+
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -175,7 +177,7 @@ public class MenuPanel extends JPanel {
         messageStatisticsItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayMessageStatistics();
+                //displayMessageStatistics();
             }
         });
 
@@ -183,6 +185,7 @@ public class MenuPanel extends JPanel {
         popupMenu.show(component, 0, component.getHeight());
     }
 
+/*
     private void displayMessageStatistics() {
         String sellerName = searchField.getText();
 
@@ -206,6 +209,7 @@ public class MenuPanel extends JPanel {
             System.out.println("Please enter a valid seller name.");
         }
     }
+*/
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
