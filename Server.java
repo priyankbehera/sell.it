@@ -1,6 +1,12 @@
+import Objects.Customer;
+import Objects.Message;
+import Objects.Seller;
+
 import javax.swing.*;
 import java.net.*;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
@@ -91,6 +97,16 @@ public class Server {
                 printWriter.println(endMarker);
                 printWriter.flush();
             }
+            case "sendMessage" -> {
+                String seller = args[0];
+                String customer = args[1];
+                boolean ifSeller = Boolean.parseBoolean(args[2]);
+                String message = args[3];
+                boolean success = sendMessage(seller, customer, ifSeller, message);
+                printWriter.println(success);
+                printWriter.flush();
+
+            }
         }
 
     }
@@ -144,6 +160,40 @@ public class Server {
         return "false";
     }
 
+    public static synchronized boolean sendMessage(String seller, String customer, boolean ifSeller, String message) {
+        String folderName = "conversation_data";
+        String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
+        String sender;
+
+            if ( !ifSeller ) {
+                Seller existingSeller = new Seller(seller);
+                messageCustomer(seller, customer, message);
+                return true;
+            } else {
+                Customer existingCustomer = new Customer(customer);
+                messageSeller(seller, customer, message);
+                return true;
+            }
+        }
+
+
+
+    public static synchronized void messageSeller(String seller, String customer, String message) {
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+        String currentDateTime = dtf.format(now);
+        String date = currentDateTime.substring(0,10);
+        String time = currentDateTime.substring(11);
+        Message message1 = new Message(seller, customer, message, date, time);
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter("conversation_data/" +  seller + "_" + customer
+                + "_Messages.csv", true))) {
+            pw.println(message1.toString());
+        } catch (IOException e) {
+            System.out.println("That does not work!");
+        }
+    }
     // manages each client thread
 
     public static synchronized boolean createAccount(int accountType, String email, String password) {
@@ -234,6 +284,22 @@ public class Server {
         }
         return messageList;
     }
+
+public static synchronized void messageCustomer(String seller, String customer, String message) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
+        LocalDateTime now = LocalDateTime.now();
+        String currentDateTime = dtf.format(now);
+        String date = currentDateTime.substring(0, 10);
+        String time = currentDateTime.substring(11);
+        Message message1 = new Message(customer, seller, message, date, time);
+
+        String fileName = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
+        pw.println(message1);
+        } catch (IOException e) {
+        System.out.println("That does not work!");
+        }
+        }
     private static class clientManager implements Runnable {
         private Socket socket;
 
@@ -266,6 +332,7 @@ public class Server {
             }
         }
     }
+
     private static boolean isUser(String user) {
         ArrayList<String> customers = new ArrayList<>();
         ArrayList<String> sellers = new ArrayList<>();

@@ -1,8 +1,6 @@
 import Objects.Customer;
-import Objects.User;
 import Panels.*;
 import Objects.*;
-import customer_data.*;
 
 
 import javax.swing.*;

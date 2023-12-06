@@ -46,7 +46,7 @@ public class DisplayMessagesPanel extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage( seller, customer, ifSeller, br, pw);
+                sendMessageRequest( seller, customer, ifSeller, br, pw);
             }
         });
 
@@ -92,21 +92,34 @@ public class DisplayMessagesPanel extends JPanel {
         }
 
     }
-    private void sendMessage( String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw ) {
+    private void sendMessageRequest(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
+        // send request string to server
         String message = inputField.getText();
-        if (!message.trim().isEmpty()) {
-            conversationArea.setText("");
-            // if the user is a seller, then the seller will send the message
-            // implementing the seller message
-            if ( !ifSeller ) {
-                Seller existingSeller = new Seller(seller);
-                existingSeller.messageCustomer(seller, customer, message);
-            } else {
-                Customer existingCustomer = new Customer(customer);
-                existingCustomer.messageSeller(seller, customer, message);
+        String request = "sendMessage," + seller + "," + customer + "," + ifSeller + "," + message;
+        pw.println(request);
+        pw.flush();
+        System.out.println("Request sent: " + request);
+
+        // get response from server
+        try {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
+                }
             }
-            requestConversationHistory(seller, customer, ifSeller, br, pw);
-            inputField.setText(""); // Clear the input field
+            String response = line;
+            boolean responseBoolean = Boolean.parseBoolean(response);
+            System.out.println("Message sent: " + response);
+            // clear input text
+            inputField.setText("");
+
+            if (!responseBoolean) {
+                // Joption pane error
+                JOptionPane.showMessageDialog(null, "Error sending message.");
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         }
     }
-}
