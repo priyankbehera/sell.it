@@ -26,22 +26,17 @@ public class DisplayMessagesPanel extends JPanel {
         displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
 
-        // creates the refresh button
-        refreshButton = new JButton("Refresh");
-        refreshButton.setBounds(10, 10, 80, 25);
-        add(refreshButton, BorderLayout.NORTH);
-
         // refresh button action listener
-        refreshButton.addActionListener(new ActionListener() {
+        Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 conversationArea.setText("");
                 requestConversationHistory(seller, customer, ifSeller, br, pw);
-
-                //TODO: Reset menupanel
-
             }
         });
+
+        timer.setRepeats(true);
+        timer.start();
 
         // create conversation history area
         conversationArea = new JTextArea();
