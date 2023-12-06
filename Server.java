@@ -2,18 +2,16 @@ import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Scanner;
+
 
 // Hostname: localhost
 // Port: 4242
 
 /**
  * PJ-05 -- Sell.it
- *
  * Server class that handles requests from the client.
  * This allows all data handling to be done server-side, increasing
  * security and limiting the amount of data sent to the client.
- *
  * NOTE: To handle requests, the server is sent a string.
  * The first word is the name of the request (eg, "login").
  * The other words are function arguments, delimited by commas.
@@ -55,35 +53,35 @@ public class Server {
         System.out.println("Function: " + function);
         // create list of arguments
         String[] args = new String[requestArray.length - 1];
-        for (int i = 1; i < requestArray.length; i++) {
-            args[i - 1] = requestArray[i];
-        }
+        System.arraycopy(requestArray, 1, args, 0, requestArray.length - 1);
 
         switch (function) {
-            case "login":
+            case "login" -> {
+                String email = args[0];
+                String password = args[1];
+                String[] successLogin = login(email, password).split(",");
+                boolean successLoginString = Boolean.parseBoolean(successLogin[0]);
+                if (!successLoginString) {
+                    printWriter.println(false);
+                    printWriter.flush();
+                } else {
+                    printWriter.println(true + "," + successLogin[1]);
+                    printWriter.flush();
+                }
+            }
+            case "createAccount" -> {
                 int accountType = Integer.parseInt(args[0]);
                 String email = args[1];
                 String password = args[2];
-
-                boolean success = login(accountType, email, password);
+                boolean success = createAccount(accountType, email, password);
                 printWriter.println(success);
                 printWriter.flush();
-                break;
-
-            case "createAccount":
-                accountType = Integer.parseInt(args[0]);
-                email = args[1];
-                password = args[2];
-                success = createAccount(accountType, email, password);
-                printWriter.println(success);
-                printWriter.flush();
-                break;
-
-            case "getConversationHistory":
-                boolean ifSelller = Boolean.parseBoolean(args[2]);
+            }
+            case "getConversationHistory" -> {
+                boolean ifSeller = Boolean.parseBoolean(args[2]);
                 String seller = args[0];
                 String customer = args[1];
-                ArrayList<String> messageList = getConversationHistory(seller, customer, ifSelller);
+                ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
                 for (String message : messageList) {
                     printWriter.println(message);
                     printWriter.flush();
@@ -92,6 +90,7 @@ public class Server {
                 String endMarker = "!@#%#$!@#%^@#$";
                 printWriter.println(endMarker);
                 printWriter.flush();
+            }
         }
 
     }
@@ -100,30 +99,49 @@ public class Server {
     returns true if user successfully logs in, false otherwise
     accountType: 0 = customer, 1 = seller
     */
-    public static synchronized boolean login(int accountType, String email, String password) {
-        // Sets filename based on account type
-        String filename = "";
-        if (accountType == 0) {
-            filename = "customer_data/customerNames.txt";
-        } else if (accountType == 1) {
-            filename = "seller_data/sellerNames.txt";
-        } else {
-            return false;
-        }
-        // Read from user data file and check if username and password match
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split("-");
-                if (data[0].equals(email) && data[1].equals(password)) {
-                    return true;
+    // if login is invalid, returns false
+    // if login is valid, the second term is the boolean ifSeller
+    // e.g. if it is a valid customer login, returns "true,false"
+    // if not a user, it returns false
+    public static synchronized String login(String email, String password) {
+        String toReturn = "";
+        String preAppend = "";
+        boolean isUser = isUser(email);
+        if ( isUser ) {
+            ArrayList<String> customers = new ArrayList<>();
+            ArrayList<String> sellers = new ArrayList<>();
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("customer_data/customerNames.txt"))) {
+                String line;
+                while ( (line = bufferedReader.readLine()) != null ) {
+                    customers.add(line);
                 }
+                for ( int i = 0; i < customers.size(); i++) {
+                    String customer = customers.get(i).split("-")[0];
+                    String passwordToCheck = customers.get(i).split("-")[1];
+                    if ( customer.equals(email) && passwordToCheck.equals(password)) {
+                        return "true,false";
+                    }
+                }
+            } catch (IOException e) {
+                return "false";
             }
-        } catch (IOException e) {
-            return false;
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
+                String line;
+                while ( (line = bufferedReader.readLine()) != null ) {
+                    sellers.add(line);
+                }
+                for ( int i = 0; i < sellers.size(); i++) {
+                    String seller = sellers.get(i).split("-")[0];
+                    String passwordToCheck = sellers.get(i).split("-")[1];
+                    if ( seller.equals(email) && passwordToCheck.equals(password)) {
+                        return "true,true";
+                    }
+                }
+            } catch (IOException e) {
+                return "false";
+            }
         }
-        return false;
+        return "false";
     }
 
     // manages each client thread
@@ -252,6 +270,63 @@ public class Server {
             }
         }
     }
+    private static boolean isUser(String user) {
+        ArrayList<String> customers = new ArrayList<>();
+        ArrayList<String> sellers = new ArrayList<>();
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("customer_data/customerNames.txt"))) {
+            String line;
+            while ( (line = bufferedReader.readLine()) != null ) {
+                customers.add(line);
+            }
+            for ( int i = 0; i < customers.size(); i++) {
+                String customer = customers.get(i).split("-")[0];
+                if ( customer.equals(user) ) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
+            String line;
+            while ( (line = bufferedReader.readLine()) != null ) {
+                sellers.add(line);
+            }
+            for ( int i = 0; i < sellers.size(); i++) {
+                String seller = sellers.get(i).split("-")[0];
+                if ( seller.equals(user) ) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return false;
     }
+    // uses isUser to see if it is a user, then returns true if is a seller,
+    // returns false if it is a customer
+    private static boolean ifSeller(String user) {
+        boolean isUser = isUser(user);
+        if (isUser) {
+            ArrayList<String> sellers = new ArrayList<>();
+            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
+                String line;
+                while ( (line = bufferedReader.readLine()) != null ) {
+                    sellers.add(line);
+                }
+                for ( int i = 0; i < sellers.size(); i++) {
+                    String seller = sellers.get(i).split("-")[0];
+                    if ( seller.equals(user) ) {
+                        return true;
+                    }
+                }
+            } catch (IOException e) {
+                return false;
+            }
+            return false;
+        }
+        return false;
+    }
+}
 
 

@@ -38,7 +38,6 @@ public class Main {
 
             SwingUtilities.invokeLater(() -> {
                 JFrame mainframe = new JFrame("Send.it");
-                Container content = mainframe.getContentPane();
                 mainframe.setLayout(new BorderLayout());
 
                 // Sets  frame
@@ -50,14 +49,6 @@ public class Main {
                 WelcomePanel welcomePanel = new WelcomePanel();
                 LoginPanel loginPanel = new LoginPanel();
                 CreateAccPanel createAccPanel = new CreateAccPanel();
-                MyAccountPanel myAccountPanel = new MyAccountPanel();
-
-                // Creates an instance of the home panel with default parameters
-                boolean ifSeller = false;
-                String testCustomer = "testcustomer";
-                String testSeller = "testseller";
-
-
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);
@@ -80,17 +71,18 @@ public class Main {
                 // Listens for successful login
                 loginPanel.getContinueButton().addActionListener(e -> {
                     System.out.println("Here");
-                    boolean isLoggedIn = false;
+                    boolean[] isLoggedIn;
                     String email = loginPanel.getEmailText().getText();
                     String password = String.valueOf(loginPanel.getPasswordField().getPassword());
                     System.out.println("Email: " + email);
                     System.out.println("Password: " + password);
 
                     // Sends login credentials to server
-                    String request = "login," + "0," + email + "," + password;
+                    String request = "login," + email + "," + password;
                     isLoggedIn = loginRequest(request, pw, br);
-                    System.out.println("Is logged in: " + isLoggedIn);
-                    if (isLoggedIn) {
+                    System.out.println("Is logged in: " + isLoggedIn[0]);
+                    if (isLoggedIn[0]) {
+                        boolean ifSeller = isLoggedIn[1];
                         HomePanel homePanel = new HomePanel(email, ifSeller, pw, br);
                         mainframe.setContentPane(homePanel);
                         mainframe.revalidate();
@@ -103,7 +95,12 @@ public class Main {
                 // Listens for "Continue" button on Panels.CreateAccPanel
                 createAccPanel.getContinueButton().addActionListener(e -> {
                     //Adds user
-                    String userType = createAccPanel.getAccountType();
+                    String userType;
+                    if ( createAccPanel.getAccountType() == null ) {
+                        userType = "Customer";
+                    } else {
+                        userType = createAccPanel.getAccountType();
+                    }
                     String accountType = "";
                     if (userType.equals("Customer")) {  // Create customer account
                         Customer customer = new Customer(createAccPanel.getUsername(), createAccPanel.getPassword());
@@ -125,17 +122,15 @@ public class Main {
                         // send back to login
                         JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                         mainframe.setContentPane(loginPanel);
-                        mainframe.revalidate();
-                        mainframe.repaint();
 
                     }
                     else {
                         createAccPanel.getSuccessMessage().setText("Account already exists. Try a different email.");
                         mainframe.setContentPane(createAccPanel);
-                        mainframe.revalidate();
-                        mainframe.repaint();
 
                     }
+                    mainframe.revalidate();
+                    mainframe.repaint();
 
                 });
 
@@ -167,7 +162,7 @@ public class Main {
 
     }
 
-    public static boolean loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+    public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
         PrintWriter pw = printWriter;
         // send request to server
         pw.println(request);
@@ -182,14 +177,20 @@ public class Main {
                     break;
                 }
             }
+            String[] lineSplit = line.split(",");
+            boolean[] booleanSplit = new boolean[lineSplit.length];
+            for ( int i = 0; i < lineSplit.length; i ++ ) {
+                booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
+            }
             System.out.println("Receive response: " + line);
             System.out.println(line);
 
-            return Boolean.parseBoolean(line);
+            return booleanSplit;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return false;
+        boolean[] empty = {false};
+        return empty;
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {

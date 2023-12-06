@@ -15,6 +15,10 @@ public class DisplayMessagesPanel extends JPanel {
 
     // button for refresh
     private JButton refreshButton;
+    
+    public JButton getRefreshButton() {
+        return this.refreshButton;
+    }
 
     // constructor for display messages panel
     public DisplayMessagesPanel(String seller, String customer, boolean ifSeller, PrintWriter pw, BufferedReader br) {
@@ -54,7 +58,7 @@ public class DisplayMessagesPanel extends JPanel {
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                sendMessage( seller, customer, ifSeller );
+                sendMessage( seller, customer, ifSeller, br, pw);
             }
         });
 
@@ -72,8 +76,7 @@ public class DisplayMessagesPanel extends JPanel {
     // boolean ifSeller identifies if the seller or the customer
     // if ifSeller == true, the user is seller
     // if ifSeller == false, then the user is customer
-    private void addConversationHistory(String seller, String customer, boolean ifSeller) {
-    }
+
     private void requestConversationHistory(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
         // send request to server
         String requestString = "getConversationHistory," + seller + "," + customer + "," + ifSeller;
@@ -101,7 +104,7 @@ public class DisplayMessagesPanel extends JPanel {
         }
 
     }
-    private void sendMessage( String seller, String customer, boolean ifSeller ) {
+    private void sendMessage( String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw ) {
         String message = inputField.getText();
         if (!message.trim().isEmpty()) {
             conversationArea.setText("");
@@ -114,21 +117,25 @@ public class DisplayMessagesPanel extends JPanel {
                 Customer existingCustomer = new Customer(customer);
                 existingCustomer.messageSeller(seller, customer, message);
             }
-            addConversationHistory( seller, customer, ifSeller );
+            requestConversationHistory(seller, customer, ifSeller, br, pw);
             inputField.setText(""); // Clear the input field
         }
     }
 
- /*   public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
+    public void simulateButtonClick(final JButton button, int delayMillis) {
+        // Use a Timer to trigger the button click after the specified delay
+        Timer timer = new Timer(delayMillis, new ActionListener() {
             @Override
-            public void run() {
-                JFrame frame = new JFrame("Display Messages Panel");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.getContentPane().add(new DisplayMessagesPanel("testSeller", "testCustomer", false));
-                frame.setSize(450, 500);
-                frame.setVisible(true);
+            public void actionPerformed(ActionEvent e) {
+                // Trigger the button's ActionListener
+                for (ActionListener listener : button.getActionListeners()) {
+                    listener.actionPerformed(new ActionEvent(button, ActionEvent.ACTION_PERFORMED, null));
+                }
             }
         });
-    }*/
+
+        // Start the timer
+        timer.setRepeats(false); // Set to false to trigger only once
+        timer.start();
+    }
 }

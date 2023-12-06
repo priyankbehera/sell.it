@@ -57,8 +57,11 @@ public class CreateAccPanel extends JPanel {
         getAccountType.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                accountTypeString = (String) accountType.getSelectedItem();
-
+                if ( accountType.getSelectedIndex() == -1 ) {
+                    accountTypeString = "Customer";
+                } else {
+                    accountTypeString = (String) accountType.getSelectedItem();
+                }
             }
         });
     }
