@@ -13,13 +13,6 @@ public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
 
-    // button for refresh
-    private JButton refreshButton;
-    
-    public JButton getRefreshButton() {
-        return this.refreshButton;
-    }
-
     // constructor for display messages panel
     public DisplayMessagesPanel(String seller, String customer, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         JPanel displayMessages = new JPanel();
@@ -115,22 +108,5 @@ public class DisplayMessagesPanel extends JPanel {
             requestConversationHistory(seller, customer, ifSeller, br, pw);
             inputField.setText(""); // Clear the input field
         }
-    }
-
-    public void simulateButtonClick(final JButton button, int delayMillis) {
-        // Use a Timer to trigger the button click after the specified delay
-        Timer timer = new Timer(delayMillis, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Trigger the button's ActionListener
-                for (ActionListener listener : button.getActionListeners()) {
-                    listener.actionPerformed(new ActionEvent(button, ActionEvent.ACTION_PERFORMED, null));
-                }
-            }
-        });
-
-        // Start the timer
-        timer.setRepeats(false); // Set to false to trigger only once
-        timer.start();
     }
 }

@@ -46,14 +46,12 @@ public class HomePanel extends JPanel {
             String[] customers = getList(true);
             for (String s : customers) {
                 DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(user, s, true, pw, br);
-                displayMessagesPanel.simulateButtonClick(displayMessagesPanel.getRefreshButton(), 0);
                 cardPanel.add(displayMessagesPanel, s);
             }
         } else {
             String[] sellers = getList(false);
             for (String s : sellers) {
                 DisplayMessagesPanel displayMessagesPanel = new DisplayMessagesPanel(s, user, false, pw, br);
-                displayMessagesPanel.simulateButtonClick(displayMessagesPanel.getRefreshButton(), 0);
                 cardPanel.add(displayMessagesPanel, s);
             }
         }
