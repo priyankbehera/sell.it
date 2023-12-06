@@ -148,35 +148,31 @@ public class Server {
 
     public static synchronized boolean createAccount(int accountType, String email, String password) {
         // Sets filename based on account type
-        String filename = "";
-        if (accountType == 0) {
-            filename = "customer_data/customerNames.txt";
-        } else if (accountType == 1) {
-            filename = "seller_data/sellerNames.txt";
-        } else {
-            return false;
-        }
-
-        // verifies account does not already exist
-        boolean accountExists = false;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split("-");
-                if (data[0].equals(email)) {
-                    accountExists = true;
-                    return false;
-                }
+        boolean isUser = isUser(email);
+        if (isUser) {
+            String filenameTxt = "";
+            String filenameCsv = "";
+            if (accountType == 0) {
+                filenameCsv = "customer_data/CustomersList.csv";
+                filenameTxt = "customer_data/customerNames.txt";
+            } else if (accountType == 1) {
+                filenameCsv = "seller_data/SellersList.csv";
+                filenameTxt = "seller_data/sellerNames.txt";
+            } else {
+                return false;
             }
-            // account must not exist -- was not found in files; add to file
-            PrintWriter pw = new PrintWriter(new FileWriter(filename, true));
-            pw.println(email + "-" + password);
-            pw.close();
-            return true;
-
-        } catch (IOException e) {
-            System.out.println("Error creating account");
+            try {
+                PrintWriter pw = new PrintWriter(new FileWriter(filenameTxt, true));
+                pw.println(email + "-" + password);
+                pw.close();
+                PrintWriter printWriter = new PrintWriter(new FileWriter(filenameCsv, true));
+                printWriter.println(email +  ",false,null");
+                printWriter.close();
+                return true;
+            } catch (IOException e) {
+                return false;
+            }
+        } else {
             return false;
         }
     }

@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MenuPanel extends JPanel {
-    private final JList<String> messageList;
+    private JList<String> messageList;
     private final JTextField searchField;
     private final JButton moreButton;
 
@@ -44,7 +44,7 @@ public class MenuPanel extends JPanel {
 
         String[] people = getList(ifSeller);
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for ( int i = 0; i < people.length; i++ ) {
+        for (int i = 0; i < people.length; i++ ) {
             listModel.addElement(people[i]);
         }
         messageList = new JList<>(listModel);
@@ -55,6 +55,20 @@ public class MenuPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(messageList);
         add(scrollPane, BorderLayout.CENTER);
+
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] temp = getList(ifSeller);
+                DefaultListModel<String> listModel = new DefaultListModel<>();
+                for (int i = 0; i < temp.length; i++) {
+                    listModel.addElement(temp[i]);
+                }
+                messageList.setModel(listModel); // Update the existing JList model
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
 
         searchButton.addActionListener(new ActionListener() {
             @Override
