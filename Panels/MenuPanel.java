@@ -15,6 +15,8 @@ public class MenuPanel extends JPanel {
     private JList<String> messageList;
     private final JTextField searchField;
     private final JButton moreButton;
+    private boolean searchButtonClicked = false;
+    private boolean seeAllButtonClicked = false;
 
     public JList getMessageList() {
         return messageList;
@@ -27,11 +29,11 @@ public class MenuPanel extends JPanel {
         JLabel searchLabel = new JLabel("Enter User's Name:");
         searchField = new JTextField(10);
         JButton searchButton = new JButton("Search User");
-        JButton resetButton = new JButton("Reset");
+        JButton seeAllButton = new JButton("See All");
         searchPanel.add(searchLabel);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-        searchPanel.add(resetButton);
+        searchPanel.add(seeAllButton);
 
         moreButton = new JButton("\u22EE");
         moreButton.setPreferredSize(new Dimension(30, 20));
@@ -59,12 +61,16 @@ public class MenuPanel extends JPanel {
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String[] temp = getList(ifSeller);
-                DefaultListModel<String> listModel = new DefaultListModel<>();
-                for (int i = 0; i < temp.length; i++) {
-                    listModel.addElement(temp[i]);
+                if ( !searchButtonClicked  || seeAllButtonClicked ) {
+                    String[] temp = getList(ifSeller);
+                    DefaultListModel<String> listModel = new DefaultListModel<>();
+                    for (int i = 0; i < temp.length; i++) {
+                        listModel.addElement(temp[i]);
+                    }
+                    messageList.setModel(listModel); // Update the existing JList model
+                    searchButtonClicked = true;
+                    seeAllButtonClicked = false;
                 }
-                messageList.setModel(listModel); // Update the existing JList model
             }
         });
         timer.setRepeats(true);
@@ -77,15 +83,17 @@ public class MenuPanel extends JPanel {
                 if (searchUser(username, ifSeller)) {
                     String[] temp = {username};
                     createJList(temp);
+                    searchButtonClicked = true;
                 } else {
                     JOptionPane.showMessageDialog(null, "No such user found!");
                 }
             }
         });
 
-        resetButton.addActionListener(new ActionListener() {
+        seeAllButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                seeAllButtonClicked = true;
                 String[] people = getList(ifSeller);
                 createJList(people);
             }
