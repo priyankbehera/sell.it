@@ -9,10 +9,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-
-// Hostname: localhost
-// Port: 4242
-
 /**
  * PJ-05 -- Sell.it
  * Server class that handles requests from the client.
@@ -21,13 +17,12 @@ import java.util.ArrayList;
  * NOTE: To handle requests, the server is sent a string.
  * The first word is the name of the request (eg, "login").
  * The other words are function arguments, delimited by commas.
- *
+ * The hostname is localhost
+ * The serverSocket is 4242
  **/
 public class Server {
-
     private static final int portNumber = 4242;
     public static void main(String[] args) {
-
         try {
             ServerSocket serverSocket = new ServerSocket(portNumber);
             System.out.println("Server started on port " + portNumber);
@@ -40,18 +35,11 @@ public class Server {
                 clientManager client = new clientManager(socket);
                 Thread thread = new Thread(client);
                 thread.start();
-
-
             }
-
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
         }
-            catch (IOException e) {
-                System.out.println(e.getMessage());
-
-            }
-        }
-
-
+    }
 
     public static void requests(String request, PrintWriter printWriter) {
         String [] requestArray = request.split(",");
@@ -105,23 +93,15 @@ public class Server {
                 boolean success = sendMessage(seller, customer, ifSeller, message);
                 printWriter.println(success);
                 printWriter.flush();
-
             }
         }
 
     }
-    /*
-     "logs in" the user by verifying their credentials are correct
-    returns true if user successfully logs in, false otherwise
-    accountType: 0 = customer, 1 = seller
-    */
     // if login is invalid, returns false
     // if login is valid, the second term is the boolean ifSeller
     // e.g. if it is a valid customer login, returns "true,false"
     // if not a user, it returns false
     public static synchronized String login(String email, String password) {
-        String toReturn = "";
-        String preAppend = "";
         boolean isUser = isUser(email);
         if ( isUser ) {
             ArrayList<String> customers = new ArrayList<>();
@@ -164,19 +144,15 @@ public class Server {
         String folderName = "conversation_data";
         String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
         String sender;
-
-            if ( !ifSeller ) {
-                Seller existingSeller = new Seller(seller);
-                messageCustomer(seller, customer, message);
-                return true;
-            } else {
-                Customer existingCustomer = new Customer(customer);
-                messageSeller(seller, customer, message);
-                return true;
-            }
+        if ( !ifSeller ) {
+            Seller existingSeller = new Seller(seller);
+            messageCustomer(seller, customer, message);
+        } else {
+            Customer existingCustomer = new Customer(customer);
+            messageSeller(seller, customer, message);
         }
-
-
+        return true;
+    }
 
     public static synchronized void messageSeller(String seller, String customer, String message) {
 
@@ -194,14 +170,14 @@ public class Server {
             System.out.println("That does not work!");
         }
     }
-    // manages each client thread
 
+    // manages each client thread
     public static synchronized boolean createAccount(int accountType, String email, String password) {
         // Sets filename based on account type
         boolean isUser = isUser(email);
         if (isUser) {
-            String filenameTxt = "";
-            String filenameCsv = "";
+            String filenameTxt;
+            String filenameCsv;
             if (accountType == 0) {
                 filenameCsv = "customer_data/CustomersList.csv";
                 filenameTxt = "customer_data/customerNames.txt";
@@ -267,14 +243,12 @@ public class Server {
                         str = "You: " + messages[i];
                     }
                 }
-
                 // Adds time stamp above the message
                 String timeStampStr = timeStamp[i] + " " + dateStamp[i] + "\n";
                 str = timeStampStr + str + "\n\n";
 
                 // write to client
                 messageList.add(str);
-
             }
         } catch (FileNotFoundException e ) {
             messageList.add("You have no message history with this user");
@@ -284,8 +258,7 @@ public class Server {
         }
         return messageList;
     }
-
-public static synchronized void messageCustomer(String seller, String customer, String message) {
+    public static synchronized void messageCustomer(String seller, String customer, String message) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
         LocalDateTime now = LocalDateTime.now();
         String currentDateTime = dtf.format(now);
@@ -299,16 +272,13 @@ public static synchronized void messageCustomer(String seller, String customer, 
         } catch (IOException e) {
         System.out.println("That does not work!");
         }
-        }
+    }
     private static class clientManager implements Runnable {
         private Socket socket;
 
         public clientManager(Socket socket) {
             this.socket = socket;
         }
-
-
-
         @Override
         public void run() {
             while (true) {

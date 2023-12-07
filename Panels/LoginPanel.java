@@ -1,14 +1,7 @@
 package Panels;
 
-import Objects.Customer;
-import Objects.Seller;
-import Objects.User;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Arrays;
 
 public class LoginPanel extends JPanel {
     private final JButton continueButton;

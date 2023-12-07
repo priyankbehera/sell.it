@@ -12,18 +12,6 @@ import java.util.ArrayList;
 public class HomePanel extends JPanel {
     private MenuPanel menuPanel;
 
-    public HomePanel(boolean ifSeller) {
-        // setting the layout manager
-        setLayout(new BorderLayout());
-
-        // creating menuPanel
-        menuPanel = new MenuPanel(ifSeller);
-        menuPanel.setPreferredSize(new Dimension(500, 800));
-
-        add(menuPanel, BorderLayout.WEST);
-        setVisible(true);
-    }
-
     public HomePanel(String user, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         // setting the layout manager
         setLayout(new BorderLayout());

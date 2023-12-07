@@ -1,30 +1,22 @@
 import Objects.Customer;
 import Panels.*;
 import Objects.*;
-
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
 import java.net.*;
-import java.util.Scanner;
-
 
 public class Main {
 
     // Adjust portNumber and hostName if needed
     private static final int portNumber = 4242;
-   private static final String hostName = "localhost";
-
+    private static final String hostName = "localhost";
 
     public static void main(String[] args) {
         // Connects to server
-        try  {
-            // TODO: Remove print statements
+        try {
             Socket socket = new Socket(hostName, portNumber);
             System.out.println("Connected to server.");
 
@@ -33,7 +25,6 @@ public class Main {
             BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
 
             // Creates the main frame
-
             SwingUtilities.invokeLater(() -> {
                 JFrame mainframe = new JFrame("Send.it");
                 mainframe.setLayout(new BorderLayout());
@@ -109,7 +100,6 @@ public class Main {
                         Seller seller = new Seller(createAccPanel.getUsername(), storeName, createAccPanel.getPassword());
                         accountType = "1";
                     }
-
                     // send request to server
                     String requestString = "createAccount," + accountType + "," + createAccPanel.getUsername() + "," + createAccPanel.getPassword();
                     boolean success = createAccountRequest(requestString, pw, br);
@@ -120,44 +110,20 @@ public class Main {
                         // send back to login
                         JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                         mainframe.setContentPane(loginPanel);
-
                     }
                     else {
                         createAccPanel.getSuccessMessage().setText("Account already exists. Try a different email.");
                         mainframe.setContentPane(createAccPanel);
-
                     }
                     mainframe.revalidate();
                     mainframe.repaint();
-
                 });
-
-                // Listens for "Send Objects.Message" button on Panels.HomePanel
-//          homePanel.getSendMessageButton().addActionListener(new ActionListener() {
-//              @Override
-//              public void actionPerformed(ActionEvent e) {
-//                  mainframe.setContentPane(customerPanel);
-//                  mainframe.revalidate();
-//                  mainframe.repaint();
-//              }
-//          });
-
-//          // Listens for "My Account" button on Panels.HomePanel
-//          homePanel.getMyAccountButton().addActionListener(e -> {
-//              mainframe.setContentPane(myAccountPanel);
-//              mainframe.revalidate();
-//              mainframe.repaint();
-//          });
-                // Makes the frame visible
                 mainframe.setVisible(true);
             });
-
-        } catch (
-                IOException e) { // Throws error if unable to connect to server
+        } catch (IOException e) { // Throws error if unable to connect to server
             System.out.println("Unable to connect to server.");
             System.out.println("Make sure the server is running before starting the client.");
         }
-
     }
 
     public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
@@ -207,14 +173,11 @@ public class Main {
                     break;
                 }
             }
-
             System.out.println("Received response: " + line);
-
             return Boolean.parseBoolean(line);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
         return false;
     }
 }
