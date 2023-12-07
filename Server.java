@@ -107,6 +107,13 @@ public class Server {
                 String customer = args[2];
                 String conversationFile = seller + "_" + customer + "_Messages.csv";
                 boolean success = importFile(filename, conversationFile);
+            } case "deleteMessage" -> {
+                String seller = args[0];
+                String customer = args[1];
+                String message = args[2];
+                boolean success = deleteMessage(seller, customer, message);
+                printWriter.println(success);
+                printWriter.flush();
             }
         }
 
@@ -189,6 +196,38 @@ public class Server {
         return "false";
     }
 
+    public static synchronized boolean deleteMessage(String seller, String customer, String message) {
+        String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+        // has to copy file contents, then delete file, then rewrite file
+        ArrayList<String> fileContents = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ( (line = br.readLine()) != null ) {
+                fileContents.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
+            for ( int i = 0; i < fileContents.size(); i++ ) {
+                // if the line is not the message, then it is written to the file
+
+                // parses message out of string
+                String [] messageParts = fileContents.get(i).split(",");
+                String messageContent = messageParts[2];
+
+                String messageToCheck = message.substring(5);
+                if ( !messageContent.equals(messageToCheck) ) {
+                    pw.println(fileContents.get(i));
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean sendMessage(String seller, String customer, boolean ifSeller, String message) {
         String folderName = "conversation_data";
         String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";

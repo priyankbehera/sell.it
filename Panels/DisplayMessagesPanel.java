@@ -12,12 +12,17 @@ import java.util.ArrayList;
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
+    private JButton moreButton;
 
     // constructor for display messages panel
     public DisplayMessagesPanel(String seller, String customer, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         JPanel displayMessages = new JPanel();
         displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
+
+
+        moreButton = new JButton("\u22EE");
+        moreButton.setPreferredSize(new Dimension(30, 20));
 
         // refresh button action listener
         Timer timer = new Timer(1000, new ActionListener() {
@@ -33,7 +38,7 @@ public class DisplayMessagesPanel extends JPanel {
 
         // create conversation history area
         conversationArea = new JTextArea();
-        conversationArea.setEditable(false);
+        conversationArea.setEditable(true);
         JScrollPane scrollPane = new JScrollPane(conversationArea);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -50,13 +55,93 @@ public class DisplayMessagesPanel extends JPanel {
             }
         });
 
+        //more button action listener
+        moreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editMessage(moreButton, seller, customer, br, pw);
+            }
+        });
+
         // Create a panel to hold the input field and send button
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
+        // add more button
+        inputPanel.add(moreButton, BorderLayout.NORTH);
         // Add the input panel to the bottom of the frame
         add(inputPanel, BorderLayout.SOUTH);
+    }
+
+    // pop-up window for editing/deleting messages
+    //create more button
+    private void editMessage(JButton moreButton, String seller, String customer, BufferedReader br, PrintWriter pw) {
+        JPopupMenu menu = new JPopupMenu();
+        JMenuItem edit = new JMenuItem("Edit Message");
+        JMenuItem delete = new JMenuItem("Delete Message");
+        menu.add(edit);
+        menu.add(delete);
+        menu.show(moreButton, moreButton.getWidth()/2, moreButton.getHeight()/2);
+
+        //edit message action listener
+        // TODO: need to do this
+        edit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String newMessage = JOptionPane.showInputDialog(null, "Enter new message: ", "Edit Message", JOptionPane.QUESTION_MESSAGE);
+                //send request to server
+                String requestString = "editMessage," + newMessage;
+                //get response from server
+                //clear input text
+                inputField.setText("");
+            }
+        });
+
+        // delete message action listener
+        delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Delete message button pressed.");
+                // gets all messages from the conversationArea
+                String allMessages = conversationArea.getText();
+                String[] messages = allMessages.split("\n");
+                JList<String> messageList = new JList<>(messages);
+                JScrollPane scrollPane = new JScrollPane(messageList);
+                scrollPane.setPreferredSize(new Dimension(300, 400));
+                JOptionPane.showMessageDialog(null, scrollPane, "Delete Message", JOptionPane.PLAIN_MESSAGE);
+                // gets selected message
+                String selectedMessage = messageList.getSelectedValue();
+                System.out.println("Selected message: " + selectedMessage);
+                String requestString = "deleteMessage," + seller + "," + customer + "," + selectedMessage;
+
+                // send request to server
+                pw.println(requestString);
+                pw.flush();
+                System.out.println("Request sent: " + requestString);
+                // gets server response
+
+                try {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (!line.isEmpty()) {
+                            break;
+                        }
+                    }
+                    String response = line;
+                    boolean responseBoolean = Boolean.parseBoolean(response);
+
+                    if (!responseBoolean) {
+                        // Joption pane error
+                        JOptionPane.showMessageDialog(null, "Error deleting message.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Message deleted.");
+                    }
+                } catch (IOException x) {
+                    JOptionPane.showMessageDialog(null, "Error deleting message.");
+                }
+            }
+        });
     }
 
     // this method tries to add the conversation history to the panel
