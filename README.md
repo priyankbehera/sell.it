@@ -7,16 +7,12 @@ Shreya Gupta -- Submitted Report on Brightspace;
 Matthew Allen -- Submitted Vocareum workspace
 
 ## RUN:
-- Compliling Instructions: `javac Account.java`
-                          `javac Conversation.java`
-                          `javac Customer.java`
-                            `javac Main.java`
-                           `javac Message.java`
-                            `javac RunLocalTest.java`
-                            `javac Seller.java`
-                            `javac User.java`
+- Compliling Instructions: 
   
 - Run Instructions: `cd src/`, `java Main`
+
+
+## Objects Folder
 
 ## 1. Customer Class
 
@@ -67,7 +63,7 @@ Relationships:
 - Extends the User class and represents a seller user.
 - Uses Message class for sending messages to customers.
 
-## 2. User Class
+## 4. User Class
 
 Functionality: 
 - Makes a generic user with the attributes of email, conversation history, and a list of messages.
@@ -87,58 +83,60 @@ Relationships:
 - Inherited by Customer and Seller classes, sharing common functionality.
 - Used by Main class for user authentication and interaction.
 
-## 5. Conversation Class
+## Panels Folder
+
+## 5. DisplayMessagesPanel
+
+Functionality: 
+- The requestConversationHistory method sends a request to the server for the conversation history between the seller and customer.
+- The sendMessageRequest method sends a message request to the server which includes the sender, recipient, and the message content.
+
+Relationships: 
+
+## 6. MenuPanel
 
 Functionality:
-- Containts constructors and getters for the users and messages
-- the newFile method creates a file based on the username
-- The writeToFile method appends the conversation to an already created file given a message. It will also throw an IOException if an error occurs while writing to the file.
-- The readConversation method reads a conversation from the given filename and stores the data in an ArrayList of messages. It will also throw an IOException if an error occurs while reading from the file.
-- The viewListOfCustomers method allows a seller to view the list of customers they can message.
-- The viewListOfStores method allows a customer to view the list of stores they can message.
-- The readCustomersFromFile method is used by the viewListOfCustomers method to read all of the customers from the file.
-- The readSellersFromFile method is used by the viewListOfStores method to read all of the sellers from the file.
-- The viewMessages method allows the user to see all of their messages.
-  
-Relationships:
-- Utilizes the Message class to create, handle, and represent messages within the conversation.
-- Utilizes PrintWriter and FileWriter to write messages to the conversation file.
-- Interacts with external files to read and write conversation data.
+- The showMenuPopup method creates and displays a popup menu when the "More" button is clicked.
+- The displayMessageStatistics method gets selected user's message statistics (sent, received, common words) and displays them in a JOptionPane
+- The blockSelectedUser method blocks the selected user and removes them from the conversation history
+- The removeFromConversationHistory method removes the blocked user's conversation history files.
+- The searchUser method searches for a user with the given name in the customer or seller data file.
+- The getList method retrieves a list of users from the respective data file.
+- The createJList method creates a JList with the given array of people and sets it as the model for the messageList
+- The sortSentMessages method retrieves and displays sorted sent or received messages statistics.
+
+Relationship:
+
+## Other Classes
 
 ## 6. Main Class
 
 Functionality: 
 - Acts as the control center for the Sell.it messaging platform.
 - Contains the main method which serves as the entry point for all of the code.
-- The checkLogin method checks the login details inputted by the user and returns true if the details match what is on file.
-- The addLoginDetails method adds the user's login credentials to the specified file.
-- The checkValidity method checks the validity of the email by searching the email files.
 
 Relationships:
 - Utilizes all of the classes
 
-## Testing:
-To create modular, specific tests for each feature of our program, we created multiple JUnit tests. These tests
-ensured that all features worked properly with valid input, and did not crash the program given
-invalid input.  
-The tests are as follows:
+## 7. Server
 
-1. **testCustomerCreation** creation: ensures that customer can be created
-2. **testSellerCreation**: ensures that seller can be created
-3. **testCustomerLogin**: ensures that customer can login
-4. **testSellerLogin**: ensures that seller can login
-5. **testMessageSeller**: verify that a customer can message a seller
-6. **testMessageCustomer**: verify that a seller can message a customer
-7. **testCustomerStatistics**: verify that a customer can view their statistics
-8. **testSellerStatistics**: verify that a seller can view their statistics
-9. **testCustomerDuplicate**: a customer cannot create an account with an email that already exists.
-10. **testSellerDuplicate**: a seller cannot create an account with an email that already exists.
-11. **testFindSeller**: verify that a customer can find a *valid* seller
-12. **testFindCustomer**: verify that a seller can find a *valid* customer
-13. **testGetStores**: ensures customer get get a list of stores
-14. **testGetCustomers**: ensures seller can get a list of customers
-15. **ErrorInvalidFindSeller**: If user tries to find a seller that does not exist, it must not crash
-16. **ErrorInvalidFindCustomer**: If user tries to find a customer that does not exist, it must not crash
-17. **InvalidCustomer**: User cannot create a customer with an invalid email
-18. **InvalidSeller**: User cannot create a seller with an invalid email
+Functionality:
+- Server class that handles requests from the client. This allows all data handling to be done server-side, increasing security and limiting the amount of data sent to the client.
+- The hostname is localhost
+- The serverSocket is 4242
+- The requests method parses the client request and dispatches the appropriate method based on the request type (login, createAccount, getConversationHistory, sendMessage).
+- The login method returns false if login is invalid. If login is valid, the second term is the boolean ifSeller. If it is not a user, it returns false
+- The sendMessage method sends a message from a seller to a customer or vice versa.
+- The messageSeller method appends the message to the conversation file between the seller and the customer.
+- The createAccount method creates a new account and adds the user to the respective data files.
+- The getConversationHistory method retrieves the conversation history between a seller and a customer.
+- The messageCustomer method appends the message to the conversation file between the customer and the seller.
+- The clientManager class implements the Runnable to handle communication with a specific client in a separate thread.
+- The isUser method checks if the email is present in either the customer or seller data files.
+- The ifSeller method uses isUser to determine if the user is a seller.
+
+Relationships: 
+
+## Testing:
+
 
