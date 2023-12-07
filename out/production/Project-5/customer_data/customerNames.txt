@@ -1,5 +1,4 @@
-braydenreimann@icloud.com-magicmike
-reimanb1036-89BR8980
-matt@gmail.com-hello
-gupt1005@purdue.edu-Purdue
-test@gmail.com-test_password
+testcustomer-password
+matt-password
+test@gmail.com-password
+priyank-password

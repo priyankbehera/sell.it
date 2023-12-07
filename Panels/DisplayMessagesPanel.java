@@ -37,7 +37,7 @@ public class DisplayMessagesPanel extends JPanel {
         moreButton = new JButton("\u22EE");
         moreButton.setPreferredSize(new Dimension(30, 20));
 
-        exportButton = new JButton("Export");
+        exportButton = new JButton("Import");
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -46,7 +46,7 @@ public class DisplayMessagesPanel extends JPanel {
         });
 
         // Add import button
-        importButton = new JButton("Import");
+        importButton = new JButton("Export");
         importButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

@@ -1,10 +1,6 @@
 package Panels;
 
-import Objects.Customer;
-
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,6 +15,8 @@ public class MenuPanel extends JPanel {
     private final JButton moreButton;
     private boolean searchButtonClicked = false;
     private boolean seeAllButtonClicked = false;
+    private final java.util.Set<String> blockedUsers = new java.util.HashSet<>();
+    private boolean isVisible = true;
 
     public JList getMessageList() {
         return messageList;
@@ -48,7 +46,7 @@ public class MenuPanel extends JPanel {
 
         String[] people = getList(ifSeller);
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (int i = 0; i < people.length; i++ ) {
+        for (int i = 0; i < people.length; i++) {
             listModel.addElement(people[i]);
         }
         messageList = new JList<>(listModel);
@@ -63,7 +61,7 @@ public class MenuPanel extends JPanel {
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if ( !searchButtonClicked  || seeAllButtonClicked ) {
+                if (!searchButtonClicked || seeAllButtonClicked) {
                     String[] temp = getList(ifSeller);
                     DefaultListModel<String> listModel = new DefaultListModel<>();
                     for (int i = 0; i < temp.length; i++) {
@@ -104,17 +102,69 @@ public class MenuPanel extends JPanel {
         moreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showStatistics(moreButton);
+                showMenuPopup(moreButton);
             }
         });
     }
 
-    public boolean searchUser(String name, boolean ifSeller) {
+    private void showMenuPopup(Component component) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem blockUserItem = new JMenuItem("Block User");
+        JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
+
+        blockUserItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                blockSelectedUser();
+            }
+        });
+
+        invisibleItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                changeVisibility();
+                invisibleItem.setText(isVisible ? "Become Invisible" : "Become Visible");
+            }
+        });
+
+        popupMenu.add(blockUserItem);
+        popupMenu.add(invisibleItem);
+
+        popupMenu.show(component, 0, component.getHeight());
+    }
+
+    private void blockSelectedUser() {
+        String selectedUser = messageList.getSelectedValue();
+        if (selectedUser != null) {
+            int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Are you sure you want to block " + selectedUser + "?",
+                    "Confirm Block User",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+                if (blockUser(selectedUser)) {
+                    JOptionPane.showMessageDialog(null, selectedUser + " has been blocked.");
+                    // Additional logic if needed
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error blocking user.");
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a user to block.");
+        }
+    }
+
+    private boolean blockUser(String user) {
+        return blockedUsers.add(user);
+    }
+
+    private boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
         String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = ifSeller ? "/CustomersList.csv" : "/SellersList.csv";
-        filename = folderName + filename;
+        String filename = folderName + "/CustomersList.csv";
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -137,7 +187,7 @@ public class MenuPanel extends JPanel {
         return isPresent;
     }
 
-    public String[] getList(boolean ifSeller) {
+    private String[] getList(boolean ifSeller) {
         ArrayList<String> menuList = new ArrayList<>();
         String folderName = ifSeller ? "customer_data" : "seller_data";
         String filename;
@@ -163,7 +213,7 @@ public class MenuPanel extends JPanel {
         }
     }
 
-    public void createJList(String[] people) {
+    private void createJList(String[] people) {
         DefaultListModel<String> model = new DefaultListModel<>();
         for (String person : people) {
             model.addElement(person);
@@ -171,20 +221,12 @@ public class MenuPanel extends JPanel {
         messageList.setModel(model);
     }
 
-    private void showStatistics(Component component) {
-        JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem messageStatisticsItem = new JMenuItem("Statistics");
-
-        messageStatisticsItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //displayMessageStatistics();
-            }
-        });
-
-        popupMenu.add(messageStatisticsItem);
-        popupMenu.show(component, 0, component.getHeight());
+    private void changeVisibility() {
+        isVisible = !isVisible;
+        String[] people = getList(true);
+        createJList(people);
     }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame testFrame = new JFrame("MenuPanel Test");
