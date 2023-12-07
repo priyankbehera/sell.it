@@ -109,7 +109,8 @@ public class MenuPanel extends JPanel {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
         String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = folderName + "/CustomersList.csv";
+        String filename = ifSeller ? "/CustomersList.csv" : "/SellersList.csv";
+        filename = folderName + filename;
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -189,33 +190,6 @@ public class MenuPanel extends JPanel {
         popupMenu.add(messageStatisticsItem);
         popupMenu.show(component, 0, component.getHeight());
     }
-
-/*
-    private void displayMessageStatistics() {
-        String sellerName = searchField.getText();
-
-        if (!sellerName.isEmpty()) {
-            Customer customer = new Customer(sellerName);
-
-            try {
-                ArrayList<String> sentStatistics = customer.viewSentStatistics(1);
-                for (String stat : sentStatistics) {
-                    System.out.println(stat);
-                }
-
-                ArrayList<String> receivedStatistics = customer.viewReceivedStatistics(1);
-                for (String stat : receivedStatistics) {
-                    System.out.println(stat);
-                }
-            } catch (IOException ex) {
-                System.out.println("Error while retrieving statistics.");
-            }
-        } else {
-            System.out.println("Please enter a valid seller name.");
-        }
-    }
-*/
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame testFrame = new JFrame("MenuPanel Test");
