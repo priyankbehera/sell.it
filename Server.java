@@ -94,8 +94,57 @@ public class Server {
                 printWriter.println(success);
                 printWriter.flush();
             }
+            case "exportFile" -> {
+                String filename = args[0];
+                filename = "conversation_data/seller_matt_Messages.csv";
+                boolean success = sendFile(filename, printWriter);
+                printWriter.println(success);
+                printWriter.flush();
+            //TODO: have client read file contents (?)
+            } case "importFile" -> { // appends .txt file to chosen conversation
+                String filename = args[0];
+                String seller = args[1];
+                String customer = args[2];
+                String conversationFile = seller + "_" + customer + "_Messages.csv";
+                boolean success = importFile(filename, conversationFile);
+            }
         }
 
+    }
+    public static synchronized boolean sendFile(String filename, PrintWriter printWriter) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ( (line = br.readLine()) != null ) {
+                printWriter.println(line);
+                printWriter.flush();
+            }
+            // unique string of characters to represent end of file
+            printWriter.println("!@##$%$%^");
+            printWriter.flush();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static synchronized boolean importFile(String filename, String conversationFile ) {
+        // reads in file
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line;
+            ArrayList<String> importFile = new ArrayList<>();
+            while ( (line = br.readLine()) != null ) {
+                importFile.add(line);
+            }
+            // writes to conversation file
+            PrintWriter pw = new PrintWriter(new FileWriter(conversationFile, true));
+            for ( int i = 0; i < importFile.size(); i++ ) {
+                pw.println(importFile.get(i));
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
     // if login is invalid, returns false
     // if login is valid, the second term is the boolean ifSeller
