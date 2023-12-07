@@ -273,6 +273,7 @@ public class Server {
         System.out.println("That does not work!");
         }
     }
+
     private static class clientManager implements Runnable {
         private Socket socket;
 
