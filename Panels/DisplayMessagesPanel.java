@@ -13,9 +13,22 @@ public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
     private JButton moreButton;
+    private JButton exportButton;
+    private JButton importButton;
+    private String seller;
+    private String customer;
+    private boolean ifSeller;
+    private PrintWriter pw;
+    private BufferedReader br;
 
     // constructor for display messages panel
     public DisplayMessagesPanel(String seller, String customer, boolean ifSeller, PrintWriter pw, BufferedReader br) {
+        this.seller = seller;
+        this.customer = customer;
+        this.ifSeller = ifSeller;
+        this.pw = pw;
+        this.br = br;
+
         JPanel displayMessages = new JPanel();
         displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
@@ -23,6 +36,23 @@ public class DisplayMessagesPanel extends JPanel {
 
         moreButton = new JButton("\u22EE");
         moreButton.setPreferredSize(new Dimension(30, 20));
+
+        exportButton = new JButton("Export");
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportFileAction();
+            }
+        });
+
+        // Add import button
+        importButton = new JButton("Import");
+        importButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                importFileAction();
+            }
+        });
 
         // refresh button action listener
         Timer timer = new Timer(1000, new ActionListener() {
@@ -63,14 +93,16 @@ public class DisplayMessagesPanel extends JPanel {
             }
         });
 
-        // Create a panel to hold the input field and send button
+
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        // add more button
+        inputPanel.add(exportButton, BorderLayout.WEST);
+        inputPanel.add(importButton, BorderLayout.WEST);
+
         inputPanel.add(moreButton, BorderLayout.NORTH);
-        // Add the input panel to the bottom of the frame
+
         add(inputPanel, BorderLayout.SOUTH);
     }
 
@@ -207,4 +239,73 @@ public class DisplayMessagesPanel extends JPanel {
             System.out.println(e.getMessage());
         }
         }
+    private void exportFileAction() {
+
+        JFileChooser fileChooser = new JFileChooser();
+        int userChoice = fileChooser.showSaveDialog(this);
+
+        if (userChoice == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+
+            String requestString = "exportFile," + filePath;
+            pw.println(requestString);
+            pw.flush();
+
+            try {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        break;
+                    }
+                }
+                boolean responseBoolean = Boolean.parseBoolean(line);
+
+                if (!responseBoolean) {
+                    JOptionPane.showMessageDialog(null, "Error exporting messages.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Messages exported successfully.");
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error exporting messages.");
+            }
+        }
     }
+
+    private void importFileAction() {
+
+        JFileChooser fileChooser = new JFileChooser();
+        int userChoice = fileChooser.showOpenDialog(this);
+
+        if (userChoice == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getAbsolutePath();
+
+            String requestString = "importFile," + filePath;
+            pw.println(requestString);
+            pw.flush();
+
+            try {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        break;
+                    }
+                }
+                boolean responseBoolean = Boolean.parseBoolean(line);
+
+                if (!responseBoolean) {
+                    JOptionPane.showMessageDialog(null, "Error importing messages.");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Messages imported successfully.");
+                    conversationArea.setText("");
+                    requestConversationHistory(seller, customer, ifSeller, br, pw);
+                }
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error importing messages.");
+            }
+        }
+    }
+}
+
+
