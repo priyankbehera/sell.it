@@ -1,6 +1,10 @@
 package Panels;
 
+import Objects.Customer;
+
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -175,15 +179,6 @@ public class MenuPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //displayMessageStatistics();
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Choose Destination Folder");
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-                int userSelection = fileChooser.showSaveDialog(null);
-
-                if (userSelection == JFileChooser.APPROVE_OPTION) {
-                    String folderPath = fileChooser.getSelectedFile().getAbsolutePath();
-                }
             }
         });
 
