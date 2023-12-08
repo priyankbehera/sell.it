@@ -33,12 +33,14 @@ public class Main {
                 mainframe.setLayout(new BorderLayout());
 
                 // Set the icon for the frame
+/*
                 try {
                     BufferedImage iconImage = ImageIO.read(new File("Images/Send.it Logo.png"));
                     mainframe.setIconImage(iconImage);
                 } catch (IOException e) {
                     throw new RuntimeException();
                 }
+*/
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
