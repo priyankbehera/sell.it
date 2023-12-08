@@ -2,8 +2,10 @@ import Objects.Customer;
 import Panels.*;
 import Objects.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.*;
@@ -29,6 +31,14 @@ public class Main {
             SwingUtilities.invokeLater(() -> {
                 JFrame mainframe = new JFrame("Send.it");
                 mainframe.setLayout(new BorderLayout());
+
+                // Set the icon for the frame
+                try {
+                    BufferedImage iconImage = ImageIO.read(new File("Images/Send.it Logo.png"));
+                    mainframe.setIconImage(iconImage);
+                } catch (IOException e) {
+                    throw new RuntimeException();
+                }
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
@@ -116,6 +126,7 @@ public class Main {
                             JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                             mainframe.setContentPane(loginPanel);
                         } else {
+                            // @TODO Ensure that when user tries to create an account when they already have one, that it gives them an error and prompts them to log in
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
                             mainframe.setContentPane(loginPanel);
                         }
