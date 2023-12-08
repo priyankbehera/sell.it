@@ -6,19 +6,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CreateAccPanel extends JPanel {
-    private final JButton continueButton;
     JTextField emailText;
     JPasswordField passwordField;
+    JComboBox<String> accountType;
+    JButton continueButton;
     JLabel successMessage;
-    private JComboBox<String> accountType;
-    private String accountTypeString;
+
     public CreateAccPanel() {
         // Set the layout manager for this panel
         setLayout(null);
 
         // Create components
         JLabel userLabel = new JLabel("Email:");
-        userLabel.setBounds(10, 20, 80 , 25);
+        userLabel.setBounds(10, 20, 80, 25);
         add(userLabel);
 
         emailText = new JTextField(20);
@@ -38,36 +38,39 @@ public class CreateAccPanel extends JPanel {
         add(accountTypeLabel);
 
         // Drop down menu for selecting account type
-        JComboBox<String> accountType = new JComboBox<>(new String[] {"Customer", "Seller"});
+        accountType = new JComboBox<>(new String[]{"Customer", "Seller"});
         accountType.setSelectedIndex(0); // Sets the default option as Customer
         accountType.setBounds(110, 80, 125, 25);
         add(accountType);
 
-        this.continueButton = new JButton("Continue");
-        this.continueButton.setBounds(10, 160, 125, 25);
-        add(this.continueButton);
+        continueButton = new JButton("Continue");
+        continueButton.setBounds(10, 160, 125, 25);
+        add(continueButton);
 
-        // success message
+        // Success message
         successMessage = new JLabel("");
         successMessage.setBounds(10, 130, 300, 25);
         add(successMessage);
     }
 
     // Allows other classes to access buttons
-    public JButton getContinueButton() {
-        return this.continueButton;
-    }
-    public JComboBox<String> getAccountType() {
-        return this.accountType;
-    }
     public String getEmail() {
         return this.emailText.getText();
     }
+
     public String getPassword() {
         return String.valueOf(this.passwordField.getPassword());
     }
+
+    public JComboBox<String> getAccountType() {
+        return this.accountType;
+    }
+
+    public JButton getContinueButton() {
+        return this.continueButton;
+    }
+
     public JLabel getSuccessMessage() {
         return this.successMessage;
     }
-
 }

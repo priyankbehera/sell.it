@@ -62,8 +62,8 @@ public class Main {
                 loginPanel.getContinueButton().addActionListener(e -> {
                     System.out.println("Here");
                     boolean[] isLoggedIn;
-                    String email = loginPanel.getEmailText().getText();
-                    String password = String.valueOf(loginPanel.getPasswordField().getPassword());
+                    String email = loginPanel.getEmail();
+                    String password = String.valueOf(loginPanel.getPassword());
                     System.out.println("Email: " + email);
                     System.out.println("Password: " + password);
 
