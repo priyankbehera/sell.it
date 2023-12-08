@@ -218,16 +218,16 @@ public class Server {
 
         // overwrites file
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
-            for ( int i = 0; i < fileContents.size(); i++ ) {
+            for (String fileContent : fileContents) {
                 // if the line is not the message, then it is written to the file
 
                 // parses message out of string
-                String [] messageParts = fileContents.get(i).split(",");
+                String[] messageParts = fileContent.split(",");
                 String messageContent = messageParts[2];
 
                 String messageToCheck = message.substring(5);
-                if ( !messageContent.equals(messageToCheck) ) {
-                    pw.println(fileContents.get(i));
+                if (!messageContent.equals(messageToCheck)) {
+                    pw.println(fileContent);
                 }
             }
         } catch (IOException e) {
