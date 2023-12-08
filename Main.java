@@ -44,6 +44,7 @@ public class Main {
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
+                mainframe.setBackground(Color.LIGHT_GRAY);
                 mainframe.setLocationRelativeTo(null);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
