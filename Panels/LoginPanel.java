@@ -31,7 +31,7 @@ public class LoginPanel extends JPanel {
         add(passwordField);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(392, 402, 125, 24);
+        continueButton.setBounds(392, 402, 120, 24);
         add(continueButton);
 
         // Success message

@@ -18,38 +18,38 @@ public class CreateAccPanel extends JPanel {
 
         // Create components
         JLabel userLabel = new JLabel("Email:");
-        userLabel.setBounds(10, 20, 80, 25);
+        userLabel.setBounds(392, 336, 80, 24);
         add(userLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(100, 20, 165, 25);
+        emailText.setBounds(482, 336, 160, 24);
         add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(10, 50, 80, 25);
+        passwordLabel.setBounds(392, 366, 80, 24);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(100, 50, 165, 25);
+        passwordField.setBounds(482, 366, 160, 24);
         add(passwordField);
 
         JLabel accountTypeLabel = new JLabel("Account Type:");
-        accountTypeLabel.setBounds(10, 80, 125, 25);
+        accountTypeLabel.setBounds(392, 396, 124, 24);
         add(accountTypeLabel);
 
         // Drop down menu for selecting account type
         accountType = new JComboBox<>(new String[]{"Customer", "Seller"});
         accountType.setSelectedIndex(0); // Sets the default option as Customer
-        accountType.setBounds(110, 80, 125, 25);
+        accountType.setBounds(492, 396, 124, 24);
         add(accountType);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(10, 160, 125, 25);
+        continueButton.setBounds(392, 426, 120, 24);
         add(continueButton);
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(10, 130, 300, 25);
+        successMessage.setBounds(392, 456, 300, 24);
         add(successMessage);
     }
 
@@ -62,8 +62,8 @@ public class CreateAccPanel extends JPanel {
         return String.valueOf(this.passwordField.getPassword());
     }
 
-    public JComboBox<String> getAccountType() {
-        return this.accountType;
+    public String getAccountType() {
+        return (String) this.accountType.getSelectedItem();
     }
 
     public JButton getContinueButton() {

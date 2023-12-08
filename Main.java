@@ -59,7 +59,7 @@ public class Main {
                 });
 
                 // Listens for successful login
-               loginPanel.getContinueButton().addActionListener(e -> {
+                loginPanel.getContinueButton().addActionListener(e -> {
                     boolean[] isLoggedIn;
                     String email = loginPanel.getEmail();
                     String password = String.valueOf(loginPanel.getPassword());
@@ -88,36 +88,44 @@ public class Main {
 
                 // Listens for "Continue" button on Panels.CreateAccPanel
                 createAccPanel.getContinueButton().addActionListener(e -> {
-                    String userType = (String) createAccPanel.getAccountType().getSelectedItem();
-                    int accountType = -1;
-                    // Creates user accounts
-                    if (userType.equals("Customer")) {  // Create customer account
-                        Customer customer = new Customer(createAccPanel.getEmail(), createAccPanel.getPassword());
-                        accountType = 0;
-                    } else {
-                        // Pop up window for seller to add a store
-                        String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
-                        Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
-                        accountType = 1;
-                    }
-                    // send request to server
-                    String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
-                    boolean success = createAccountRequest(requestString, pw, br);
-                    System.out.println("Account created: " + success);
+                    // @TODO Update code to account for getting email and password first
+                    String email = createAccPanel.getEmail();
+                    String password = createAccPanel.getPassword();
 
-                    // display results
-                    if (success) {
-                        // send back to log in
-                        JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        mainframe.setContentPane(loginPanel);
+                    if (!email.isEmpty() && !password.isEmpty()) {
+                        String userType = createAccPanel.getAccountType();
+                        int accountType = -1;
+                        // Creates user accounts
+                        if (userType.equals("Customer")) {  // Create customer account
+                            Customer customer = new Customer(createAccPanel.getEmail(), createAccPanel.getPassword());
+                            accountType = 0;
+                        } else if (userType.equals("Seller")) {
+                            // Pop up window for seller to add a store
+                            String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                            Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
+                            accountType = 1;
+                        }
+                        // send request to server
+                        String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
+                        boolean success = createAccountRequest(requestString, pw, br);
+                        System.out.println("Account created: " + success);
+
+                        // display results
+                        if (success) {
+                            // send back to log in
+                            JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            mainframe.setContentPane(loginPanel);
+                        } else {
+                            createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
+                            mainframe.setContentPane(loginPanel);
+                        }
+                        mainframe.revalidate();
+                        mainframe.repaint();
                     } else {
-                        createAccPanel.getSuccessMessage().setText("Account already exists. Try a different email.");
-                        mainframe.setContentPane(createAccPanel);
+                        createAccPanel.getSuccessMessage().setText("Please enter an email and password to continue.");
                     }
-                    mainframe.revalidate();
-                    mainframe.repaint();
+                    mainframe.setVisible(true);
                 });
-                mainframe.setVisible(true);
             });
         } catch (IOException e) { // Throws error if unable to connect to server
             System.out.println("Unable to connect to server.");
