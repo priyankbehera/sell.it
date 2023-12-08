@@ -117,6 +117,7 @@ public class Main {
                             Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
                             accountType = 1;
                         }
+
                         // send request to server
                         String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
                         boolean success = createAccountRequest(requestString, pw, br);
