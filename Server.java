@@ -90,7 +90,17 @@ public class Server {
                 String seller = args[0];
                 String customer = args[1];
                 boolean ifSeller = Boolean.parseBoolean(args[2]);
-                String message = args[3];
+                String message;
+                try {
+                    message = args[3];
+                } catch (Exception e) {
+                    System.out.println("Please enter a message");
+                    printWriter.println(false);
+                    printWriter.flush();
+
+                    return;
+                }
+
                 boolean success = sendMessage(seller, customer, ifSeller, message);
                 printWriter.println(success);
                 printWriter.flush();

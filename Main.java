@@ -29,7 +29,7 @@ public class Main {
 
             // Creates the main frame
             SwingUtilities.invokeLater(() -> {
-                JFrame mainframe = new JFrame("Send.it");
+                JFrame mainframe = new JFrame("Sell.it");
                 mainframe.setLayout(new BorderLayout());
 
                 // Set the icon for the frame
