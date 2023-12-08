@@ -298,6 +298,20 @@ public class Server {
             } else {
                 return false;
             }
+            // makes sure customer is not a duplicate
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(filenameTxt));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] lineArray = line.split("-");
+                    String emailToCheck = lineArray[0];
+                    if (emailToCheck.equals(email)) {
+                        return false;
+                    }
+                }
+            } catch (IOException e) {
+                return false;
+            }
             try {
                 PrintWriter pw = new PrintWriter(new FileWriter(filenameTxt, true));
                 pw.println(email + "-" + password);

@@ -282,7 +282,7 @@ public class DisplayMessagesPanel extends JPanel {
 
             if (!responseBoolean) {
                 // Joption pane error
-                JOptionPane.showMessageDialog(null, "Error sending message.");
+                JOptionPane.showMessageDialog(null, "Please enter a message.");
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());

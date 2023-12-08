@@ -130,7 +130,7 @@ public class Main {
                         } else {
                             // @TODO Ensure that when user tries to create an account when they already have one, that it gives them an error and prompts them to log in
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
-                            mainframe.setContentPane(loginPanel);
+                            JOptionPane.showMessageDialog(null, "Account already exists, Please log in or try a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
                         }
                         mainframe.revalidate();
                         mainframe.repaint();
