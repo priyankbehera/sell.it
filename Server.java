@@ -114,9 +114,16 @@ public class Server {
                 boolean success = deleteMessage(seller, customer, message);
                 printWriter.println(success);
                 printWriter.flush();
+            } case "editMessage" -> {
+                String seller = args[0];
+                String customer = args[1];
+                String messageToEdit = args[2];
+                String editedMessage = args[3];
+                boolean success = editMessage(seller, customer, messageToEdit, editedMessage);
+                printWriter.println(success);
+                printWriter.flush();
             }
         }
-
     }
     public static synchronized boolean sendFile(String filename, PrintWriter printWriter) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -448,6 +455,39 @@ public class Server {
             return false;
         }
         return false;
+    }
+    public static synchronized boolean editMessage(String seller, String customer, String messageToEdit, String editedMessage) {
+        String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+        // has to copy file contents, then delete file, then rewrite file
+        ArrayList<String> fileContents = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ( (line = br.readLine()) != null ) {
+                fileContents.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        for ( int i = 0; i < fileContents.size(); i++ ) {
+            String[] messageParts = fileContents.get(i).split(",");
+            String messageContent = messageParts[2];
+            if (messageContent.equals(messageToEdit)) {
+                messageParts[2] = editedMessage;
+                String toAdd = "";
+                toAdd += messageParts[0] + "," + messageParts[1] + "," + messageParts[2] +
+                        "," + messageParts[3] + "," + messageParts[4];
+                fileContents.set(i,toAdd);
+            }
+        }
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
+            for ( int i = 0; i < fileContents.size(); i++ ) {
+                pw.println(fileContents.get(i));
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }
 

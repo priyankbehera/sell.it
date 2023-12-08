@@ -116,17 +116,62 @@ public class DisplayMessagesPanel extends JPanel {
         menu.add(delete);
         menu.show(moreButton, moreButton.getWidth()/2, moreButton.getHeight()/2);
 
-        //edit message action listener
-        // TODO: need to do this
         edit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String newMessage = JOptionPane.showInputDialog(null, "Enter new message: ", "Edit Message", JOptionPane.QUESTION_MESSAGE);
-                //send request to server
-                String requestString = "editMessage," + newMessage;
-                //get response from server
-                //clear input text
-                inputField.setText("");
+                String allMessages = conversationArea.getText();
+                JTextField editField = new JTextField(20);
+                String[] messages = allMessages.split("\n");
+                String[] messages1 = new String[messages.length/2];
+                for ( int i = 0; i < messages1.length; i++ ) {
+                    messages1[i] = messages[2*i + 1];
+                }
+                JList<String> messageList = new JList<>(messages1);
+                JScrollPane scrollPane = new JScrollPane(messageList);
+                scrollPane.setPreferredSize(new Dimension(300,400));
+                JPanel panel = new JPanel(new BorderLayout());
+                panel.add(scrollPane, BorderLayout.CENTER);
+                panel.add(editField, BorderLayout.SOUTH);
+
+                JOptionPane.showMessageDialog(null, panel, "Edit Message", JOptionPane.PLAIN_MESSAGE);
+                // gets selected message
+                String selectedMessage = messageList.getSelectedValue();
+                if (selectedMessage != null) {
+                    String selectedMessage1 = selectedMessage.split(": ")[1];
+                    System.out.println("Selected message: " + selectedMessage);
+                    String messageToEdit = "";
+                    if (!editField.getText().equals("")) {
+                        messageToEdit = editField.getText();
+                    }
+                    String requestString = "editMessage," + seller + "," + customer + "," + selectedMessage1 + "," + messageToEdit;
+                    // send request to server
+                    pw.println(requestString);
+                    pw.flush();
+                    System.out.println("Request sent: " + requestString);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Please select an option",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                // gets server response
+                try {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (!line.isEmpty()) {
+                            break;
+                        }
+                    }
+                    String response = line;
+                    boolean responseBoolean = Boolean.parseBoolean(response);
+
+                    if (!responseBoolean) {
+                        // JOption pane error
+                        JOptionPane.showMessageDialog(null, "Error editing message.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Message edited.");
+                    }
+                } catch (IOException x) {
+                    JOptionPane.showMessageDialog(null, "Error editing message.");
+                }
             }
         });
 
@@ -138,7 +183,11 @@ public class DisplayMessagesPanel extends JPanel {
                 // gets all messages from the conversationArea
                 String allMessages = conversationArea.getText();
                 String[] messages = allMessages.split("\n");
-                JList<String> messageList = new JList<>(messages);
+                String[] messages1 = new String[messages.length/2];
+                for ( int i = 0; i < messages1.length; i++ ) {
+                    messages1[i] = messages[2*i + 1];
+                }
+                JList<String> messageList = new JList<>(messages1);
                 JScrollPane scrollPane = new JScrollPane(messageList);
                 scrollPane.setPreferredSize(new Dimension(300, 400));
                 JOptionPane.showMessageDialog(null, scrollPane, "Delete Message", JOptionPane.PLAIN_MESSAGE);
