@@ -49,7 +49,7 @@ public class CreateAccPanel extends JPanel {
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(392, 456, 300, 24);
+        successMessage.setBounds(392, 456, 320, 24);
         add(successMessage);
     }
 
