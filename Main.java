@@ -124,8 +124,8 @@ public class Main {
                     } else {
                         createAccPanel.getSuccessMessage().setText("Please enter an email and password to continue.");
                     }
-                    mainframe.setVisible(true);
                 });
+                mainframe.setVisible(true);
             });
         } catch (IOException e) { // Throws error if unable to connect to server
             System.out.println("Unable to connect to server.");

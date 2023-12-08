@@ -174,10 +174,10 @@ public class Server {
                 while ( (line = bufferedReader.readLine()) != null ) {
                     customers.add(line);
                 }
-                for ( int i = 0; i < customers.size(); i++) {
-                    String customer = customers.get(i).split("-")[0];
-                    String passwordToCheck = customers.get(i).split("-")[1];
-                    if ( customer.equals(email) && passwordToCheck.equals(password)) {
+                for (String s : customers) {
+                    String customer = s.split("-")[0];
+                    String passwordToCheck = s.split("-")[1];
+                    if (customer.equals(email) && passwordToCheck.equals(password)) {
                         return "true,false";
                     }
                 }
