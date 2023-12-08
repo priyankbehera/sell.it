@@ -79,8 +79,10 @@ public class Main {
                             mainframe.revalidate();
                             mainframe.repaint();
                         } else {
-                            loginPanel.getSuccessMessage().setText("Incorrect email or password.");
+                            loginPanel.getSuccessMessage().setText("Invalid credentials. Please try again.");
                         }
+                    } else {
+                        loginPanel.getSuccessMessage().setText("Please enter an email and password to continue.");
                     }
                 });
 

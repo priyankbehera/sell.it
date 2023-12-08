@@ -15,28 +15,28 @@ public class LoginPanel extends JPanel {
 
         // Create components
         JLabel userLabel = new JLabel("Email:");
-        userLabel.setBounds(10, 20, 80, 25);
+        userLabel.setBounds(392, 342, 80, 24);
         add(userLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(100, 20, 165, 25);
+        emailText.setBounds(482, 342, 160, 24);
         add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(10, 50, 80, 25);
+        passwordLabel.setBounds(392, 372, 80, 24);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(100, 50, 165, 25);
+        passwordField.setBounds(482, 372, 160, 24);
         add(passwordField);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(10, 80, 125, 25);
+        continueButton.setBounds(392, 402, 125, 24);
         add(continueButton);
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(10, 110, 300, 25);
+        successMessage.setBounds(392, 432, 300, 24);
         add(successMessage);
     }
 
