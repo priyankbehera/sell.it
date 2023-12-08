@@ -4,54 +4,49 @@ import javax.swing.*;
 import java.awt.*;
 
 public class LoginPanel extends JPanel {
-    private final JButton continueButton;
     JTextField emailText;
     JPasswordField passwordField;
+    JButton continueButton;
     JLabel successMessage;
 
     public LoginPanel() {
         // Set the layout manager for this panel
-        setLayout(new BorderLayout());
-
-        // Create panel for login components
-        JPanel loginComponents = new JPanel();
-        loginComponents.setLayout(new GridLayout(3, 2, 0, 10));
-        loginComponents.setPreferredSize(new Dimension(400, 300));
+        setLayout(null);
 
         // Create components
-        JLabel emailLabel = new JLabel("Email:");
-        loginComponents.add(emailLabel);
+        JLabel userLabel = new JLabel("Email:");
+        userLabel.setBounds(10, 20, 80, 25);
+        add(userLabel);
 
         emailText = new JTextField(20);
-        loginComponents.add(emailText);
+        emailText.setBounds(100, 20, 165, 25);
+        add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        loginComponents.add(passwordLabel);
+        passwordLabel.setBounds(10, 50, 80, 25);
+        add(passwordLabel);
 
-        passwordField = new JPasswordField(20);
-        loginComponents.add(passwordField);
+        passwordField = new JPasswordField();
+        passwordField.setBounds(100, 50, 165, 25);
+        add(passwordField);
 
-        continueButton = new JButton("Continue");
-        loginComponents.add(continueButton);
-
+        // Success message
         successMessage = new JLabel("");
-        loginComponents.add(successMessage);
-
-        // Add loginComponents to the panel
-        add(loginComponents, BorderLayout.CENTER);
+        successMessage.setBounds(10, 130, 300, 25);
+        add(successMessage);
     }
 
     // Allows other classes to access elements
+    public String getEmail() {
+        return this.emailText.getText();
+    }
+
+    public String getPassword() {
+        return String.valueOf(this.passwordField.getPassword());
+    }
+
     public JButton getContinueButton() {
         return this.continueButton;
-    }
-
-    public JTextField getEmailText() {
-        return this.emailText;
-    }
-
-    public JPasswordField getPasswordField() {
-        return this.passwordField;
     }
 
     public JLabel getSuccessMessage() {

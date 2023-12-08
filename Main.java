@@ -1,6 +1,7 @@
 import Objects.Customer;
 import Panels.*;
 import Objects.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
@@ -58,11 +59,11 @@ public class Main {
                 });
 
                 // Listens for successful login
-                loginPanel.getContinueButton().addActionListener(e -> {
+               loginPanel.getContinueButton().addActionListener(e -> {
                     System.out.println("Here");
                     boolean[] isLoggedIn;
-                    String email = loginPanel.getEmailText().getText();
-                    String password = String.valueOf(loginPanel.getPasswordField().getPassword());
+                    String email = loginPanel.getEmail();
+                    String password = String.valueOf(loginPanel.getPassword());
                     System.out.println("Email: " + email);
                     System.out.println("Password: " + password);
 
@@ -83,25 +84,20 @@ public class Main {
 
                 // Listens for "Continue" button on Panels.CreateAccPanel
                 createAccPanel.getContinueButton().addActionListener(e -> {
-                    //Adds user
-                    String userType;
-                    if ( createAccPanel.getAccountType() == null ) {
-                        userType = "Customer";
-                    } else {
-                        userType = createAccPanel.getAccountType();
-                    }
-                    String accountType = "";
+                    String userType = (String) createAccPanel.getAccountType().getSelectedItem();
+                    int accountType = -1;
+                    // Creates user accounts
                     if (userType.equals("Customer")) {  // Create customer account
-                        Customer customer = new Customer(createAccPanel.getUsername(), createAccPanel.getPassword());
-                        accountType = "0";
+                        Customer customer = new Customer(createAccPanel.getEmail(), createAccPanel.getPassword());
+                        accountType = 0;
                     } else {
                         // Pop up window for seller to add a store
                         String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
-                        Seller seller = new Seller(createAccPanel.getUsername(), storeName, createAccPanel.getPassword());
-                        accountType = "1";
+                        Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
+                        accountType = 1;
                     }
                     // send request to server
-                    String requestString = "createAccount," + accountType + "," + createAccPanel.getUsername() + "," + createAccPanel.getPassword();
+                    String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
                     boolean success = createAccountRequest(requestString, pw, br);
                     System.out.println("Account created: " + success);
 
@@ -110,8 +106,7 @@ public class Main {
                         // send back to login
                         JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                         mainframe.setContentPane(loginPanel);
-                    }
-                    else {
+                    } else {
                         createAccPanel.getSuccessMessage().setText("Account already exists. Try a different email.");
                         mainframe.setContentPane(createAccPanel);
                     }
@@ -143,7 +138,7 @@ public class Main {
             }
             String[] lineSplit = line.split(",");
             boolean[] booleanSplit = new boolean[lineSplit.length];
-            for ( int i = 0; i < lineSplit.length; i ++ ) {
+            for (int i = 0; i < lineSplit.length; i++) {
                 booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
             }
             System.out.println("Receive response: " + line);
