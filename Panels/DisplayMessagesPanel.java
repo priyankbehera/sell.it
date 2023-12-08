@@ -173,7 +173,7 @@ public class DisplayMessagesPanel extends JPanel {
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                exportFileAction();
+                exportFileAction(seller, customer, ifSeller, br, pw);
             }
         });
         // import button action listener
@@ -284,16 +284,16 @@ public class DisplayMessagesPanel extends JPanel {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        }
-    private void exportFileAction() {
+    }
+    private void exportFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
         int userChoice = fileChooser.showSaveDialog(this);
 
         if (userChoice == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
 
-            String requestString = "exportFile," + filePath;
+            String requestString = "exportFile," + selectedFile + "," + seller + ","
+                    + customer;
             pw.println(requestString);
             pw.flush();
 
