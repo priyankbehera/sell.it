@@ -7,9 +7,8 @@ import java.awt.event.ActionListener;
 
 public class CreateAccPanel extends JPanel {
     private final JButton continueButton;
-    private JTextField usernameText;
-    private JPasswordField passwordField;
-
+    JTextField emailText;
+    JPasswordField passwordField;
     JLabel successMessage;
     private JComboBox<String> accountType;
     private String accountTypeString;
@@ -17,24 +16,14 @@ public class CreateAccPanel extends JPanel {
         // Set the layout manager for this panel
         setLayout(null);
 
-        // Drop down menu for account type
-        JComboBox<String> accountType = new JComboBox<>(new String[] {"Customer", "Seller"});
-        accountType.setBounds(110, 80, 125, 25);
-        JButton getAccountType = new JButton("Select");
-        getAccountType.setBounds(250, 80, 80, 25);
-        JLabel accountTypeLabel = new JLabel("Account Type:");
-        accountTypeLabel.setBounds(10, 80, 125, 25);
-        add(accountTypeLabel);
-        add(accountType);
-        add(getAccountType);
         // Create components
-        JLabel userLabel = new JLabel("Username:");
+        JLabel userLabel = new JLabel("Email:");
         userLabel.setBounds(10, 20, 80 , 25);
         add(userLabel);
 
-        usernameText = new JTextField(20);
-        usernameText.setBounds(100, 20, 165, 25);
-        add(usernameText);
+        emailText = new JTextField(20);
+        emailText.setBounds(100, 20, 165, 25);
+        add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(10, 50, 80, 25);
@@ -44,6 +33,16 @@ public class CreateAccPanel extends JPanel {
         passwordField.setBounds(100, 50, 165, 25);
         add(passwordField);
 
+        JLabel accountTypeLabel = new JLabel("Account Type:");
+        accountTypeLabel.setBounds(10, 80, 125, 25);
+        add(accountTypeLabel);
+
+        // Drop down menu for selecting account type
+        JComboBox<String> accountType = new JComboBox<>(new String[] {"Customer", "Seller"});
+        accountType.setSelectedIndex(0); // Sets the default option as Customer
+        accountType.setBounds(110, 80, 125, 25);
+        add(accountType);
+
         this.continueButton = new JButton("Continue");
         this.continueButton.setBounds(10, 160, 125, 25);
         add(this.continueButton);
@@ -52,41 +51,21 @@ public class CreateAccPanel extends JPanel {
         successMessage = new JLabel("");
         successMessage.setBounds(10, 130, 300, 25);
         add(successMessage);
-
-        // Action listener
-        getAccountType.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if ( accountType.getSelectedIndex() == -1 ) {
-                    accountTypeString = "Customer";
-                } else {
-                    accountTypeString = (String) accountType.getSelectedItem();
-                }
-            }
-        });
     }
 
     // Allows other classes to access buttons
     public JButton getContinueButton() {
         return this.continueButton;
     }
-
-    public JButton getAccountTypeButton() {
-        return this.continueButton;
+    public JComboBox<String> getAccountType() {
+        return this.accountType;
     }
-
-    public String getAccountType() {
-        return this.accountTypeString;
+    public String getEmail() {
+        return this.emailText.getText();
     }
-
-    public String getUsername() {
-        return this.usernameText.getText();
-    }
-
     public String getPassword() {
         return String.valueOf(this.passwordField.getPassword());
     }
-
     public JLabel getSuccessMessage() {
         return this.successMessage;
     }
