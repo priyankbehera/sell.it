@@ -106,9 +106,8 @@ public class Server {
                 printWriter.flush();
             }
             case "exportFile" -> {
-                String filename = args[0];
-                filename = "conversation_data/seller_matt_Messages.csv";
-                boolean success = sendFile(filename, printWriter);
+                String filepath = args[0];
+                boolean success = sendFile(filepath, printWriter);
                 printWriter.println(success);
                 printWriter.flush();
                 //TODO: have client read file contents (?)
@@ -241,8 +240,7 @@ public class Server {
                 String[] messageParts = fileContent.split(",");
                 String messageContent = messageParts[2];
 
-                String messageToCheck = message.substring(5);
-                if (!messageContent.equals(messageToCheck)) {
+                if (!messageContent.equals(message)) {
                     pw.println(fileContent);
                 }
             }
