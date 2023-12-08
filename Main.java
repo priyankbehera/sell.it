@@ -59,7 +59,7 @@ public class Main {
                 });
 
                 // Listens for successful login
-                loginPanel.getContinueButton().addActionListener(e -> {
+               loginPanel.getContinueButton().addActionListener(e -> {
                     System.out.println("Here");
                     boolean[] isLoggedIn;
                     String email = loginPanel.getEmail();
