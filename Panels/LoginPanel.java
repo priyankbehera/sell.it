@@ -31,12 +31,12 @@ public class LoginPanel extends JPanel {
         add(passwordField);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(10, 160, 125, 25);
+        continueButton.setBounds(10, 80, 125, 25);
         add(continueButton);
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(10, 130, 300, 25);
+        successMessage.setBounds(10, 110, 300, 25);
         add(successMessage);
     }
 

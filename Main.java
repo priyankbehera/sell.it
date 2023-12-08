@@ -60,25 +60,27 @@ public class Main {
 
                 // Listens for successful login
                loginPanel.getContinueButton().addActionListener(e -> {
-                    System.out.println("Here");
                     boolean[] isLoggedIn;
                     String email = loginPanel.getEmail();
                     String password = String.valueOf(loginPanel.getPassword());
-                    System.out.println("Email: " + email);
-                    System.out.println("Password: " + password);
 
-                    // Sends login credentials to server
-                    String request = "login," + email + "," + password;
-                    isLoggedIn = loginRequest(request, pw, br);
-                    System.out.println("Is logged in: " + isLoggedIn[0]);
-                    if (isLoggedIn[0]) {
-                        boolean ifSeller = isLoggedIn[1];
-                        HomePanel homePanel = new HomePanel(email, ifSeller, pw, br);
-                        mainframe.setContentPane(homePanel);
-                        mainframe.revalidate();
-                        mainframe.repaint();
-                    } else {
-                        loginPanel.getSuccessMessage().setText("Incorrect email or password.");
+                    if (!email.isEmpty() && !password.isEmpty()) {
+                        System.out.println("Email: " + email);
+                        System.out.println("Password: " + password);
+
+                        // Sends login credentials to server
+                        String request = "login," + email + "," + password;
+                        isLoggedIn = loginRequest(request, pw, br);
+                        System.out.println("Is logged in: " + isLoggedIn[0]);
+                        if (isLoggedIn[0]) {
+                            boolean ifSeller = isLoggedIn[1];
+                            HomePanel homePanel = new HomePanel(email, ifSeller, pw, br);
+                            mainframe.setContentPane(homePanel);
+                            mainframe.revalidate();
+                            mainframe.repaint();
+                        } else {
+                            loginPanel.getSuccessMessage().setText("Incorrect email or password.");
+                        }
                     }
                 });
 
@@ -103,7 +105,7 @@ public class Main {
 
                     // display results
                     if (success) {
-                        // send back to login
+                        // send back to log in
                         JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                         mainframe.setContentPane(loginPanel);
                     } else {
