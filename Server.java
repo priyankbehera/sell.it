@@ -203,7 +203,13 @@ public class Server {
                 printWriter.println(success);
                 printWriter.flush();
             }
-
+            case "setKeyword" -> {
+                String user = args[0];
+                String keyword = args[1];
+                boolean success = setCensoredKeyword(user, keyword);
+                printWriter.println(success);
+                printWriter.flush();
+            }
         }
     }
 
@@ -718,6 +724,7 @@ public class Server {
         return true;
     }
 
+    // Writes the user's censored keyword to a file
     public static synchronized boolean setCensoredKeyword(String user, String keyword) {
         String filename = "keywords_data/" + user + "_censoredKeywords.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
@@ -728,6 +735,7 @@ public class Server {
         return true;
     }
 
+    // Retrieves the user's censored keywords from a file
     public static ArrayList<String> getCensoredKeywords(String user) {
         ArrayList<String> censoredKeywords = new ArrayList<String>();
         String filename = "keywords_data/" + user + "_censoredKeywords.csv";

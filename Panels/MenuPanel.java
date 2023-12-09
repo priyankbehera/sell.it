@@ -124,17 +124,29 @@ public class MenuPanel extends JPanel {
 
     private void showMenuPopup(Component component, PrintWriter pw, BufferedReader br) {
         JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem blockUserItem = new JMenuItem("Block User");
-        JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
-        JMenuItem deleteAccount = new JMenuItem("Delete Account");
-        JMenuItem editAccount = new JMenuItem("Edit Account");
+
         JMenuItem censorKeywords = new JMenuItem("Censor keywords");
+        popupMenu.add(censorKeywords);
+
+        JMenuItem blockUserItem = new JMenuItem("Block User");
+        popupMenu.add(blockUserItem);
+
+        JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
+        popupMenu.add(invisibleItem);
+
+        JMenuItem deleteAccount = new JMenuItem("Delete Account");
+        popupMenu.add(deleteAccount);
+
+        JMenuItem editAccount = new JMenuItem("Edit Account");
+        popupMenu.add(editAccount);
 
         censorKeywords.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String keyword = JOptionPane.showInputDialog(null, "Please enter the keyword that you would like to filter from all future conversations:", "Censor a Keyword", JOptionPane.WARNING_MESSAGE);
-                System.out.println("hello");
+                if (setCensoredKeyword(keyword, currentUser, br, pw)) {
+                    JOptionPane.showMessageDialog(null, "Keyword " + keyword + " successfully censored!", "Censor a Keyword", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
         });
 
@@ -254,10 +266,7 @@ public class MenuPanel extends JPanel {
             }
         });
 
-        popupMenu.add(blockUserItem);
-        popupMenu.add(invisibleItem);
-        popupMenu.add(deleteAccount);
-        popupMenu.add(editAccount);
+        // Make the popup menu visible
         popupMenu.show(component, 0, component.getHeight());
     }
 
@@ -282,6 +291,27 @@ public class MenuPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Please select a user to block.");
         }
+    }
+
+    private boolean setCensoredKeyword(String keyword, String user, BufferedReader br, PrintWriter pw) {
+        String request = "setKeyword," + user + "," + keyword;
+        boolean success = false;
+        try {
+            pw.println(request);
+            pw.flush();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
+                }
+            }
+            success = Boolean.parseBoolean(line);
+
+        } catch (IOException e) {
+            return false;
+        }
+        return success;
     }
 
     private boolean requestBlock(String blocker, String toBlock, BufferedReader br, PrintWriter pw) {
