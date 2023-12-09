@@ -143,9 +143,9 @@ public class MenuPanel extends JPanel {
         censorKeywords.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String keyword = JOptionPane.showInputDialog(null, "Please enter the keyword that you would like to filter from all future conversations:", "Censor a Keyword", JOptionPane.WARNING_MESSAGE);
+                String keyword = JOptionPane.showInputDialog(null, "Please enter a keyword:", "Censor a Keyword", JOptionPane.WARNING_MESSAGE);
                 if (setCensoredKeyword(keyword, currentUser, br, pw)) {
-                    JOptionPane.showMessageDialog(null, "Keyword " + keyword + " successfully censored!", "Censor a Keyword", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Keyword " + '"' + keyword + '"' + " successfully censored.", "Censor a Keyword", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         });
@@ -294,24 +294,28 @@ public class MenuPanel extends JPanel {
     }
 
     private boolean setCensoredKeyword(String keyword, String user, BufferedReader br, PrintWriter pw) {
-        String request = "setKeyword," + user + "," + keyword;
-        boolean success = false;
-        try {
-            pw.println(request);
-            pw.flush();
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    break;
-                }
-            }
-            success = Boolean.parseBoolean(line);
-
-        } catch (IOException e) {
+        if (keyword == null) {
             return false;
+        } else {
+            String request = "setKeyword," + user + "," + keyword;
+            boolean success = false;
+            try {
+                pw.println(request);
+                pw.flush();
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.isEmpty()) {
+                        break;
+                    }
+                }
+                success = Boolean.parseBoolean(line);
+
+            } catch (IOException e) {
+                return false;
+            }
+            return success;
         }
-        return success;
     }
 
     private boolean requestBlock(String blocker, String toBlock, BufferedReader br, PrintWriter pw) {
