@@ -14,6 +14,7 @@ public class CreateAccPanel extends JPanel {
     JPasswordField passwordField;
     JComboBox<String> accountType;
     JButton continueButton;
+    JButton returnLoginButton;
     JLabel successMessage;
 
     public CreateAccPanel(Color backgroundColor) {
@@ -66,6 +67,10 @@ public class CreateAccPanel extends JPanel {
         continueButton.setBounds(392, 426, 120, 24);
         add(continueButton);
 
+        returnLoginButton = new JButton("Return to Login");
+        returnLoginButton.setBounds(432, 592, 160, 24);
+        add(returnLoginButton);
+
         // Success message
         successMessage = new JLabel("");
         successMessage.setBounds(392, 456, 300, 24);
@@ -87,6 +92,10 @@ public class CreateAccPanel extends JPanel {
 
     public JButton getContinueButton() {
         return this.continueButton;
+    }
+
+    public JButton getReturnLoginButton() {
+        return this.returnLoginButton;
     }
 
     public JLabel getSuccessMessage() {
