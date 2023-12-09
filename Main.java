@@ -17,8 +17,8 @@ public class Main {
 
     public static void main(String[] args) {
         // Connects to server
-        try (Socket socket = new Socket(hostName, portNumber)) {
-            System.out.println("Connected to server.");
+        try {
+            Socket socket = new Socket(hostName, portNumber);
 
             // input & output for server
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), false);
@@ -98,7 +98,8 @@ public class Main {
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
                             // Pop up window for seller to add a store
-                            String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                            String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+                            String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                             accountType = 1;
                         }
 
