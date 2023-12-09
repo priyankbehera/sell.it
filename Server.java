@@ -156,7 +156,7 @@ public class Server {
     }
 
     public static synchronized boolean addStore(String seller, String storeName, String description) {
-        String filename = "seller_data/stores" + seller + "_Stores.csv";
+        String filename = "seller_data/stores/" + seller + "_Stores.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
             pw.println(storeName + "," + description);
         } catch (IOException e) {
@@ -185,6 +185,7 @@ public class Server {
             pw.println("end");
             pw.println("end");
             pw.flush();
+            pw.println("sent stores");
         } catch (Exception e) {
             return false;
         }
