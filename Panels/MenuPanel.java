@@ -17,25 +17,36 @@ public class MenuPanel extends JPanel {
     private boolean seeAllButtonClicked = false;
     private final Set<String> blockedUsers = new HashSet<>();
     private boolean isVisible = true;
+/*
     private final String blockedUsersFile;
     private final String blockedByUsersFile;
     private ArrayList<String> blockedUsersList;
+*/
     private String currentUser;
-    private final String invisibleUsersFile;
+    // private final String invisibleUsersFile;
     private ArrayList<String> invisibleUsersList;
 
     public JList getMessageList() {
         return messageList;
     }
 
-    public MenuPanel(boolean ifSeller, String currentUser) {
+    //global printwriter
+    private PrintWriter pw;
+    private BufferedReader br;
+    public MenuPanel(boolean ifSeller, String currentUser, PrintWriter pw, BufferedReader br) {
         setLayout(new BorderLayout());
+        this.pw = pw;
+        this.br = br;
+/*
+       pri
 
-        blockedUsersFile = ifSeller ? "blocked_users_seller.txt" : "blocked_users_customer.txt";
-        blockedByUsersFile = ifSeller ? "blocked_by_seller.txt" : "blocked_by_customer.txt";
-        invisibleUsersFile = currentUser + "_invisible_users.txt";
+
+        blockedUsersFile = ifSeller ? "user_info/blocked_users_seller.txt" : "user_info/blocked_users_customer.txt";
+        blockedByUsersFile = ifSeller ? "user_info/blocked_by_seller.txt" : "user_info/blocked_by_customer.txt";
+        invisibleUsersFile = "user_info/" + currentUser + "_invisible_users.txt";
         blockedUsersList = loadBlockedUsers();
         invisibleUsersList = loadInvisibleUsers();
+*/
         this.currentUser = currentUser;
 
         JPanel searchPanel = new JPanel(new FlowLayout());
@@ -115,12 +126,12 @@ public class MenuPanel extends JPanel {
         moreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showMenuPopup(moreButton);
+                showMenuPopup(moreButton, pw ,br);
             }
         });
     }
 
-    private void showMenuPopup(Component component) {
+    private void showMenuPopup(Component component, PrintWriter pw, BufferedReader br) {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem blockUserItem = new JMenuItem("Block User");
         JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
@@ -128,15 +139,14 @@ public class MenuPanel extends JPanel {
         blockUserItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                blockSelectedUser();
+                blockSelectedUser(pw, br);
             }
         });
 
         invisibleItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                changeVisibility();
-                invisibleItem.setText(isVisible ? "Become Invisible" : "Become Visible");
+
             }
         });
 
@@ -146,7 +156,8 @@ public class MenuPanel extends JPanel {
         popupMenu.show(component, 0, component.getHeight());
     }
 
-    private void blockSelectedUser() {
+    private void blockSelectedUser(PrintWriter pw, BufferedReader br) {
+        ArrayList<String> blockedUsers = requestBlockedUsers(currentUser, pw, br);
         String selectedUser = messageList.getSelectedValue();
         if (selectedUser != null) {
             int choice = JOptionPane.showConfirmDialog(
@@ -157,14 +168,8 @@ public class MenuPanel extends JPanel {
             );
 
             if (choice == JOptionPane.YES_OPTION) {
-                if (blockUser(selectedUser)) {
-                    JOptionPane.showMessageDialog(null, selectedUser + " has been blocked.");
-
-                    if (canSendMessage(selectedUser)) {
-
-                    } else {
-                        JOptionPane.showMessageDialog(null, "You cannot send messages to " + selectedUser + " as they have blocked you.");
-                    }
+                if (requestBlock(currentUser, selectedUser, br, pw)) {
+                    JOptionPane.showMessageDialog(null, selectedUser + " has been blocked. Please click 'See All' to refresh the list.");
                 } else {
                     JOptionPane.showMessageDialog(null, "Error blocking user.");
                 }
@@ -172,67 +177,53 @@ public class MenuPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Please select a user to block.");
         }
+
     }
 
-    private boolean canSendMessage(String sender) {
-        return !isUserBlocked(sender, currentUser);
-    }
+    private boolean requestBlock(String blocker, String toBlock, BufferedReader br, PrintWriter pw) {
+        String request = "blockUser," + blocker + "," + toBlock;
+        boolean success = false;
+        try {
+            pw.println(request);
+            pw.flush();
 
-    private boolean isUserBlocked(String userToCheck, String currentUser) {
-        String blockedUsersFilePath = currentUser + "_blocked_users.txt";
-
-        try (BufferedReader blockedUsersReader = new BufferedReader(new FileReader(blockedUsersFilePath))) {
-            String blockedUser;
-            while ((blockedUser = blockedUsersReader.readLine()) != null) {
-                if (blockedUser.equals(userToCheck)) {
-                    return true;
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
                 }
             }
+            success = Boolean.parseBoolean(line);
+
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
-
-        return false;
+        return success;
     }
 
-    private boolean blockUser(String userToBlock) {
-        if (!blockedUsersList.contains(userToBlock)) {
-            blockedUsersList.add(userToBlock);
-            saveBlockedUsers();
-            return true;
-        }
-        return false;
-    }
-
-    private ArrayList<String> loadBlockedUsers() {
-        String blockedUsersFilePath = blockedUsersFile;
+    private ArrayList<String> requestBlockedUsers(String user, PrintWriter pw, BufferedReader br) {
+        String request = "getBlockedUsers," + user;
         ArrayList<String> blockedUsers = new ArrayList<>();
+        try {
+            pw.println(request);
+            pw.flush();
 
-        try (BufferedReader blockedUsersReader = new BufferedReader(new FileReader(blockedUsersFilePath))) {
-            String blockedUser;
-            while ((blockedUser = blockedUsersReader.readLine()) != null) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
+                }
+            }
+            String[] blockedUsersArray = line.split(",");
+            for (String blockedUser : blockedUsersArray) {
                 blockedUsers.add(blockedUser);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+        } catch (IOException e) {
+            return null;
+        }
         return blockedUsers;
     }
-
-    private void saveBlockedUsers() {
-        String blockedUsersFilePath = blockedUsersFile;
-
-        try (BufferedWriter blockedUsersWriter = new BufferedWriter(new FileWriter(blockedUsersFilePath))) {
-            for (String blockedUser : blockedUsersList) {
-                blockedUsersWriter.write(blockedUser);
-                blockedUsersWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
@@ -261,33 +252,50 @@ public class MenuPanel extends JPanel {
     }
 
     private String[] getList(boolean ifSeller) {
-        ArrayList<String> menuList = new ArrayList<>();
-        String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename;
-        if (ifSeller) {
-            filename = folderName + "/CustomersList.csv";
-        } else {
-            filename = folderName + "/SellersList.csv";
-        }
-        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+        // send request to server
+        String request = "getUsers," + ifSeller;
+
+        try {
+            pw.println(request);
+            pw.flush();
+
             String line;
-            while ((line = bfr.readLine()) != null) {
-                menuList.add(line);
-            }
-            String[] menuArray = new String[menuList.size()];
-            for (int i = 0; i < menuArray.length; i++) {
-                String customerName = menuList.get(i).split(",")[0];
-                if (!isVisible && isUserBlocked(customerName, currentUser)) {
-                    continue;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
                 }
-                menuArray[i] = customerName;
             }
-            return menuArray;
+            String[] users = line.split(",");
+
+
+            // removes blocked users
+            ArrayList<String> blockedUsers = requestBlockedUsers(currentUser, pw, br);
+            for (int i = 0; i < users.length; i++) {
+                if (blockedUsers.contains(users[i])) {
+                    users[i] = null;
+                }
+            }
+            // remove null users from array
+            ArrayList<String> tempUsers = new ArrayList<>();
+            for (String user : users) {
+                if (user != null) {
+                    tempUsers.add(user);
+                }
+            }
+            users = new String[tempUsers.size()];
+            for (int i = 0; i < users.length; i++) {
+                users[i] = tempUsers.get(i);
+            }
+
+            return users;
+
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error - IOException");
             return null;
         }
+
+
     }
+
 
     private void createJList(String[] people) {
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -297,62 +305,4 @@ public class MenuPanel extends JPanel {
         messageList.setModel(model);
     }
 
-    private void changeVisibility() {
-        isVisible = !isVisible;
-
-        if (!isVisible && !invisibleUsersList.contains(currentUser)) {
-            invisibleUsersList.add(currentUser);
-            saveInvisibleUsers();
-        } else if (isVisible && invisibleUsersList.contains(currentUser)) {
-            invisibleUsersList.remove(currentUser);
-            saveInvisibleUsers();
-        }
-
-        String[] people = getList(true);
-        createJList(people);
-    }
-
-    private ArrayList<String> loadInvisibleUsers() {
-        String invisibleUsersFilePath = invisibleUsersFile;
-        ArrayList<String> invisibleUsers = new ArrayList<>();
-
-        try (BufferedReader invisibleUsersReader = new BufferedReader(new FileReader(invisibleUsersFilePath))) {
-            String invisibleUser;
-            while ((invisibleUser = invisibleUsersReader.readLine()) != null) {
-                invisibleUsers.add(invisibleUser);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return invisibleUsers;
-    }
-
-    private void saveInvisibleUsers() {
-        String invisibleUsersFilePath = invisibleUsersFile;
-
-        try (BufferedWriter invisibleUsersWriter = new BufferedWriter(new FileWriter(invisibleUsersFilePath))) {
-            for (String invisibleUser : invisibleUsersList) {
-                invisibleUsersWriter.write(invisibleUser);
-                invisibleUsersWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-//    public static void main(String[] args) {
-//        SwingUtilities.invokeLater(() -> {
-//            JFrame testFrame = new JFrame("MenuPanel Test");
-//            testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//
-//            MenuPanel menuPanel = new MenuPanel(false);
-//
-//            testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
-//
-//            testFrame.setSize(500, 768);
-//            testFrame.setLocationRelativeTo(null);
-//            testFrame.setVisible(true);
-//        });
-//    }
 }

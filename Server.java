@@ -154,9 +154,70 @@ public class Server {
                 String seller = args[0];
                 boolean success = getStores(seller, printWriter);
             }
+            case "blockUser" -> {
+                System.out.println("Blocking user: " + args[1]);
+                String blocker = args[0]; // person blocking
+                String toBlock = args[1]; //person getting blocked
+
+                boolean success = blockUser(blocker, toBlock);
+                printWriter.println(success);
+                printWriter.flush();
+
+            }
+            case "getBlockedUsers" -> {
+                System.out.println("Getting blocked users");
+                String blocker = args[0];
+                getBlockedUsers(blocker, printWriter);
+            }
+            case "getUsers" -> {
+                boolean ifSeller = Boolean.parseBoolean(args[0]);
+                getList(ifSeller, printWriter);
+            }
+
         }
     }
 
+    public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
+        ArrayList<String> menuList = new ArrayList<>();
+        String folderName = ifSeller ? "customer_data" : "seller_data";
+        String filename;
+        if (ifSeller) {
+            filename = folderName + "/CustomersList.csv";
+        } else {
+            filename = folderName + "/SellersList.csv";
+        }
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                menuList.add(line);
+            }
+            String[] menuArray = new String[menuList.size()];
+            for (int i = 0; i < menuArray.length; i++) {
+                String customerName = menuList.get(i).split(",")[0];
+/*                if (!isVisible && isUserBlocked(customerName, currentUser)) {
+                    continue;
+                }*/
+                menuArray[i] = customerName;
+            }
+
+            // send to client
+            try {
+                String list = "";
+                for (String s : menuArray) {
+                    list += s + ",";
+                }
+                list = list.substring(0, list.length() - 1); //removes trailing comma
+                pw.println(list);
+                pw.flush();
+            } catch (Exception e) {
+                return false;
+            }
+
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean addStore(String seller, String storeName, String description) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
@@ -167,6 +228,56 @@ public class Server {
         return true;
     }
 
+    // makes sure user is not blocked before sending message
+    // returns false if blocked, true if not
+    public static synchronized boolean checkBlocked(String toCheck, String sender) {
+
+        String filename = "block_data/blocked/" + toCheck + "_Blocked.csv";
+        ArrayList<String> blockedUsers = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                blockedUsers.add(line);
+            }
+        } catch (IOException e) {
+            return true;
+        }
+        for (String blockedUser : blockedUsers) {
+            if (blockedUser.equals(sender)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public static synchronized boolean getBlockedUsers(String blocker, PrintWriter pw) {
+        String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
+        // ensure file exists
+
+        ArrayList<String> blockedUsers = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                blockedUsers.add(line);
+            }
+        } catch (IOException e) {
+            pw.println("No blocked users");
+            pw.flush();
+            return true;
+        }
+        // write to client
+        String blocked = "";
+        try {
+            for (String blockedUser : blockedUsers) {
+                blocked += blockedUser + ",";
+            }
+            blocked =  blocked.substring(0, blocked.length() - 1); //removes trailing comma
+            pw.println(blocked);
+            pw.flush();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean getStores(String seller, PrintWriter pw) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         ArrayList<String> stores = new ArrayList<>();
@@ -321,17 +432,24 @@ public class Server {
         String folderName = "conversation_data";
         String filename = folderName + "/" + seller + "_" + customer + "_Messages.csv";
         String sender;
+        boolean success;
         if (!ifSeller) {
             Seller existingSeller = new Seller(seller);
-            messageCustomer(seller, customer, message);
+            success = messageCustomer(seller, customer, message);
         } else {
             Customer existingCustomer = new Customer(customer);
-            messageSeller(seller, customer, message);
+            success = messageSeller(seller, customer, message);
         }
-        return true;
+        return success;
     }
 
-    public static synchronized void messageSeller(String seller, String customer, String message) {
+    public static synchronized boolean messageSeller(String seller, String customer, String message) {
+
+        // wont send message if receipient blocked sender
+        boolean blocked = checkBlocked(customer, seller);
+        if (!blocked) {
+            return false;
+        }
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
         LocalDateTime now = LocalDateTime.now();
@@ -344,7 +462,9 @@ public class Server {
             pw.println(message1.toString());
         } catch (IOException e) {
             System.out.println("That does not work!");
+            return false;
         }
+        return true;
     }
 
     // manages each client thread
@@ -392,7 +512,16 @@ public class Server {
             return false;
         }
     }
-
+    // blocks user
+    public static synchronized boolean blockUser(String blocker, String toBlock) {
+        String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+            pw.println(toBlock);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
     // sends arraylist of messages to client
     public static synchronized ArrayList<String> getConversationHistory(String seller, String customer, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
@@ -448,7 +577,13 @@ public class Server {
         return messageList;
     }
 
-    public static synchronized void messageCustomer(String seller, String customer, String message) {
+    public static synchronized boolean messageCustomer(String seller, String customer, String message) {
+
+        // wont send message if receipient blocked sender
+        boolean blocked = checkBlocked(customer, seller);
+        if (!blocked) {
+            return false;
+        }
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
         LocalDateTime now = LocalDateTime.now();
         String currentDateTime = dtf.format(now);
@@ -460,8 +595,9 @@ public class Server {
         try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
             pw.println(message1);
         } catch (IOException e) {
-            System.out.println("That does not work!");
+            return false;
         }
+        return true;
     }
 
     private static class clientManager implements Runnable {
