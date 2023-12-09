@@ -1,6 +1,4 @@
-import Objects.Customer;
 import Panels.*;
-import Objects.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,8 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         // Connects to server
-        try {
-            Socket socket = new Socket(hostName, portNumber);
+        try (Socket socket = new Socket(hostName, portNumber)) {
             System.out.println("Connected to server.");
 
             // input & output for server
@@ -97,12 +94,10 @@ public class Main {
                         int accountType = -1;
                         // Creates user accounts
                         if (userType.equals("Customer")) {  // Create customer account
-                            Customer customer = new Customer(createAccPanel.getEmail(), createAccPanel.getPassword());
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
                             // Pop up window for seller to add a store
                             String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
-                            Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
                             accountType = 1;
                         }
 
@@ -144,10 +139,9 @@ public class Main {
     }
 
     public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
-        PrintWriter pw = printWriter;
         // send request to server
-        pw.println(request);
-        pw.flush();
+        printWriter.println(request);
+        printWriter.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
@@ -158,28 +152,27 @@ public class Main {
                     break;
                 }
             }
-            String[] lineSplit = line.split(",");
-            boolean[] booleanSplit = new boolean[lineSplit.length];
-            for (int i = 0; i < lineSplit.length; i++) {
-                booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
+            if (line != null) {
+                String[] lineSplit = line.split(",");
+                boolean[] booleanSplit = new boolean[lineSplit.length];
+                for (int i = 0; i < lineSplit.length; i++) {
+                    booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
+                }
+                System.out.println("Receive response: " + line);
+                System.out.println(line);
+                return booleanSplit;
             }
-            System.out.println("Receive response: " + line);
-            System.out.println(line);
-
-            return booleanSplit;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        boolean[] empty = {false};
-        return empty;
+        return new boolean[]{false};
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
-        PrintWriter pw = printWriter;
 
         // send request to server
-        pw.println(request);
-        pw.flush();
+        printWriter.println(request);
+        printWriter.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
