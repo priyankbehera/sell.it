@@ -191,6 +191,13 @@ public class Server {
                 printWriter.flush();
 
             }
+            case "searchUser" -> {
+                String name = args[0];
+                boolean ifSeller = Boolean.parseBoolean(args[1]);
+                boolean success = searchUser(name, ifSeller);
+                printWriter.println(success);
+                printWriter.flush();
+            }
 
         }
     }
@@ -318,6 +325,34 @@ public class Server {
         }
 
         return true;
+    }
+
+    public static synchronized boolean searchUser(String name, boolean ifSeller) {
+        ArrayList<String> list = new ArrayList<>();
+        boolean isPresent = false;
+        String folderName = ifSeller ? "customer_data" : "seller_data";
+        String filename = folderName + "/CustomersList.csv";
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                list.add(line);
+            }
+            String[] usernames = new String[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                String username = list.get(i).split(",")[0];
+                usernames[i] = username;
+            }
+            for (String username : usernames) {
+                //TODO: add invisible users list
+                if (username.equals(name)) {
+                    isPresent = true;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error - IOException");
+        }
+        return isPresent;
     }
     public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
         ArrayList<String> menuList = new ArrayList<>();
