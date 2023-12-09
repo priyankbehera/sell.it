@@ -17,11 +17,11 @@ public class MenuPanel extends JPanel {
     private boolean seeAllButtonClicked = false;
     private final Set<String> blockedUsers = new HashSet<>();
     private boolean isVisible = true;
-/*
-    private final String blockedUsersFile;
-    private final String blockedByUsersFile;
-    private ArrayList<String> blockedUsersList;
-*/
+    /*
+        private final String blockedUsersFile;
+        private final String blockedByUsersFile;
+        private ArrayList<String> blockedUsersList;
+    */
     private String currentUser;
     // private final String invisibleUsersFile;
     private ArrayList<String> invisibleUsersList;
@@ -33,6 +33,7 @@ public class MenuPanel extends JPanel {
     //global printwriter
     private PrintWriter pw;
     private BufferedReader br;
+
     public MenuPanel(boolean ifSeller, String currentUser, PrintWriter pw, BufferedReader br) {
         setLayout(new BorderLayout());
         this.pw = pw;
@@ -116,7 +117,7 @@ public class MenuPanel extends JPanel {
         moreButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showMenuPopup(moreButton, pw ,br);
+                showMenuPopup(moreButton, pw, br);
             }
         });
     }
@@ -136,7 +137,7 @@ public class MenuPanel extends JPanel {
         invisibleItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                // @TODO Add functionality
             }
         });
 
@@ -214,6 +215,7 @@ public class MenuPanel extends JPanel {
         }
         return blockedUsers;
     }
+
     private boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
