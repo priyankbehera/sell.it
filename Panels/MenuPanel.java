@@ -127,6 +127,73 @@ public class MenuPanel extends JPanel {
         JMenuItem blockUserItem = new JMenuItem("Block User");
         JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
         JMenuItem deleteAccount = new JMenuItem("Delete Account");
+        JMenuItem editAccount = new JMenuItem("Edit Account");
+
+        editAccount.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
+                int choice = JOptionPane.showConfirmDialog(
+                        null,
+                        "Are you sure you want to edit your account?\n" +
+                                "This will only have an affect on future messages. Current messages will be lost.\nNOTE: If only password is changed, all data will remain.",
+                        "Confirm Delete Account",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    // prompt user for new username
+                    String newUsername = JOptionPane.showInputDialog("Enter new username:");
+                    if (newUsername == null) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid username.");
+                        return;
+                    }
+                    if (newUsername.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid username.");
+                        return;
+                    }
+                    if (newUsername.contains(",")) {
+                        JOptionPane.showMessageDialog(null, "Username cannot contain commas.");
+                        return;
+                    }
+                    String newPassword = JOptionPane.showInputDialog("Enter new password:");
+                    if (newPassword == null) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid password.");
+                        return;
+                    }
+                    if (newPassword.isEmpty()) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid password.");
+                        return;
+                    }
+                    if (newPassword.contains(",")) {
+                        JOptionPane.showMessageDialog(null, "Password cannot contain commas.");
+                        return;
+                    }
+                    String request = "editAccount," + currentUser +  "," + newUsername + "," + newPassword;
+                    try {
+                        pw.println(request);
+                        pw.flush();
+
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            if (!line.isEmpty()) {
+                                break;
+                            }
+                        }
+                        boolean success = Boolean.parseBoolean(line);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Account edited successfully.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error editing account.");
+                        }
+
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(null, "Error editing account.");
+                    }
+                }
+            }
+
+        });
         blockUserItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -181,6 +248,7 @@ public class MenuPanel extends JPanel {
         popupMenu.add(blockUserItem);
         popupMenu.add(invisibleItem);
         popupMenu.add(deleteAccount);
+        popupMenu.add(editAccount);
         popupMenu.show(component, 0, component.getHeight());
     }
 

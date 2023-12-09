@@ -186,10 +186,84 @@ public class Server {
                 printWriter.flush();
 
             }
+            case "editAccount" -> {
+                String email = args[0];
+                String newEmail = args[1];
+                String newPassword = args[2];
+                boolean accountType = isUser(email);
+                boolean success = editAccount(accountType, email, newEmail, newPassword);
+                printWriter.println(success);
+                printWriter.flush();
+
+            }
 
         }
     }
 
+    public static synchronized boolean editAccount(boolean accountType, String email, String newEmail, String newPassword) {
+        String filename1;
+        String filename2;
+
+        if (accountType) {
+            filename1 = "seller_data/SellersList.csv";
+            filename2 = "seller_data/sellerNames.txt";
+        } else {
+            filename1 = "customer_data/CustomersList.csv";
+            filename2 = "customer_data/customerNames.txt";
+        }
+        //removes from file
+
+        // copys file contents
+        ArrayList<String> list = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename1))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                list.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename1, false))) {
+            for (String fileContent : list) {
+                String[] lineArray = fileContent.split(",");
+                String emailToCheck = lineArray[0];
+                if (!emailToCheck.equals(email)) {
+                    pw.println(fileContent);
+                } else  {
+                    pw.println(newEmail + ",false,null");
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        //same thingfor other file
+        ArrayList<String> list2 = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename2))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                list2.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename2, false))) {
+            for (String fileContent : list2) {
+                String[] lineArray = fileContent.split("-");
+                String emailToCheck = lineArray[0];
+                if (!emailToCheck.equals(email)) {
+                    pw.println(fileContent);
+                } else {
+                    pw.println(newEmail + "-" + newPassword);
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean deleteAccount(boolean accountType, String email) {
         String filename1;
         String filename2;
