@@ -40,6 +40,7 @@ public class Main {
                 // Sets  frame
                 mainframe.setSize(1024, 768);
                 mainframe.setLocationRelativeTo(null);
+                mainframe.setResizable(false);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Create an instance of panels
