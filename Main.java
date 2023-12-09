@@ -82,7 +82,6 @@ public class Main {
                 welcomePanel.getCreateAccButton().addActionListener(e -> {
                     mainframe.setContentPane(createAccPanel);
                     mainframe.revalidate();
-                    mainframe.repaint();
                 });
 
                 // Listens for "Continue" button on Panels.CreateAccPanel
