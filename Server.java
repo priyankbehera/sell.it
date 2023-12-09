@@ -3,6 +3,7 @@ import Objects.Message;
 import Objects.Seller;
 
 import javax.swing.*;
+import java.lang.reflect.Array;
 import java.net.*;
 import java.io.*;
 import java.time.LocalDateTime;
@@ -73,11 +74,15 @@ public class Server {
                 printWriter.flush();
             }
             case "getConversationHistory" -> {
+                String censoredKey = "fuck";
                 boolean ifSeller = Boolean.parseBoolean(args[2]);
                 String seller = args[0];
                 String customer = args[1];
                 ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
                 for (String message : messageList) {
+                    if (message.contains(censoredKey)) {
+                        message = message.replace("fuck", "****");
+                    }
                     printWriter.println(message);
                     printWriter.flush();
                 }
@@ -346,6 +351,11 @@ public class Server {
         }
         return true;
     }
+
+    public static synchronized ArrayList<String> getCensoredKeywords(ArrayList<String> keyWords) {
+        return new ArrayList<>(keyWords);
+    }
+
     public static synchronized boolean getStores(String seller, PrintWriter pw) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         ArrayList<String> stores = new ArrayList<>();

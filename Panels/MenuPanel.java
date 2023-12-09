@@ -205,7 +205,6 @@ public class MenuPanel extends JPanel {
         } else {
             JOptionPane.showMessageDialog(null, "Please select a user to block.");
         }
-
     }
 
     private boolean requestBlock(String blocker, String toBlock, BufferedReader br, PrintWriter pw) {
