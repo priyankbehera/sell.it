@@ -137,9 +137,59 @@ public class Server {
                 printWriter.println(success);
                 printWriter.flush();
             }
+            case "addStore" -> {
+                String seller = args[0];
+                String storeName = args[1];
+                String description = args[2];
+
+                boolean success = addStore(seller, storeName, description);
+                printWriter.println(success);
+                printWriter.flush();
+
+            }
+            case "getStores" -> {
+                System.out.println("Getting stores");
+                String seller = args[0];
+                boolean success = getStores(seller, printWriter);
+            }
         }
     }
 
+    public static synchronized boolean addStore(String seller, String storeName, String description) {
+        String filename = "seller_data/stores" + seller + "_Stores.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+            pw.println(storeName + "," + description);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static synchronized boolean getStores(String seller, PrintWriter pw) {
+        String filename = "seller_data/stores/" + seller + "_Stores.csv";
+        ArrayList<String> stores = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                stores.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        try {
+            for (String store : stores) {
+                pw.println(store);
+                pw.flush();
+            }
+            pw.println("end");
+            pw.println("end");
+            pw.flush();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
         ArrayList<String> list = new ArrayList<>();
         String contents = "";
@@ -164,8 +214,6 @@ public class Server {
         }
         try (OutputStream outputStream = new FileOutputStream(selectedFile)) {
             outputStream.write(contents.getBytes());
-            JOptionPane.showMessageDialog(null, "File exported successfully",
-                    "Error", JOptionPane.INFORMATION_MESSAGE );
             return true;
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "File could not be exported",
@@ -303,7 +351,7 @@ public class Server {
     public static synchronized boolean createAccount(int accountType, String email, String password) {
         // Sets filename based on account type
         boolean isUser = isUser(email);
-        if (isUser) {
+        if (!isUser) {
             String filenameTxt;
             String filenameCsv;
             if (accountType == 0) {
