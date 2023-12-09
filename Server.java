@@ -74,18 +74,39 @@ public class Server {
                 printWriter.flush();
             }
             case "getConversationHistory" -> {
-                String censoredKey = "Winnie the Pooh";
                 boolean ifSeller = Boolean.parseBoolean(args[2]);
                 String seller = args[0];
                 String customer = args[1];
                 ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
-                for (String message : messageList) {
-                    if (message.contains(censoredKey)) {
-                        message = message.replace(censoredKey, "****************");
-                    }
-                    printWriter.println(message);
-                    printWriter.flush();
+                ArrayList<String> censoredKeywords;
+
+                // Checks to see if the user is a seller or a customer and retrieves censored keywords
+                if (ifSeller) {
+                    censoredKeywords = getCensoredKeywords(seller);
+                    System.out.println(seller);
+                } else {
+                    censoredKeywords = getCensoredKeywords(customer);
+                    System.out.println(customer);
                 }
+
+                if (censoredKeywords != null) {
+                    for (String message : messageList) {
+                        for (String censoredKeyword : censoredKeywords) {
+                            System.out.println(censoredKeyword);
+                            if (message.contains(censoredKeyword)) {
+                                message = message.replace(censoredKeyword, "[redacted]");
+                            }
+                        }
+                        printWriter.println(message);
+                        printWriter.flush();
+                    }
+                } else {
+                    for (String message: messageList) {
+                        printWriter.println(message);
+                        printWriter.flush();
+                    }
+                }
+
                 //prints end string to represent end of conversation
                 String endMarker = "!@#%#$!@#%^@#$";
                 printWriter.println(endMarker);
@@ -471,10 +492,6 @@ public class Server {
         return true;
     }
 
-    public static synchronized ArrayList<String> getCensoredKeywords(ArrayList<String> keyWords) {
-        return new ArrayList<>(keyWords);
-    }
-
     public static synchronized boolean getStores(String seller, PrintWriter pw) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         ArrayList<String> stores = new ArrayList<>();
@@ -828,37 +845,37 @@ public class Server {
         return true;
     }
 
-private static class clientManager implements Runnable {
-    private Socket socket;
+    private static class clientManager implements Runnable {
+        private Socket socket;
 
-    public clientManager(Socket socket) {
-        this.socket = socket;
-    }
+        public clientManager(Socket socket) {
+            this.socket = socket;
+        }
 
-    @Override
-    public void run() {
-        while (true) {
-            try {
-                PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
+                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                // Read request from  client
-                String request;
-                while (true) {
-                    request = br.readLine();
-                    if (request != null) {
-                        if (!request.isEmpty()) break;
+                    // Read request from  client
+                    String request;
+                    while (true) {
+                        request = br.readLine();
+                        if (request != null) {
+                            if (!request.isEmpty()) break;
+                        }
                     }
+                    System.out.println("Received request: " + request);
+                    requests(request, printWriter);
+                } catch (IOException e) {
+                    System.out.println(e.getMessage());
                 }
-                System.out.println("Received request: " + request);
-                requests(request, printWriter);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
             }
         }
-    }
 
-}
+    }
 
     private static boolean isUser(String user) {
         ArrayList<String> customers = new ArrayList<>();
