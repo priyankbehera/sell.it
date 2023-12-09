@@ -94,7 +94,7 @@ public class DisplayMessagesPanel extends JPanel {
                 JOptionPane.showMessageDialog(null, scrollPane, seller + "'s stores", JOptionPane.PLAIN_MESSAGE);
 
                 } catch (Exception d) {
-                    //ignore
+                    JOptionPane.showMessageDialog(null, "Seller has no stores, try selecting a different seller.");
                 }
 
             }
