@@ -74,14 +74,14 @@ public class Server {
                 printWriter.flush();
             }
             case "getConversationHistory" -> {
-                String censoredKey = "fuck";
+                String censoredKey = "Winnie the Pooh";
                 boolean ifSeller = Boolean.parseBoolean(args[2]);
                 String seller = args[0];
                 String customer = args[1];
                 ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
                 for (String message : messageList) {
                     if (message.contains(censoredKey)) {
-                        message = message.replace("fuck", "****");
+                        message = message.replace(censoredKey, "****************");
                     }
                     printWriter.println(message);
                     printWriter.flush();
