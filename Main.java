@@ -97,10 +97,35 @@ public class Main {
                         if (userType.equals("Customer")) {  // Create customer account
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
-                            // Pop up window for seller to add a store
-                            String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
-                            String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                             accountType = 1;
+                            //seller  Pop up window for seller to add a store
+                            try {
+                                String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+                                String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                                if (store.equals("") || description.equals("")) {
+                                    JOptionPane.showMessageDialog(null, "Please enter a valid name");
+                                } else {
+                                    String request = "addStore," + email + "," + store + "," + description;
+                                    pw.println(request);
+                                    pw.flush();
+
+                                    String line;
+                                    while ((line = br.readLine()) != null) {
+                                        if (!line.isEmpty()) {
+                                            break;
+                                        }
+                                    }
+                                    boolean response = Boolean.parseBoolean(line);
+                                    if (response) {
+                                        JOptionPane.showMessageDialog(null, "Store added successfully.");
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Error adding store.");
+                                    }
+
+                                }
+                            } catch(Exception d) {
+                                //ignore
+                            }
                         }
 
                         // send request to server
