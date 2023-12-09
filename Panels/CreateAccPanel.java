@@ -82,6 +82,14 @@ public class CreateAccPanel extends JPanel {
         add(successMessage);
     }
 
+    // Method to reset the panel
+    public void resetPanel() {
+        emailText.setText("");
+        passwordField.setText("");
+        accountType.setSelectedIndex(0);
+        successMessage.setText("");
+    }
+
     // Allows other classes to access buttons
     public String getEmail() {
         return this.emailText.getText();

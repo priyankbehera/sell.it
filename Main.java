@@ -137,6 +137,7 @@ public class Main {
                         if (success) {
                             // send back to log in
                             JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            createAccPanel.resetPanel(); // Resets the Create Account panel
                             mainframe.setContentPane(welcomePanel);
                         } else {
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
