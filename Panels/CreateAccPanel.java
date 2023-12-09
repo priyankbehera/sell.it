@@ -1,9 +1,13 @@
 package Panels;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class CreateAccPanel extends JPanel {
     JTextField emailText;
@@ -20,6 +24,18 @@ public class CreateAccPanel extends JPanel {
         setBackground(backgroundColor);
 
         // Create components
+        try {
+            BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
+            ImageIcon logo = new ImageIcon(iconImage);
+            JLabel imageLabel = new JLabel(logo);
+            imageLabel.setBounds(362, 200, 300, 125);
+            add(imageLabel);
+        } catch (IOException e) {
+            JLabel imageLabel = new JLabel("Unable to load image.");
+            imageLabel.setBounds(412, 200, 200, 24);
+            add(imageLabel);
+        }
+
         JLabel userLabel = new JLabel("Email:");
         userLabel.setBounds(392, 336, 80, 24);
         add(userLabel);

@@ -22,7 +22,6 @@ public class LoginPanel extends JPanel {
         setBackground(backgroundColor);
 
         // Create components
-
         try {
             BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
             ImageIcon logo = new ImageIcon(iconImage);
