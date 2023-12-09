@@ -171,10 +171,11 @@ public class Main {
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
 
         // send request to server
-        printWriter.println(request);
-        printWriter.flush();
+        pw.println(request);
+        pw.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
