@@ -37,43 +37,48 @@ public class CreateAccPanel extends JPanel {
             add(imageLabel);
         }
 
+        JLabel loginLabel = new JLabel("Create Account");
+        loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        loginLabel.setBounds(392, 332, 200, 24);
+        add(loginLabel);
+
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(392, 336, 80, 24);
+        emailLabel.setBounds(392, 372, 80, 24);
         add(emailLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(482, 336, 160, 24);
+        emailText.setBounds(482, 372, 160, 24);
         add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(392, 366, 80, 24);
+        passwordLabel.setBounds(392, 402, 80, 24);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(482, 366, 160, 24);
+        passwordField.setBounds(482, 402, 160, 24);
         add(passwordField);
 
         JLabel accountTypeLabel = new JLabel("Account Type:");
-        accountTypeLabel.setBounds(392, 396, 124, 24);
+        accountTypeLabel.setBounds(392, 432, 124, 24);
         add(accountTypeLabel);
 
         // Drop down menu for selecting account type
         accountType = new JComboBox<>(new String[]{"Customer", "Seller"});
         accountType.setSelectedIndex(0); // Sets the default option as Customer
-        accountType.setBounds(492, 396, 124, 24);
+        accountType.setBounds(492, 432, 124, 24);
         add(accountType);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(392, 426, 120, 24);
+        continueButton.setBounds(392, 462, 120, 24);
         add(continueButton);
 
-        returnLoginButton = new JButton("Return to Login");
+        returnLoginButton = new JButton("Return to Sign in");
         returnLoginButton.setBounds(432, 592, 160, 24);
         add(returnLoginButton);
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(392, 456, 320, 24);
+        successMessage.setBounds(392, 492, 320, 24);
         add(successMessage);
     }
 
