@@ -17,8 +17,8 @@ public class Main {
 
     public static void main(String[] args) {
         // Connects to server
-        try (Socket socket = new Socket(hostName, portNumber)) {
-            System.out.println("Connected to server.");
+        try {
+            Socket socket = new Socket(hostName, portNumber);
 
             // input & output for server
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), false);
@@ -97,9 +97,35 @@ public class Main {
                         if (userType.equals("Customer")) {  // Create customer account
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
-                            // Pop up window for seller to add a store
-                            String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                             accountType = 1;
+                            //seller  Pop up window for seller to add a store
+                            try {
+                                String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+                                String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                                if (store.equals("") || description.equals("")) {
+                                    JOptionPane.showMessageDialog(null, "Please enter a valid name");
+                                } else {
+                                    String request = "addStore," + email + "," + store + "," + description;
+                                    pw.println(request);
+                                    pw.flush();
+
+                                    String line;
+                                    while ((line = br.readLine()) != null) {
+                                        if (!line.isEmpty()) {
+                                            break;
+                                        }
+                                    }
+                                    boolean response = Boolean.parseBoolean(line);
+                                    if (response) {
+                                        JOptionPane.showMessageDialog(null, "Store added successfully.");
+                                    } else {
+                                        JOptionPane.showMessageDialog(null, "Error adding store.");
+                                    }
+
+                                }
+                            } catch(Exception d) {
+                                //ignore
+                            }
                         }
 
                         // send request to server
@@ -140,9 +166,10 @@ public class Main {
     }
 
     public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
         // send request to server
-        printWriter.println(request);
-        printWriter.flush();
+        pw.println(request);
+        pw.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
@@ -153,27 +180,28 @@ public class Main {
                     break;
                 }
             }
-            if (line != null) {
-                String[] lineSplit = line.split(",");
-                boolean[] booleanSplit = new boolean[lineSplit.length];
-                for (int i = 0; i < lineSplit.length; i++) {
-                    booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
-                }
-                System.out.println("Receive response: " + line);
-                System.out.println(line);
-                return booleanSplit;
+            String[] lineSplit = line.split(",");
+            boolean[] booleanSplit = new boolean[lineSplit.length];
+            for (int i = 0; i < lineSplit.length; i++) {
+                booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
             }
+            System.out.println("Receive response: " + line);
+            System.out.println(line);
+
+            return booleanSplit;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return new boolean[]{false};
+        boolean[] empty = {false};
+        return empty;
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
 
         // send request to server
-        printWriter.println(request);
-        printWriter.flush();
+        pw.println(request);
+        pw.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server

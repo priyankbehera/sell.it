@@ -37,9 +37,9 @@ public class CreateAccPanel extends JPanel {
             add(imageLabel);
         }
 
-        JLabel userLabel = new JLabel("Email:");
-        userLabel.setBounds(392, 336, 80, 24);
-        add(userLabel);
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(392, 336, 80, 24);
+        add(emailLabel);
 
         emailText = new JTextField(20);
         emailText.setBounds(482, 336, 160, 24);

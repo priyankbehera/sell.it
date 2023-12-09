@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
@@ -15,6 +16,8 @@ public class DisplayMessagesPanel extends JPanel {
     private JButton moreButton;
     private JButton exportButton;
     private JButton importButton;
+    private JButton viewStoresButton;
+    private JButton addStoreButton;
     private String seller;
     private String customer;
     private boolean ifSeller;
@@ -38,6 +41,14 @@ public class DisplayMessagesPanel extends JPanel {
         JButton exportButton = new JButton("Export");
         JButton importButton = new JButton("Import");
 
+        viewStoresButton = new JButton("View Stores");
+        addStoreButton = new JButton("Add Store");
+        if (ifSeller) {
+            buttonPanel.add(addStoreButton);
+        } else {
+            buttonPanel.add(viewStoresButton);
+        }
+
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(importButton);
@@ -46,6 +57,81 @@ public class DisplayMessagesPanel extends JPanel {
         add(buttonPanel, BorderLayout.NORTH);
         add(displayMessages, BorderLayout.CENTER);
 
+        // view seller_data.stores action listener
+        viewStoresButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    String request = "getStores," + seller;
+                    pw.println(request);
+                    pw.flush();
+                ArrayList<String> storeList = new ArrayList<>();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.equals("end")) {
+                        break;
+                    } else {
+                        storeList.add(line);
+                    }
+                }
+                // turn arraylist into list of formatted strings
+                String[] storeList1 = new String[storeList.size()];
+                for (int i = 0; i < storeList.size(); i++) {
+                    String[] store = storeList.get(i).split(",");
+                    storeList1[i] =  store[0] + "\n" + ": " + store[1];
+
+                }
+                // display list of stores
+                JList<String> storeJList = new JList<>(storeList1);
+                JScrollPane scrollPane = new JScrollPane(storeJList);
+                scrollPane.setPreferredSize(new Dimension(500, 400));
+                // make the text bigger
+                Font font = new Font("Monospace", Font.BOLD, 15);
+                storeJList.setFont(font);
+
+                JOptionPane.showMessageDialog(null, scrollPane, seller + "'s stores", JOptionPane.PLAIN_MESSAGE);
+
+                } catch (Exception d) {
+                    //ignore
+                }
+
+            }
+        });
+
+        // add store action listener
+        addStoreButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // popup for store name and description
+                try {
+                    String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+                    String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                    if (store.equals("") || description.equals("")) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid name");
+                    } else {
+                        String request = "addStore," + seller + "," + store + "," + description;
+                        pw.println(request);
+                        pw.flush();
+
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            if (!line.isEmpty()) {
+                                break;
+                            }
+                        }
+                        boolean response = Boolean.parseBoolean(line);
+                        if (response) {
+                            JOptionPane.showMessageDialog(null, "Store added successfully.");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error adding store.");
+                        }
+
+                    }
+                } catch(Exception d) {
+                    //ignore
+                }
+            }
+        });
         // edit button action listener logic
         editButton.addActionListener(new ActionListener() {
             @Override
