@@ -141,9 +141,10 @@ public class Main {
     }
 
     public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
         // send request to server
-        printWriter.println(request);
-        printWriter.flush();
+        pw.println(request);
+        pw.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
@@ -154,27 +155,28 @@ public class Main {
                     break;
                 }
             }
-            if (line != null) {
-                String[] lineSplit = line.split(",");
-                boolean[] booleanSplit = new boolean[lineSplit.length];
-                for (int i = 0; i < lineSplit.length; i++) {
-                    booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
-                }
-                System.out.println("Receive response: " + line);
-                System.out.println(line);
-                return booleanSplit;
+            String[] lineSplit = line.split(",");
+            boolean[] booleanSplit = new boolean[lineSplit.length];
+            for (int i = 0; i < lineSplit.length; i++) {
+                booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
             }
+            System.out.println("Receive response: " + line);
+            System.out.println(line);
+
+            return booleanSplit;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return new boolean[]{false};
+        boolean[] empty = {false};
+        return empty;
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
+        PrintWriter pw = printWriter;
 
         // send request to server
-        printWriter.println(request);
-        printWriter.flush();
+        pw.println(request);
+        pw.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server

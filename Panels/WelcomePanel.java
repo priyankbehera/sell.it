@@ -34,37 +34,42 @@ public class WelcomePanel extends JPanel {
             add(imageLabel);
         }
 
-        JLabel userLabel = new JLabel("Email:");
-        userLabel.setBounds(392, 342, 80, 24);
-        add(userLabel);
+        JLabel loginLabel = new JLabel("Sign in");
+        loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        loginLabel.setBounds(392, 342, 100, 24);
+        add(loginLabel);
+
+        JLabel emailLabel = new JLabel("Email:");
+        emailLabel.setBounds(392, 372, 80, 24);
+        add(emailLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(482, 342, 160, 24);
+        emailText.setBounds(482, 372, 160, 24);
         add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(392, 372, 80, 24);
+        passwordLabel.setBounds(392, 402, 80, 24);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(482, 372, 160, 24);
+        passwordField.setBounds(482, 402, 160, 24);
         add(passwordField);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(392, 402, 120, 24);
+        continueButton.setBounds(392, 432, 120, 24);
         add(continueButton);
 
         JLabel messageLabel = new JLabel("Or if you are a new user, please create an account.");
-        messageLabel.setBounds(367, 562, 290, 24);
+        messageLabel.setBounds(367, 592, 290, 24);
         add(messageLabel);
 
         createAccButton = new JButton("Create Account");
-        createAccButton.setBounds(432, 592, 160, 24);
+        createAccButton.setBounds(432, 622, 160, 24);
         add(createAccButton);
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(392, 432, 300, 24);
+        successMessage.setBounds(392, 462, 300, 24);
         add(successMessage);
     }
 
