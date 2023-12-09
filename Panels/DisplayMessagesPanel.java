@@ -349,6 +349,16 @@ public class DisplayMessagesPanel extends JPanel {
                 }
 
             }
+            // switch ¶ back to commas
+            for (int i = 0; i < messageList.size(); i++) {
+                String s = messageList.get(i);
+                for (int j = 0; j < s.length(); j++) {
+                    if (s.charAt(j) == (char) 182) {
+                        s = s.substring(0, j) + "," + s.substring(j + 1);
+                    }
+                }
+                messageList.set(i, s);
+            }
             for (String s : messageList) {
                 conversationArea.append(s + "\n");
             }
@@ -365,6 +375,12 @@ public class DisplayMessagesPanel extends JPanel {
         if (message.equals("")) {
             JOptionPane.showMessageDialog(null, "Please enter a message.");
             return;
+        }
+        for (int i = 0; i < message.length(); i++) {
+            // if comma, replace with ascii code 182 (¶)
+            if (message.charAt(i) == ',') {
+                message = message.substring(0, i) + (char) 182 + message.substring(i + 1);
+            }
         }
         String request = "sendMessage," + seller + "," + customer + "," + ifSeller + "," + message;
         pw.println(request);
