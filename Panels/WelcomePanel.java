@@ -36,7 +36,7 @@ public class WelcomePanel extends JPanel {
 
         JLabel loginLabel = new JLabel("Sign in");
         loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
-        loginLabel.setBounds(392, 332, 100, 24);
+        loginLabel.setBounds(392, 332, 100, 30);
         add(loginLabel);
 
         JLabel emailLabel = new JLabel("Email:");

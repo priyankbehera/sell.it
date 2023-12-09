@@ -39,7 +39,7 @@ public class CreateAccPanel extends JPanel {
 
         JLabel loginLabel = new JLabel("Create Account");
         loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
-        loginLabel.setBounds(392, 332, 200, 24);
+        loginLabel.setBounds(392, 332, 200, 30);
         add(loginLabel);
 
         JLabel emailLabel = new JLabel("Email:");
