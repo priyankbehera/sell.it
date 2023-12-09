@@ -364,8 +364,14 @@ public class DisplayMessagesPanel extends JPanel {
 
     }
     private void sendMessageRequest(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
+
+
         // send request string to server
         String message = inputField.getText();
+        if (message.equals("")) {
+            JOptionPane.showMessageDialog(null, "Please enter a message.");
+            return;
+        }
         String request = "sendMessage," + seller + "," + customer + "," + ifSeller + "," + message;
         pw.println(request);
         pw.flush();
@@ -379,18 +385,16 @@ public class DisplayMessagesPanel extends JPanel {
                     break;
                 }
             }
-            String response = line;
-            boolean responseBoolean = Boolean.parseBoolean(response);
-            System.out.println("Message sent: " + response);
+            boolean responseBoolean = Boolean.parseBoolean(line);
             // clear input text
             inputField.setText("");
 
             if (!responseBoolean) {
                 // Joption pane error
-                JOptionPane.showMessageDialog(null, "Please enter a message.");
+                JOptionPane.showMessageDialog(null, "You've been blocked by this user. Cannot send message.");
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            JOptionPane.showMessageDialog(null, "You've been blocked by this user. Cannot send message.");
         }
     }
     private void exportFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
