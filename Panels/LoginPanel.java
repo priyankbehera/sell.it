@@ -36,7 +36,7 @@ public class LoginPanel extends JPanel {
 
         // Success message
         successMessage = new JLabel("");
-        successMessage.setBounds(392, 432, 320, 24);
+        successMessage.setBounds(392, 432, 300, 24);
         add(successMessage);
     }
 

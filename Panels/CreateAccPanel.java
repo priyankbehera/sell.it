@@ -1,22 +1,42 @@
 package Panels;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class CreateAccPanel extends JPanel {
     JTextField emailText;
     JPasswordField passwordField;
     JComboBox<String> accountType;
     JButton continueButton;
+    JButton returnLoginButton;
     JLabel successMessage;
 
-    public CreateAccPanel() {
+    public CreateAccPanel(Color backgroundColor) {
         // Set the layout manager for this panel
         setLayout(null);
 
+        // Sets the background color for the panel
+        setBackground(backgroundColor);
+
         // Create components
+        try {
+            BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
+            ImageIcon logo = new ImageIcon(iconImage);
+            JLabel imageLabel = new JLabel(logo);
+            imageLabel.setBounds(362, 200, 300, 125);
+            add(imageLabel);
+        } catch (IOException e) {
+            JLabel imageLabel = new JLabel("Unable to load image.");
+            imageLabel.setBounds(412, 200, 200, 24);
+            add(imageLabel);
+        }
+
         JLabel userLabel = new JLabel("Email:");
         userLabel.setBounds(392, 336, 80, 24);
         add(userLabel);
@@ -47,6 +67,10 @@ public class CreateAccPanel extends JPanel {
         continueButton.setBounds(392, 426, 120, 24);
         add(continueButton);
 
+        returnLoginButton = new JButton("Return to Login");
+        returnLoginButton.setBounds(432, 592, 160, 24);
+        add(returnLoginButton);
+
         // Success message
         successMessage = new JLabel("");
         successMessage.setBounds(392, 456, 320, 24);
@@ -68,6 +92,10 @@ public class CreateAccPanel extends JPanel {
 
     public JButton getContinueButton() {
         return this.continueButton;
+    }
+
+    public JButton getReturnLoginButton() {
+        return this.returnLoginButton;
     }
 
     public JLabel getSuccessMessage() {

@@ -1,6 +1,4 @@
-import Objects.Customer;
 import Panels.*;
-import Objects.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,8 +17,7 @@ public class Main {
 
     public static void main(String[] args) {
         // Connects to server
-        try {
-            Socket socket = new Socket(hostName, portNumber);
+        try (Socket socket = new Socket(hostName, portNumber)) {
             System.out.println("Connected to server.");
 
             // input & output for server
@@ -37,43 +34,27 @@ public class Main {
                     BufferedImage iconImage = ImageIO.read(new File("Images/Send.it Logo.png"));
                     mainframe.setIconImage(iconImage);
                 } catch (IOException e) {
-                    throw new RuntimeException();
+                    mainframe.setIconImage(null);
                 }
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
-                mainframe.setBackground(Color.LIGHT_GRAY);
                 mainframe.setLocationRelativeTo(null);
+                mainframe.setResizable(false);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Create an instance of panels
-                WelcomePanel welcomePanel = new WelcomePanel();
-                LoginPanel loginPanel = new LoginPanel();
-                CreateAccPanel createAccPanel = new CreateAccPanel();
+                WelcomePanel welcomePanel = new WelcomePanel(new Color(240, 240, 240));
+                CreateAccPanel createAccPanel = new CreateAccPanel(new Color(240, 240, 240));
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);
 
-                // Listens for "Login" button on Panels.WelcomePanel
-                welcomePanel.getLoginButton().addActionListener(e -> {
-                    mainframe.setContentPane(loginPanel); // Resets the content pane
-                    mainframe.revalidate(); // Reorders components
-                    mainframe.repaint(); // Repaints components
-                });
-
-                // Listens for "Create Account" button on Panels.WelcomePanel
-                welcomePanel.getCreateAccButton().addActionListener(e -> {
-                    // Creates account
-                    mainframe.setContentPane(createAccPanel);
-                    mainframe.revalidate();
-                    mainframe.repaint();
-                });
-
-                // Listens for successful login
-                loginPanel.getContinueButton().addActionListener(e -> {
+                // Listens for "Continue" button on Panels.WelcomePanel
+                welcomePanel.getContinueButton().addActionListener(e -> {
                     boolean[] isLoggedIn;
-                    String email = loginPanel.getEmail();
-                    String password = String.valueOf(loginPanel.getPassword());
+                    String email = welcomePanel.getEmail();
+                    String password = String.valueOf(welcomePanel.getPassword());
 
                     if (!email.isEmpty() && !password.isEmpty()) {
                         System.out.println("Email: " + email);
@@ -90,16 +71,22 @@ public class Main {
                             mainframe.revalidate();
                             mainframe.repaint();
                         } else {
-                            loginPanel.getSuccessMessage().setText("Invalid credentials. Please try again.");
+                            welcomePanel.getSuccessMessage().setText("Invalid credentials. Please try again.");
                         }
                     } else {
-                        loginPanel.getSuccessMessage().setText("Please enter an email and password to continue.");
+                        welcomePanel.getSuccessMessage().setText("Please enter an email and password to continue.");
                     }
+                });
+
+                // Listens for "Create Account" button on Panels.WelcomePanel
+                welcomePanel.getCreateAccButton().addActionListener(e -> {
+                    mainframe.setContentPane(createAccPanel);
+                    mainframe.revalidate();
+                    mainframe.repaint();
                 });
 
                 // Listens for "Continue" button on Panels.CreateAccPanel
                 createAccPanel.getContinueButton().addActionListener(e -> {
-                    // @TODO Update code to account for getting email and password first
                     String email = createAccPanel.getEmail();
                     String password = createAccPanel.getPassword();
 
@@ -108,12 +95,10 @@ public class Main {
                         int accountType = -1;
                         // Creates user accounts
                         if (userType.equals("Customer")) {  // Create customer account
-                            Customer customer = new Customer(createAccPanel.getEmail(), createAccPanel.getPassword());
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
                             // Pop up window for seller to add a store
                             String storeName = JOptionPane.showInputDialog(null, "Enter store name: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
-                            Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
                             accountType = 1;
                         }
 
@@ -126,9 +111,8 @@ public class Main {
                         if (success) {
                             // send back to log in
                             JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                            mainframe.setContentPane(loginPanel);
+                            mainframe.setContentPane(welcomePanel);
                         } else {
-                            // @TODO Ensure that when user tries to create an account when they already have one, that it gives them an error and prompts them to log in
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
                             JOptionPane.showMessageDialog(null, "Account already exists, Please log in or try a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
                         }
@@ -138,6 +122,15 @@ public class Main {
                         createAccPanel.getSuccessMessage().setText("Please enter an email and password to continue.");
                     }
                 });
+
+                // Listens for "Return to Login" button on Panels.CreateAccPanel
+                createAccPanel.getReturnLoginButton().addActionListener(e -> {
+                    mainframe.setContentPane(welcomePanel);
+                    mainframe.revalidate();
+                    mainframe.repaint();
+                });
+
+                // Makes the frame visible
                 mainframe.setVisible(true);
             });
         } catch (IOException e) { // Throws error if unable to connect to server
@@ -147,10 +140,9 @@ public class Main {
     }
 
     public static boolean[] loginRequest(String request, PrintWriter printWriter, BufferedReader br) {
-        PrintWriter pw = printWriter;
         // send request to server
-        pw.println(request);
-        pw.flush();
+        printWriter.println(request);
+        printWriter.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
@@ -161,28 +153,27 @@ public class Main {
                     break;
                 }
             }
-            String[] lineSplit = line.split(",");
-            boolean[] booleanSplit = new boolean[lineSplit.length];
-            for (int i = 0; i < lineSplit.length; i++) {
-                booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
+            if (line != null) {
+                String[] lineSplit = line.split(",");
+                boolean[] booleanSplit = new boolean[lineSplit.length];
+                for (int i = 0; i < lineSplit.length; i++) {
+                    booleanSplit[i] = Boolean.parseBoolean(lineSplit[i]);
+                }
+                System.out.println("Receive response: " + line);
+                System.out.println(line);
+                return booleanSplit;
             }
-            System.out.println("Receive response: " + line);
-            System.out.println(line);
-
-            return booleanSplit;
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        boolean[] empty = {false};
-        return empty;
+        return new boolean[]{false};
     }
 
     public static boolean createAccountRequest(String request, PrintWriter printWriter, BufferedReader br) {
-        PrintWriter pw = printWriter;
 
         // send request to server
-        pw.println(request);
-        pw.flush();
+        printWriter.println(request);
+        printWriter.flush();
         System.out.println("Request sent: " + request);
 
         // get response from server
