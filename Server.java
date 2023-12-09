@@ -304,7 +304,9 @@ public class Server {
     }
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
         ArrayList<String> list = new ArrayList<>();
-        String contents = "";
+        String contents = "Hello! Thank you for exporting a file through Sell.it!\n" +
+                "This conversation file will take the following format:\n" +
+                "(sender),(receiver),(message contents),(date),(time)\n";
         String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -316,13 +318,8 @@ public class Server {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
         for ( int i = 0; i < list.size(); i++ ) {
-            String[] messageParts = list.get(i).split(",");
-            String message = messageParts[2];
-            String time = messageParts[4];
-            String date = messageParts[3];
-            String sender = messageParts[0];
-            String toAdd = time + "," + date + "\n" + sender + ": " + message + "\n";
-            contents += toAdd;
+            String messageParts = list.get(i);
+            contents += messageParts + "\n";
         }
         try (OutputStream outputStream = new FileOutputStream(selectedFile)) {
             outputStream.write(contents.getBytes());
