@@ -95,7 +95,7 @@ public class MenuPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = searchField.getText();
-                if (isVisible && searchUser(username, ifSeller)) {
+                if (isVisible && searchUser(username, ifSeller, pw, br)) {
                     String[] temp = {username};
                     createJList(temp);
                     searchButtonClicked = true;
@@ -320,29 +320,23 @@ public class MenuPanel extends JPanel {
         return blockedUsers;
     }
 
-    private boolean searchUser(String name, boolean ifSeller) {
-        ArrayList<String> list = new ArrayList<>();
+    private boolean searchUser(String name, boolean ifSeller, PrintWriter pw, BufferedReader br) {
         boolean isPresent = false;
-        String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = folderName + "/CustomersList.csv";
-        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                list.add(line);
-            }
-            String[] usernames = new String[list.size()];
-            for (int i = 0; i < list.size(); i++) {
-                String username = list.get(i).split(",")[0];
-                usernames[i] = username;
-            }
-            for (String username : usernames) {
-                if (username.equals(name) && (!invisibleUsersList.contains(username) || isVisible)) {
-                    isPresent = true;
+        String request = "searchUser," + name + "," + ifSeller;
+
+        pw.println(request);
+        pw.flush();
+
+        String line;
+        try {
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
                     break;
                 }
             }
+            isPresent = Boolean.parseBoolean(line);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error - IOException");
+            return false;
         }
         return isPresent;
     }

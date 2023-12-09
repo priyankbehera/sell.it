@@ -102,6 +102,7 @@ public class Server {
                     System.out.println("Please enter a message");
                     printWriter.println(false);
                     printWriter.flush();
+
                     return;
                 }
 
@@ -195,6 +196,13 @@ public class Server {
                 printWriter.flush();
 
             }
+            case "searchUser" -> {
+                String name = args[0];
+                boolean ifSeller = Boolean.parseBoolean(args[1]);
+                boolean success = searchUser(name, ifSeller);
+                printWriter.println(success);
+                printWriter.flush();
+            }
 
         }
     }
@@ -229,7 +237,7 @@ public class Server {
                 String emailToCheck = lineArray[0];
                 if (!emailToCheck.equals(email)) {
                     pw.println(fileContent);
-                } else {
+                } else  {
                     pw.println(newEmail + ",false,null");
                 }
             }
@@ -263,7 +271,6 @@ public class Server {
         }
         return true;
     }
-
     public static synchronized boolean deleteAccount(boolean accountType, String email) {
         String filename1;
         String filename2;
@@ -325,6 +332,33 @@ public class Server {
         return true;
     }
 
+    public static synchronized boolean searchUser(String name, boolean ifSeller) {
+        ArrayList<String> list = new ArrayList<>();
+        boolean isPresent = false;
+        String folderName = ifSeller ? "customer_data" : "seller_data";
+        String filename = folderName + "/CustomersList.csv";
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                list.add(line);
+            }
+            String[] usernames = new String[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                String username = list.get(i).split(",")[0];
+                usernames[i] = username;
+            }
+            for (String username : usernames) {
+                //TODO: add invisible users list
+                if (username.equals(name)) {
+                    isPresent = true;
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error - IOException");
+        }
+        return isPresent;
+    }
     public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
         ArrayList<String> menuList = new ArrayList<>();
         String folderName = ifSeller ? "customer_data" : "seller_data";
@@ -366,7 +400,6 @@ public class Server {
         }
         return true;
     }
-
     public static synchronized boolean addStore(String seller, String storeName, String description) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
@@ -398,7 +431,6 @@ public class Server {
         }
         return true;
     }
-
     public static synchronized boolean getBlockedUsers(String blocker, PrintWriter pw) {
         String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
         // ensure file exists
@@ -420,7 +452,7 @@ public class Server {
             for (String blockedUser : blockedUsers) {
                 blocked += blockedUser + ",";
             }
-            blocked = blocked.substring(0, blocked.length() - 1); //removes trailing comma
+            blocked =  blocked.substring(0, blocked.length() - 1); //removes trailing comma
             pw.println(blocked);
             pw.flush();
         } catch (Exception e) {
@@ -459,7 +491,6 @@ public class Server {
         }
         return true;
     }
-
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
         selectedFile += ".csv";
         ArrayList<String> list = new ArrayList<>();
@@ -476,7 +507,7 @@ public class Server {
             JOptionPane.showMessageDialog(null, "Error exporting file",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-        for (int i = 0; i < list.size(); i++) {
+        for ( int i = 0; i < list.size(); i++ ) {
             String messageParts = list.get(i);
             contents += messageParts + "\n";
         }
@@ -494,7 +525,6 @@ public class Server {
         String fileContent = readFile(new File(filename)).trim();
         return sendMessage(seller, customer, ifSeller, fileContent);
     }
-
     private synchronized static String readFile(File file) {
         StringBuilder content = new StringBuilder();
 
@@ -670,7 +700,6 @@ public class Server {
             return false;
         }
     }
-
     // blocks user
     public static synchronized boolean blockUser(String blocker, String toBlock) {
         String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
@@ -681,7 +710,6 @@ public class Server {
         }
         return true;
     }
-
     // sends arraylist of messages to client
     public static synchronized ArrayList<String> getConversationHistory(String seller, String customer, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
@@ -735,33 +763,6 @@ public class Server {
             JOptionPane.showMessageDialog(null, "Error in Program, please refresh", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return messageList;
-    }
-
-    // @TODO Finish these methods
-    // Adds a censored keyword to a file specific to each user
-    public static synchronized boolean setCensoredKeyword(String user, String keyword) {
-        String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
-        try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
-            pw.println(keyword);
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
-    }
-
-    // Retrieves censored keywords from file
-    public static synchronized ArrayList<String> getCensoredKeywords(String user) {
-        ArrayList<String> censoredKeywords = new ArrayList<String>();
-        String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                censoredKeywords.add(line);
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return censoredKeywords;
     }
 
     public static synchronized boolean messageCustomer(String seller, String customer, String message) {
