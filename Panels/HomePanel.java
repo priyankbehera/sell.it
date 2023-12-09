@@ -17,7 +17,7 @@ public class HomePanel extends JPanel {
         setLayout(new BorderLayout());
 
         // creating menuPanel
-        menuPanel = new MenuPanel(ifSeller);
+        menuPanel = new MenuPanel(ifSeller, user);
         menuPanel.setPreferredSize(new Dimension(500, 800));
 
         add(menuPanel, BorderLayout.WEST);
