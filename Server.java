@@ -738,6 +738,7 @@ public class Server {
     }
 
     // @TODO Finish these methods
+    // Adds a censored keyword to a file specific to each user
     public static synchronized boolean setCensoredKeyword(String user, String keyword) {
         String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
@@ -748,6 +749,7 @@ public class Server {
         return true;
     }
 
+    // Retrieves censored keywords from file
     public static synchronized ArrayList<String> getCensoredKeywords(String user) {
         ArrayList<String> censoredKeywords = new ArrayList<String>();
         String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
