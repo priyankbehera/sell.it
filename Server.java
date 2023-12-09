@@ -737,6 +737,7 @@ public class Server {
         return messageList;
     }
 
+    // @TODO Finish these methods
     public static synchronized boolean setCensoredKeyword(String user, String keyword) {
         String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
@@ -745,6 +746,20 @@ public class Server {
             return false;
         }
         return true;
+    }
+
+    public static synchronized ArrayList<String> getCensoredKeywords(String user) {
+        ArrayList<String> censoredKeywords = new ArrayList<String>();
+        String fileName = "censored_keyWords/" + user + "_censoredKeywords.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                censoredKeywords.add(line);
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return censoredKeywords;
     }
 
     public static synchronized boolean messageCustomer(String seller, String customer, String message) {
