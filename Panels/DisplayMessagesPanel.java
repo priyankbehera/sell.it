@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -292,6 +294,26 @@ public class DisplayMessagesPanel extends JPanel {
         inputField = new JTextField();
         JButton sendButton = new JButton("Send");
         //sends request to server to get conversation history
+
+        // Add KeyListener to the text field
+        inputField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // No code needed
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    sendMessageRequest(seller, customer, ifSeller, br, pw);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // No code needed
+            }
+        });
 
         // Add action listener to the button
         sendButton.addActionListener(new ActionListener() {
