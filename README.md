@@ -7,9 +7,10 @@ Shreya Gupta -- Submitted Report on Brightspace;
 Matthew Allen -- Submitted Vocareum workspace
 
 ## RUN:
-- Compliling Instructions: 
+- Compliling Instructions: `mkdir out && javac -d out -sourcepath src src/*.java`
+  - This will make a directory called `out` for the .class files, and then compile all .java files.
   
-- Run Instructions: `cd src/`, `java Main`
+- Run Instructions: `cd out/`, `java Main`
 
 
 ## Objects Folder
