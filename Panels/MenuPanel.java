@@ -21,17 +21,22 @@ public class MenuPanel extends JPanel {
     private final String blockedByUsersFile;
     private ArrayList<String> blockedUsersList;
     private String currentUser;
+    private final String invisibleUsersFile;
+    private ArrayList<String> invisibleUsersList;
 
     public JList getMessageList() {
         return messageList;
     }
 
-    public MenuPanel(boolean ifSeller) {
+    public MenuPanel(boolean ifSeller, String currentUser) {
         setLayout(new BorderLayout());
 
         blockedUsersFile = ifSeller ? "blocked_users_seller.txt" : "blocked_users_customer.txt";
         blockedByUsersFile = ifSeller ? "blocked_by_seller.txt" : "blocked_by_customer.txt";
+        invisibleUsersFile = currentUser + "_invisible_users.txt";
         blockedUsersList = loadBlockedUsers();
+        invisibleUsersList = loadInvisibleUsers();
+        this.currentUser = currentUser;
 
         JPanel searchPanel = new JPanel(new FlowLayout());
         JLabel searchLabel = new JLabel("Enter User's Name:");
@@ -54,7 +59,7 @@ public class MenuPanel extends JPanel {
 
         String[] people = getList(ifSeller);
         DefaultListModel<String> listModel = new DefaultListModel<>();
-        for (int i = 0; i < people.length; i++) {
+        for (int i = 0; people != null && i < people.length; i++) {
             listModel.addElement(people[i]);
         }
         messageList = new JList<>(listModel);
@@ -72,7 +77,7 @@ public class MenuPanel extends JPanel {
                 if (!searchButtonClicked || seeAllButtonClicked) {
                     String[] temp = getList(ifSeller);
                     DefaultListModel<String> listModel = new DefaultListModel<>();
-                    for (int i = 0; i < temp.length; i++) {
+                    for (int i = 0; temp != null && i < temp.length; i++) {
                         listModel.addElement(temp[i]);
                     }
                     messageList.setModel(listModel);
@@ -180,7 +185,6 @@ public class MenuPanel extends JPanel {
             String blockedUser;
             while ((blockedUser = blockedUsersReader.readLine()) != null) {
                 if (blockedUser.equals(userToCheck)) {
-
                     return true;
                 }
             }
@@ -201,7 +205,7 @@ public class MenuPanel extends JPanel {
     }
 
     private ArrayList<String> loadBlockedUsers() {
-        String blockedUsersFilePath = "blocked_users.txt";
+        String blockedUsersFilePath = blockedUsersFile;
         ArrayList<String> blockedUsers = new ArrayList<>();
 
         try (BufferedReader blockedUsersReader = new BufferedReader(new FileReader(blockedUsersFilePath))) {
@@ -217,7 +221,7 @@ public class MenuPanel extends JPanel {
     }
 
     private void saveBlockedUsers() {
-        String blockedUsersFilePath = "blocked_users.txt";
+        String blockedUsersFilePath = blockedUsersFile;
 
         try (BufferedWriter blockedUsersWriter = new BufferedWriter(new FileWriter(blockedUsersFilePath))) {
             for (String blockedUser : blockedUsersList) {
@@ -228,7 +232,6 @@ public class MenuPanel extends JPanel {
             e.printStackTrace();
         }
     }
-
 
     private boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
@@ -246,7 +249,7 @@ public class MenuPanel extends JPanel {
                 usernames[i] = username;
             }
             for (String username : usernames) {
-                if (username.equals(name)) {
+                if (username.equals(name) && (!invisibleUsersList.contains(username) || isVisible)) {
                     isPresent = true;
                     break;
                 }
@@ -296,22 +299,60 @@ public class MenuPanel extends JPanel {
 
     private void changeVisibility() {
         isVisible = !isVisible;
+
+        if (!isVisible && !invisibleUsersList.contains(currentUser)) {
+            invisibleUsersList.add(currentUser);
+            saveInvisibleUsers();
+        } else if (isVisible && invisibleUsersList.contains(currentUser)) {
+            invisibleUsersList.remove(currentUser);
+            saveInvisibleUsers();
+        }
+
         String[] people = getList(true);
         createJList(people);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame testFrame = new JFrame("MenuPanel Test");
-            testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    private ArrayList<String> loadInvisibleUsers() {
+        String invisibleUsersFilePath = invisibleUsersFile;
+        ArrayList<String> invisibleUsers = new ArrayList<>();
 
-            MenuPanel menuPanel = new MenuPanel(true);
+        try (BufferedReader invisibleUsersReader = new BufferedReader(new FileReader(invisibleUsersFilePath))) {
+            String invisibleUser;
+            while ((invisibleUser = invisibleUsersReader.readLine()) != null) {
+                invisibleUsers.add(invisibleUser);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
-
-            testFrame.setSize(500, 768);
-            testFrame.setLocationRelativeTo(null);
-            testFrame.setVisible(true);
-        });
+        return invisibleUsers;
     }
+
+    private void saveInvisibleUsers() {
+        String invisibleUsersFilePath = invisibleUsersFile;
+
+        try (BufferedWriter invisibleUsersWriter = new BufferedWriter(new FileWriter(invisibleUsersFilePath))) {
+            for (String invisibleUser : invisibleUsersList) {
+                invisibleUsersWriter.write(invisibleUser);
+                invisibleUsersWriter.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(() -> {
+//            JFrame testFrame = new JFrame("MenuPanel Test");
+//            testFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//
+//            MenuPanel menuPanel = new MenuPanel(false);
+//
+//            testFrame.getContentPane().add(menuPanel, BorderLayout.CENTER);
+//
+//            testFrame.setSize(500, 768);
+//            testFrame.setLocationRelativeTo(null);
+//            testFrame.setVisible(true);
+//        });
+//    }
 }
