@@ -128,6 +128,15 @@ public class MenuPanel extends JPanel {
         JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
         JMenuItem deleteAccount = new JMenuItem("Delete Account");
         JMenuItem editAccount = new JMenuItem("Edit Account");
+        JMenuItem censorKeywords = new JMenuItem("Censor keywords");
+
+        censorKeywords.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String keyword = JOptionPane.showInputDialog(null, "Please enter the keyword that you would like to filter from all future conversations:", "Censor a Keyword", JOptionPane.WARNING_MESSAGE);
+                System.out.println("hello");
+            }
+        });
 
         editAccount.addActionListener(new ActionListener() {
             @Override

@@ -728,7 +728,7 @@ public class Server {
         return true;
     }
 
-    public static ArrayList<String> getcensoredKeywords(String user) {
+    public static ArrayList<String> getCensoredKeywords(String user) {
         ArrayList<String> censoredKeywords = new ArrayList<String>();
         String filename = "keywords_data/" + user + "_censoredKeywords.csv";
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
