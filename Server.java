@@ -114,11 +114,13 @@ public class Server {
                 printWriter.flush();
             }
             case "importFile" -> { // appends .txt file to chosen conversation
-                String filename = args[0];
-                String seller = args[1];
-                String customer = args[2];
-                String conversationFile = seller + "_" + customer + "_Messages.csv";
-                boolean success = importFile(filename, conversationFile);
+                String seller = args[0];
+                String customer = args[1];
+                boolean ifSeller = Boolean.parseBoolean(args[2]);
+                String filename = args[3];
+                boolean success = importFile(seller, customer, ifSeller, filename);
+                printWriter.println(success);
+                printWriter.flush();
             }
             case "deleteMessage" -> {
                 String seller = args[0];
@@ -220,24 +222,24 @@ public class Server {
         }
     }
 
-    public static synchronized boolean importFile(String filename, String conversationFile) {
-        // reads in file
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(filename));
+    public static synchronized boolean importFile(String seller, String customer, boolean ifSeller, String filename) {
+        String fileContent = readFile(new File(filename)).trim();
+        return sendMessage(seller, customer, ifSeller, fileContent);
+    }
+    private synchronized static String readFile(File file) {
+        StringBuilder content = new StringBuilder();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
-            ArrayList<String> importFile = new ArrayList<>();
-            while ((line = br.readLine()) != null) {
-                importFile.add(line);
-            }
-            // writes to conversation file
-            PrintWriter pw = new PrintWriter(new FileWriter(conversationFile, true));
-            for (int i = 0; i < importFile.size(); i++) {
-                pw.println(importFile.get(i));
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
             }
         } catch (IOException e) {
-            return false;
+            e.printStackTrace();
+            // Handle the exception appropriately based on your application's requirements
         }
-        return true;
+
+        return content.toString();
     }
 
     // if login is invalid, returns false

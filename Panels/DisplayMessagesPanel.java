@@ -1,23 +1,17 @@
 package Panels;
 
-import Objects.Customer;
-import Objects.Seller;
-
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
-    private JButton moreButton;
-    private JButton exportButton;
-    private JButton importButton;
     private JButton viewStoresButton;
     private JButton addStoreButton;
     private String seller;
@@ -261,14 +255,14 @@ public class DisplayMessagesPanel extends JPanel {
         exportButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                exportFileAction(seller, customer, ifSeller, br, pw);
+                exportFileAction(seller, customer, br, pw);
             }
         });
         // import button action listener
         importButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                importFileAction();
+                importFileAction(seller, customer, ifSeller, br, pw);
             }
         });
 
@@ -393,7 +387,7 @@ public class DisplayMessagesPanel extends JPanel {
             System.out.println(e.getMessage());
         }
     }
-    private void exportFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
+    private void exportFileAction(String seller, String customer, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
         int userChoice = fileChooser.showSaveDialog(this);
 
@@ -425,16 +419,17 @@ public class DisplayMessagesPanel extends JPanel {
         }
     }
 
-    private void importFileAction() {
-
+    private void importFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
-        int userChoice = fileChooser.showOpenDialog(this);
 
-        if (userChoice == JFileChooser.APPROVE_OPTION) {
+        FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+        fileChooser.setFileFilter(txtFilter);
+
+        int result = fileChooser.showOpenDialog(null);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
-
-            String requestString = "importFile," + filePath;
+            String requestString = "importFile," + seller + "," + customer + "," + ifSeller + "," + selectedFile;
             pw.println(requestString);
             pw.flush();
 
@@ -450,11 +445,9 @@ public class DisplayMessagesPanel extends JPanel {
                 if (!responseBoolean) {
                     JOptionPane.showMessageDialog(null, "Error importing messages.");
                 } else {
-                    JOptionPane.showMessageDialog(null, "Messages imported successfully.");
-                    conversationArea.setText("");
-                    requestConversationHistory(seller, customer, ifSeller, br, pw);
+                    JOptionPane.showMessageDialog(null, "Messages imported successfully");
                 }
-            } catch (IOException e) {
+            } catch (IOException e ) {
                 JOptionPane.showMessageDialog(null, "Error importing messages.");
             }
         }
