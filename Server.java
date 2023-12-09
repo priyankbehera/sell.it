@@ -83,17 +83,14 @@ public class Server {
                 // Checks to see if the user is a seller or a customer and retrieves censored keywords
                 if (ifSeller) {
                     censoredKeywords = getCensoredKeywords(seller);
-                    System.out.println(seller);
                 } else {
                     censoredKeywords = getCensoredKeywords(customer);
-                    System.out.println(customer);
                 }
 
                 if (censoredKeywords != null) {
                     for (String message : messageList) {
                         for (String censoredKeyword : censoredKeywords) {
-                            System.out.println(censoredKeyword);
-                            if (message.contains(censoredKeyword)) {
+                            if (message.equalsIgnoreCase("message")) {
                                 message = message.replace(censoredKeyword, "[redacted]");
                             }
                         }
