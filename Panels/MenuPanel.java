@@ -4,10 +4,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MenuPanel extends JPanel {
     private JList<String> messageList;
@@ -15,8 +15,12 @@ public class MenuPanel extends JPanel {
     private final JButton moreButton;
     private boolean searchButtonClicked = false;
     private boolean seeAllButtonClicked = false;
-    private final java.util.Set<String> blockedUsers = new java.util.HashSet<>();
+    private final Set<String> blockedUsers = new HashSet<>();
     private boolean isVisible = true;
+    private final String blockedUsersFile;
+    private final String blockedByUsersFile;
+    private ArrayList<String> blockedUsersList;
+    private String currentUser;
 
     public JList getMessageList() {
         return messageList;
@@ -24,6 +28,10 @@ public class MenuPanel extends JPanel {
 
     public MenuPanel(boolean ifSeller) {
         setLayout(new BorderLayout());
+
+        blockedUsersFile = ifSeller ? "blocked_users_seller.txt" : "blocked_users_customer.txt";
+        blockedByUsersFile = ifSeller ? "blocked_by_seller.txt" : "blocked_by_customer.txt";
+        blockedUsersList = loadBlockedUsers();
 
         JPanel searchPanel = new JPanel(new FlowLayout());
         JLabel searchLabel = new JLabel("Enter User's Name:");
@@ -67,7 +75,7 @@ public class MenuPanel extends JPanel {
                     for (int i = 0; i < temp.length; i++) {
                         listModel.addElement(temp[i]);
                     }
-                    messageList.setModel(listModel); // Update the existing JList model
+                    messageList.setModel(listModel);
                     searchButtonClicked = true;
                     seeAllButtonClicked = false;
                 }
@@ -80,7 +88,7 @@ public class MenuPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = searchField.getText();
-                if (searchUser(username, ifSeller)) {
+                if (isVisible && searchUser(username, ifSeller)) {
                     String[] temp = {username};
                     createJList(temp);
                     searchButtonClicked = true;
@@ -146,7 +154,12 @@ public class MenuPanel extends JPanel {
             if (choice == JOptionPane.YES_OPTION) {
                 if (blockUser(selectedUser)) {
                     JOptionPane.showMessageDialog(null, selectedUser + " has been blocked.");
-                    // Additional logic if needed
+
+                    if (canSendMessage(selectedUser)) {
+
+                    } else {
+                        JOptionPane.showMessageDialog(null, "You cannot send messages to " + selectedUser + " as they have blocked you.");
+                    }
                 } else {
                     JOptionPane.showMessageDialog(null, "Error blocking user.");
                 }
@@ -156,16 +169,72 @@ public class MenuPanel extends JPanel {
         }
     }
 
-    private boolean blockUser(String user) {
-        return blockedUsers.add(user);
+    private boolean canSendMessage(String sender) {
+        return !isUserBlocked(sender, currentUser);
     }
+
+    private boolean isUserBlocked(String userToCheck, String currentUser) {
+        String blockedUsersFilePath = currentUser + "_blocked_users.txt";
+
+        try (BufferedReader blockedUsersReader = new BufferedReader(new FileReader(blockedUsersFilePath))) {
+            String blockedUser;
+            while ((blockedUser = blockedUsersReader.readLine()) != null) {
+                if (blockedUser.equals(userToCheck)) {
+
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    private boolean blockUser(String userToBlock) {
+        if (!blockedUsersList.contains(userToBlock)) {
+            blockedUsersList.add(userToBlock);
+            saveBlockedUsers();
+            return true;
+        }
+        return false;
+    }
+
+    private ArrayList<String> loadBlockedUsers() {
+        String blockedUsersFilePath = "blocked_users.txt";
+        ArrayList<String> blockedUsers = new ArrayList<>();
+
+        try (BufferedReader blockedUsersReader = new BufferedReader(new FileReader(blockedUsersFilePath))) {
+            String blockedUser;
+            while ((blockedUser = blockedUsersReader.readLine()) != null) {
+                blockedUsers.add(blockedUser);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return blockedUsers;
+    }
+
+    private void saveBlockedUsers() {
+        String blockedUsersFilePath = "blocked_users.txt";
+
+        try (BufferedWriter blockedUsersWriter = new BufferedWriter(new FileWriter(blockedUsersFilePath))) {
+            for (String blockedUser : blockedUsersList) {
+                blockedUsersWriter.write(blockedUser);
+                blockedUsersWriter.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private boolean searchUser(String name, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
         String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = ifSeller ? "/CustomersList.csv" : "/SellersList.csv";
-        filename = folderName + filename;
+        String filename = folderName + "/CustomersList.csv";
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -205,6 +274,9 @@ public class MenuPanel extends JPanel {
             String[] menuArray = new String[menuList.size()];
             for (int i = 0; i < menuArray.length; i++) {
                 String customerName = menuList.get(i).split(",")[0];
+                if (!isVisible && isUserBlocked(customerName, currentUser)) {
+                    continue;
+                }
                 menuArray[i] = customerName;
             }
             return menuArray;
