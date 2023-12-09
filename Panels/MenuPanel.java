@@ -126,11 +126,48 @@ public class MenuPanel extends JPanel {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem blockUserItem = new JMenuItem("Block User");
         JMenuItem invisibleItem = new JMenuItem(isVisible ? "Become Invisible" : "Become Visible");
-
+        JMenuItem deleteAccount = new JMenuItem("Delete Account");
         blockUserItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 blockSelectedUser(pw, br);
+            }
+        });
+
+        deleteAccount.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                int choice = JOptionPane.showConfirmDialog(
+                        null,
+                        "Are you sure you want to delete your account?",
+                        "Confirm Delete Account",
+                        JOptionPane.YES_NO_OPTION
+                );
+
+                if (choice == JOptionPane.YES_OPTION) {
+                    String request = "deleteAccount," + currentUser;
+                    try {
+                        pw.println(request);
+                        pw.flush();
+
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            if (!line.isEmpty()) {
+                                break;
+                            }
+                        }
+                        boolean success = Boolean.parseBoolean(line);
+                        if (success) {
+                            JOptionPane.showMessageDialog(null, "Account deleted successfully.");
+                            System.exit(0);
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error deleting account.");
+                        }
+
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(null, "Error deleting account.");
+                    }
+                }
             }
         });
 
@@ -143,7 +180,7 @@ public class MenuPanel extends JPanel {
 
         popupMenu.add(blockUserItem);
         popupMenu.add(invisibleItem);
-
+        popupMenu.add(deleteAccount);
         popupMenu.show(component, 0, component.getHeight());
     }
 

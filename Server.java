@@ -173,10 +173,78 @@ public class Server {
                 boolean ifSeller = Boolean.parseBoolean(args[0]);
                 getList(ifSeller, printWriter);
             }
+            case "deleteAccount" -> {
+                String email = args[0];
+                boolean accountType = isUser(email);
+                boolean success = deleteAccount(accountType, email);
+                printWriter.println(success);
+                printWriter.flush();
+
+            }
 
         }
     }
 
+    public static synchronized boolean deleteAccount(boolean accountType, String email) {
+        String filename1;
+        String filename2;
+
+        if (accountType) {
+            filename1 = "seller_data/SellersList.csv";
+            filename2 = "seller_data/sellerNames.txt";
+        } else {
+            filename1 = "customer_data/CustomersList.csv";
+            filename2 = "customer_data/customerNames.txt";
+        }
+        //removes from file
+
+        // copys file contents
+        ArrayList<String> list = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename1))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                list.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename1, false))) {
+            for (String fileContent : list) {
+                String[] lineArray = fileContent.split(",");
+                String emailToCheck = lineArray[0];
+                if (!emailToCheck.equals(email)) {
+                    pw.println(fileContent);
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        // same thing for other file
+        ArrayList<String> list2 = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename2))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                list2.add(line);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        // overwrites file
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename2, false))) {
+            for (String fileContent : list2) {
+                String[] lineArray = fileContent.split("-");
+                String emailToCheck = lineArray[0];
+                if (!emailToCheck.equals(email)) {
+                    pw.println(fileContent);
+                }
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+        return true;
+    }
     public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
         ArrayList<String> menuList = new ArrayList<>();
         String folderName = ifSeller ? "customer_data" : "seller_data";
