@@ -305,6 +305,7 @@ public class Server {
         return true;
     }
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
+        selectedFile += ".csv";
         ArrayList<String> list = new ArrayList<>();
         String contents = "Hello! Thank you for exporting a file through Sell.it!\n" +
                 "This conversation file will take the following format:\n" +

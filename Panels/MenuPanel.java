@@ -37,16 +37,6 @@ public class MenuPanel extends JPanel {
         setLayout(new BorderLayout());
         this.pw = pw;
         this.br = br;
-/*
-       pri
-
-
-        blockedUsersFile = ifSeller ? "user_info/blocked_users_seller.txt" : "user_info/blocked_users_customer.txt";
-        blockedByUsersFile = ifSeller ? "user_info/blocked_by_seller.txt" : "user_info/blocked_by_customer.txt";
-        invisibleUsersFile = "user_info/" + currentUser + "_invisible_users.txt";
-        blockedUsersList = loadBlockedUsers();
-        invisibleUsersList = loadInvisibleUsers();
-*/
         this.currentUser = currentUser;
 
         JPanel searchPanel = new JPanel(new FlowLayout());
