@@ -33,25 +33,22 @@ public class Main {
                 mainframe.setLayout(new BorderLayout());
 
                 // Set the icon for the frame
-/*
                 try {
                     BufferedImage iconImage = ImageIO.read(new File("Images/Send.it Logo.png"));
                     mainframe.setIconImage(iconImage);
                 } catch (IOException e) {
-                    throw new RuntimeException();
+                    mainframe.setIconImage(null);
                 }
-*/
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
-                mainframe.setBackground(Color.LIGHT_GRAY);
                 mainframe.setLocationRelativeTo(null);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
                 // Create an instance of panels
-                WelcomePanel welcomePanel = new WelcomePanel();
-                LoginPanel loginPanel = new LoginPanel();
-                CreateAccPanel createAccPanel = new CreateAccPanel();
+                WelcomePanel welcomePanel = new WelcomePanel(new Color(240, 240, 240));
+                LoginPanel loginPanel = new LoginPanel(new Color(240, 240, 240));
+                CreateAccPanel createAccPanel = new CreateAccPanel(new Color(240, 240, 240));
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);

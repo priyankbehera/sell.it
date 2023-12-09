@@ -12,9 +12,12 @@ public class CreateAccPanel extends JPanel {
     JButton continueButton;
     JLabel successMessage;
 
-    public CreateAccPanel() {
+    public CreateAccPanel(Color backgroundColor) {
         // Set the layout manager for this panel
         setLayout(null);
+
+        // Sets the background color for the panel
+        setBackground(backgroundColor);
 
         // Create components
         JLabel userLabel = new JLabel("Email:");

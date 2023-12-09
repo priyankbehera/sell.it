@@ -1,7 +1,12 @@
 package Panels;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 
 public class LoginPanel extends JPanel {
     JTextField emailText;
@@ -9,11 +14,27 @@ public class LoginPanel extends JPanel {
     JButton continueButton;
     JLabel successMessage;
 
-    public LoginPanel() {
+    public LoginPanel(Color backgroundColor) {
         // Set the layout manager for this panel
         setLayout(null);
 
+        // Set the background color for the panel
+        setBackground(backgroundColor);
+
         // Create components
+
+        try {
+            BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
+            ImageIcon logo = new ImageIcon(iconImage);
+            JLabel imageLabel = new JLabel(logo);
+            imageLabel.setBounds(362, 200, 300, 125);
+            add(imageLabel);
+        } catch (IOException e) {
+            JLabel imageLabel = new JLabel("Unable to load image.");
+            imageLabel.setBounds(412, 200, 200, 24);
+            add(imageLabel);
+        }
+
         JLabel userLabel = new JLabel("Email:");
         userLabel.setBounds(392, 342, 80, 24);
         add(userLabel);
