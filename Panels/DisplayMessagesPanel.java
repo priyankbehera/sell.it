@@ -28,95 +28,26 @@ public class DisplayMessagesPanel extends JPanel {
         this.ifSeller = ifSeller;
         this.pw = pw;
         this.br = br;
-
-        JPanel displayMessages = new JPanel();
-        displayMessages.setSize(300,400);
         setLayout(new BorderLayout());
 
+        JPanel displayMessages = new JPanel();
+        JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        moreButton = new JButton("\u22EE");
-        moreButton.setPreferredSize(new Dimension(30, 20));
+        JButton editButton = new JButton("Edit");
+        JButton deleteButton = new JButton("Delete");
+        JButton exportButton = new JButton("Export");
+        JButton importButton = new JButton("Import");
 
-        exportButton = new JButton("Import");
-        exportButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportFileAction();
-            }
-        });
+        buttonPanel.add(editButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(importButton);
+        buttonPanel.add(exportButton);
 
-        // Add import button
-        importButton = new JButton("Export");
-        importButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                importFileAction();
-            }
-        });
+        add(buttonPanel, BorderLayout.NORTH);
+        add(displayMessages, BorderLayout.CENTER);
 
-        // refresh button action listener
-        Timer timer = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                conversationArea.setText("");
-                requestConversationHistory(seller, customer, ifSeller, br, pw);
-            }
-        });
-
-        timer.setRepeats(true);
-        timer.start();
-
-        // create conversation history area
-        conversationArea = new JTextArea();
-        conversationArea.setEditable(true);
-        JScrollPane scrollPane = new JScrollPane(conversationArea);
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Create the input field for user messages
-        inputField = new JTextField();
-        JButton sendButton = new JButton("Send");
-        //sends request to server to get conversation history
-
-        // Add action listener to the button
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMessageRequest( seller, customer, ifSeller, br, pw);
-            }
-        });
-
-        //more button action listener
-        moreButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                editMessage(moreButton, seller, customer, br, pw);
-            }
-        });
-
-
-        JPanel inputPanel = new JPanel(new BorderLayout());
-        inputPanel.add(inputField, BorderLayout.CENTER);
-        inputPanel.add(sendButton, BorderLayout.EAST);
-
-        inputPanel.add(exportButton, BorderLayout.WEST);
-        inputPanel.add(importButton, BorderLayout.WEST);
-
-        inputPanel.add(moreButton, BorderLayout.NORTH);
-
-        add(inputPanel, BorderLayout.SOUTH);
-    }
-
-    // pop-up window for editing/deleting messages
-    //create more button
-    private void editMessage(JButton moreButton, String seller, String customer, BufferedReader br, PrintWriter pw) {
-        JPopupMenu menu = new JPopupMenu();
-        JMenuItem edit = new JMenuItem("Edit Message");
-        JMenuItem delete = new JMenuItem("Delete Message");
-        menu.add(edit);
-        menu.add(delete);
-        menu.show(moreButton, moreButton.getWidth()/2, moreButton.getHeight()/2);
-
-        edit.addActionListener(new ActionListener() {
+        // edit button action listener logic
+        editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String allMessages = conversationArea.getText();
@@ -138,16 +69,21 @@ public class DisplayMessagesPanel extends JPanel {
                 String selectedMessage = messageList.getSelectedValue();
                 if (selectedMessage != null) {
                     String selectedMessage1 = selectedMessage.split(": ")[1];
-                    System.out.println("Selected message: " + selectedMessage);
-                    String messageToEdit = "";
-                    if (!editField.getText().equals("")) {
-                        messageToEdit = editField.getText();
+                    if ( !selectedMessage.split(": ")[0].equals("You") ) {
+                        JOptionPane.showMessageDialog(null, "You can only edit your own message",
+                                "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        System.out.println("Selected message: " + selectedMessage);
+                        String messageToEdit = "";
+                        if (!editField.getText().equals("")) {
+                            messageToEdit = editField.getText();
+                        }
+                        String requestString = "editMessage," + seller + "," + customer + "," + selectedMessage1 + "," + messageToEdit;
+                        // send request to server
+                        pw.println(requestString);
+                        pw.flush();
+                        System.out.println("Request sent: " + requestString);
                     }
-                    String requestString = "editMessage," + seller + "," + customer + "," + selectedMessage1 + "," + messageToEdit;
-                    // send request to server
-                    pw.println(requestString);
-                    pw.flush();
-                    System.out.println("Request sent: " + requestString);
                 } else {
                     JOptionPane.showMessageDialog(null, "Please select an option",
                             "Error", JOptionPane.ERROR_MESSAGE);
@@ -174,9 +110,8 @@ public class DisplayMessagesPanel extends JPanel {
                 }
             }
         });
-
-        // delete message action listener
-        delete.addActionListener(new ActionListener() {
+        // delete button action listener logic
+        deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Delete message button pressed.");
@@ -193,36 +128,98 @@ public class DisplayMessagesPanel extends JPanel {
                 JOptionPane.showMessageDialog(null, scrollPane, "Delete Message", JOptionPane.PLAIN_MESSAGE);
                 // gets selected message
                 String selectedMessage = messageList.getSelectedValue();
-                System.out.println("Selected message: " + selectedMessage);
-                String requestString = "deleteMessage," + seller + "," + customer + "," + selectedMessage;
+                if ( selectedMessage == null ) {
+                    JOptionPane.showMessageDialog(null, "Please select a message", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String selectedMessage1 = selectedMessage.split(": ")[0];
+                    if ( !selectedMessage1.equals("You")) {
+                        JOptionPane.showMessageDialog(null, "You can only delete your " +
+                                "own message!", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        String selectedMessage2 = selectedMessage.split(": ")[1];
+                        System.out.println("Selected message: " + selectedMessage2);
+                        String requestString = "deleteMessage," + seller + "," + customer + "," + selectedMessage2;
+                        // send request to server
+                        pw.println(requestString);
+                        pw.flush();
+                        System.out.println("Request sent: " + requestString);
+                        // gets server response
+                        try {
+                            String line;
+                            while ((line = br.readLine()) != null) {
+                                if (!line.isEmpty()) {
+                                    break;
+                                }
+                            }
+                            String response = line;
+                            boolean responseBoolean = Boolean.parseBoolean(response);
 
-                // send request to server
-                pw.println(requestString);
-                pw.flush();
-                System.out.println("Request sent: " + requestString);
-                // gets server response
-
-                try {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        if (!line.isEmpty()) {
-                            break;
+                            if (!responseBoolean) {
+                                // Joption pane error
+                                JOptionPane.showMessageDialog(null, "Error deleting message.");
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Message deleted.");
+                            }
+                        } catch (IOException x) {
+                            JOptionPane.showMessageDialog(null, "Error deleting message.");
                         }
                     }
-                    String response = line;
-                    boolean responseBoolean = Boolean.parseBoolean(response);
-
-                    if (!responseBoolean) {
-                        // Joption pane error
-                        JOptionPane.showMessageDialog(null, "Error deleting message.");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Message deleted.");
-                    }
-                } catch (IOException x) {
-                    JOptionPane.showMessageDialog(null, "Error deleting message.");
                 }
             }
         });
+
+        // export button action listener
+        exportButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportFileAction(seller, customer, ifSeller, br, pw);
+            }
+        });
+        // import button action listener
+        importButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                importFileAction();
+            }
+        });
+
+        // refresh button action listener
+        Timer timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                conversationArea.setText("");
+                requestConversationHistory(seller, customer, ifSeller, br, pw);
+            }
+        });
+
+        timer.setRepeats(true);
+        timer.start();
+
+        // create conversation history area
+        conversationArea = new JTextArea();
+        conversationArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(conversationArea);
+        add(scrollPane, BorderLayout.CENTER);
+
+        // Create the input field for user messages
+        inputField = new JTextField();
+        JButton sendButton = new JButton("Send");
+        //sends request to server to get conversation history
+
+        // Add action listener to the button
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMessageRequest( seller, customer, ifSeller, br, pw);
+            }
+        });
+
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.add(inputField, BorderLayout.CENTER);
+        inputPanel.add(sendButton, BorderLayout.EAST);
+
+        add(inputPanel, BorderLayout.SOUTH);
     }
 
     // this method tries to add the conversation history to the panel
@@ -282,22 +279,21 @@ public class DisplayMessagesPanel extends JPanel {
 
             if (!responseBoolean) {
                 // Joption pane error
-                JOptionPane.showMessageDialog(null, "Error sending message.");
+                JOptionPane.showMessageDialog(null, "Please enter a message.");
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        }
-    private void exportFileAction() {
-
+    }
+    private void exportFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
         int userChoice = fileChooser.showSaveDialog(this);
 
         if (userChoice == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            String filePath = selectedFile.getAbsolutePath();
 
-            String requestString = "exportFile," + filePath;
+            String requestString = "exportFile," + selectedFile + "," + seller + ","
+                    + customer;
             pw.println(requestString);
             pw.flush();
 

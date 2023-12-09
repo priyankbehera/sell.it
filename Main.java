@@ -42,6 +42,7 @@ public class Main {
 
                 // Sets  frame
                 mainframe.setSize(1024, 768);
+                mainframe.setBackground(Color.LIGHT_GRAY);
                 mainframe.setLocationRelativeTo(null);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -115,6 +116,7 @@ public class Main {
                             Seller seller = new Seller(createAccPanel.getEmail(), storeName, createAccPanel.getPassword());
                             accountType = 1;
                         }
+
                         // send request to server
                         String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
                         boolean success = createAccountRequest(requestString, pw, br);
@@ -128,7 +130,7 @@ public class Main {
                         } else {
                             // @TODO Ensure that when user tries to create an account when they already have one, that it gives them an error and prompts them to log in
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
-                            mainframe.setContentPane(loginPanel);
+                            JOptionPane.showMessageDialog(null, "Account already exists, Please log in or try a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
                         }
                         mainframe.revalidate();
                         mainframe.repaint();

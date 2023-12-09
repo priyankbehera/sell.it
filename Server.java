@@ -106,12 +106,12 @@ public class Server {
                 printWriter.flush();
             }
             case "exportFile" -> {
-                String filename = args[0];
-                filename = "conversation_data/seller_matt_Messages.csv";
-                boolean success = sendFile(filename, printWriter);
+                String selectedFile = args[0];
+                String seller = args[1];
+                String customer = args[2];
+                boolean success = sendFile(selectedFile, seller, customer);
                 printWriter.println(success);
                 printWriter.flush();
-                //TODO: have client read file contents (?)
             }
             case "importFile" -> { // appends .txt file to chosen conversation
                 String filename = args[0];
@@ -140,18 +140,36 @@ public class Server {
         }
     }
 
-    public static synchronized boolean sendFile(String filename, PrintWriter printWriter) {
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+    public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
+        ArrayList<String> list = new ArrayList<>();
+        String contents = "";
+        String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             String line;
-            while ((line = br.readLine()) != null) {
-                printWriter.println(line);
-                printWriter.flush();
+            while ((line = bufferedReader.readLine()) != null) {
+                list.add(line);
             }
-            // unique string of characters to represent end of file
-            printWriter.println("!@##$%$%^");
-            printWriter.flush();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error exporting file",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        for ( int i = 0; i < list.size(); i++ ) {
+            String[] messageParts = list.get(i).split(",");
+            String message = messageParts[2];
+            String time = messageParts[4];
+            String date = messageParts[3];
+            String sender = messageParts[0];
+            String toAdd = time + "," + date + "\n" + sender + ": " + message + "\n";
+            contents += toAdd;
+        }
+        try (OutputStream outputStream = new FileOutputStream(selectedFile)) {
+            outputStream.write(contents.getBytes());
+            JOptionPane.showMessageDialog(null, "File exported successfully",
+                    "Error", JOptionPane.INFORMATION_MESSAGE );
             return true;
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "File could not be exported",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -241,8 +259,7 @@ public class Server {
                 String[] messageParts = fileContent.split(",");
                 String messageContent = messageParts[2];
 
-                String messageToCheck = message.substring(5);
-                if (!messageContent.equals(messageToCheck)) {
+                if (!messageContent.equals(message)) {
                     pw.println(fileContent);
                 }
             }
@@ -296,6 +313,20 @@ public class Server {
                 filenameCsv = "seller_data/SellersList.csv";
                 filenameTxt = "seller_data/sellerNames.txt";
             } else {
+                return false;
+            }
+            // makes sure customer is not a duplicate
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(filenameTxt));
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] lineArray = line.split("-");
+                    String emailToCheck = lineArray[0];
+                    if (emailToCheck.equals(email)) {
+                        return false;
+                    }
+                }
+            } catch (IOException e) {
                 return false;
             }
             try {
