@@ -237,7 +237,7 @@ public class Server {
                 String emailToCheck = lineArray[0];
                 if (!emailToCheck.equals(email)) {
                     pw.println(fileContent);
-                } else  {
+                } else {
                     pw.println(newEmail + ",false,null");
                 }
             }
@@ -271,6 +271,7 @@ public class Server {
         }
         return true;
     }
+
     public static synchronized boolean deleteAccount(boolean accountType, String email) {
         String filename1;
         String filename2;
@@ -359,6 +360,7 @@ public class Server {
         }
         return isPresent;
     }
+
     public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
         ArrayList<String> menuList = new ArrayList<>();
         String folderName = ifSeller ? "customer_data" : "seller_data";
@@ -400,6 +402,7 @@ public class Server {
         }
         return true;
     }
+
     public static synchronized boolean addStore(String seller, String storeName, String description) {
         String filename = "seller_data/stores/" + seller + "_Stores.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
@@ -431,6 +434,7 @@ public class Server {
         }
         return true;
     }
+
     public static synchronized boolean getBlockedUsers(String blocker, PrintWriter pw) {
         String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
         // ensure file exists
@@ -452,7 +456,7 @@ public class Server {
             for (String blockedUser : blockedUsers) {
                 blocked += blockedUser + ",";
             }
-            blocked =  blocked.substring(0, blocked.length() - 1); //removes trailing comma
+            blocked = blocked.substring(0, blocked.length() - 1); //removes trailing comma
             pw.println(blocked);
             pw.flush();
         } catch (Exception e) {
@@ -491,6 +495,7 @@ public class Server {
         }
         return true;
     }
+
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
         selectedFile += ".csv";
         ArrayList<String> list = new ArrayList<>();
@@ -507,7 +512,7 @@ public class Server {
             JOptionPane.showMessageDialog(null, "Error exporting file",
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
-        for ( int i = 0; i < list.size(); i++ ) {
+        for (int i = 0; i < list.size(); i++) {
             String messageParts = list.get(i);
             contents += messageParts + "\n";
         }
@@ -525,6 +530,7 @@ public class Server {
         String fileContent = readFile(new File(filename)).trim();
         return sendMessage(seller, customer, ifSeller, fileContent);
     }
+
     private synchronized static String readFile(File file) {
         StringBuilder content = new StringBuilder();
 
@@ -700,6 +706,7 @@ public class Server {
             return false;
         }
     }
+
     // blocks user
     public static synchronized boolean blockUser(String blocker, String toBlock) {
         String filename = "block_data/blocked/" + blocker + "_Blocked.csv";
@@ -710,6 +717,31 @@ public class Server {
         }
         return true;
     }
+
+    public static synchronized boolean setCensoredKeyword(String user, String keyword) {
+        String filename = "keywords_data/" + user + "_censoredKeywords.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+            pw.println(keyword);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static ArrayList<String> getcensoredKeywords(String user) {
+        ArrayList<String> censoredKeywords = new ArrayList<String>();
+        String filename = "keywords_data/" + user + "_censoredKeywords.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                censoredKeywords.add(line);
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return censoredKeywords;
+    }
+
     // sends arraylist of messages to client
     public static synchronized ArrayList<String> getConversationHistory(String seller, String customer, boolean ifSeller) {
         ArrayList<String> list = new ArrayList<>();
@@ -788,36 +820,37 @@ public class Server {
         return true;
     }
 
-    private static class clientManager implements Runnable {
-        private Socket socket;
+private static class clientManager implements Runnable {
+    private Socket socket;
 
-        public clientManager(Socket socket) {
-            this.socket = socket;
-        }
+    public clientManager(Socket socket) {
+        this.socket = socket;
+    }
 
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+    @Override
+    public void run() {
+        while (true) {
+            try {
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                    // Read request from  client
-                    String request;
-                    while (true) {
-                        request = br.readLine();
-                        if (request != null) {
-                            if (!request.isEmpty()) break;
-                        }
+                // Read request from  client
+                String request;
+                while (true) {
+                    request = br.readLine();
+                    if (request != null) {
+                        if (!request.isEmpty()) break;
                     }
-                    System.out.println("Received request: " + request);
-                    requests(request, printWriter);
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
                 }
+                System.out.println("Received request: " + request);
+                requests(request, printWriter);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
+
+}
 
     private static boolean isUser(String user) {
         ArrayList<String> customers = new ArrayList<>();
