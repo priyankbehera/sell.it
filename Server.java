@@ -7,6 +7,7 @@ import java.net.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 
 /**
@@ -22,21 +23,19 @@ import java.util.ArrayList;
  **/
 public class Server {
     private static final int portNumber = 4242;
+    Message message;
 
     public static void main(String[] args) {
-        try {
-            ServerSocket serverSocket = new ServerSocket(portNumber);
+        try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             System.out.println("Server started on port " + portNumber);
 
-            while (true) {
-                Socket socket = serverSocket.accept();
-                System.out.println("Client connected at: " + socket.getInetAddress().getHostAddress());
+            Socket socket = serverSocket.accept();
+            System.out.println("Client connected at: " + socket.getInetAddress().getHostAddress());
 
-                // Creates client object and thread
-                clientManager client = new clientManager(socket);
-                Thread thread = new Thread(client);
-                thread.start();
-            }
+            // Creates client object and thread
+            clientManager client = new clientManager(socket);
+            Thread thread = new Thread(client);
+            thread.start();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -142,7 +141,7 @@ public class Server {
 
     public static synchronized boolean sendFile(String selectedFile, String seller, String customer) {
         ArrayList<String> list = new ArrayList<>();
-        String contents = "";
+        StringBuilder contents = new StringBuilder();
         String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -150,26 +149,23 @@ public class Server {
                 list.add(line);
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error exporting file",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error exporting file", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        for ( int i = 0; i < list.size(); i++ ) {
-            String[] messageParts = list.get(i).split(",");
+        for (String s : list) {
+            String[] messageParts = s.split(",");
             String message = messageParts[2];
             String time = messageParts[4];
             String date = messageParts[3];
             String sender = messageParts[0];
             String toAdd = time + "," + date + "\n" + sender + ": " + message + "\n";
-            contents += toAdd;
+            contents.append(toAdd);
         }
         try (OutputStream outputStream = new FileOutputStream(selectedFile)) {
-            outputStream.write(contents.getBytes());
-            JOptionPane.showMessageDialog(null, "File exported successfully",
-                    "Error", JOptionPane.INFORMATION_MESSAGE );
+            outputStream.write(contents.toString().getBytes());
+            JOptionPane.showMessageDialog(null, "File exported successfully", "Error", JOptionPane.INFORMATION_MESSAGE);
             return true;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "File could not be exported",
-                    "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "File could not be exported", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
     }
@@ -185,8 +181,8 @@ public class Server {
             }
             // writes to conversation file
             PrintWriter pw = new PrintWriter(new FileWriter(conversationFile, true));
-            for (int i = 0; i < importFile.size(); i++) {
-                pw.println(importFile.get(i));
+            for (String s : importFile) {
+                pw.println(s);
             }
         } catch (IOException e) {
             return false;
@@ -237,9 +233,9 @@ public class Server {
         return "false";
     }
 
-    public static synchronized boolean deleteMessage(String seller, String customer, String message) {
+    // Has to copy file contents, then delete file, then rewrite file
+    public static synchronized ArrayList<String> getFileContents(String seller, String customer, String message) {
         String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
-        // has to copy file contents, then delete file, then rewrite file
         ArrayList<String> fileContents = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -247,26 +243,36 @@ public class Server {
                 fileContents.add(line);
             }
         } catch (IOException e) {
-            return false;
+            return null;
         }
+        return fileContents;
+    }
+
+    public static synchronized boolean deleteMessage(String seller, String customer, String message) {
+        ArrayList<String> fileContents = getFileContents(seller, customer, message);
 
         // overwrites file
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
-            for (String fileContent : fileContents) {
-                // if the line is not the message, then it is written to the file
+        if (fileContents != null) {
+            String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+            try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
+                for (String fileContent : fileContents) {
+                    // if the line is not the message, then it is written to the file
 
-                // parses message out of string
-                String[] messageParts = fileContent.split(",");
-                String messageContent = messageParts[2];
+                    // parses message out of string
+                    String[] messageParts = fileContent.split(",");
+                    String messageContent = messageParts[2];
 
-                if (!messageContent.equals(message)) {
-                    pw.println(fileContent);
+                    if (!messageContent.equals(message)) {
+                        pw.println(fileContent);
+                    }
                 }
+            } catch (IOException e) {
+                return false;
             }
-        } catch (IOException e) {
+            return true;
+        } else {
             return false;
         }
-        return true;
     }
 
     public static synchronized boolean sendMessage(String seller, String customer, boolean ifSeller, String message) {
@@ -283,17 +289,19 @@ public class Server {
         return true;
     }
 
-    public static synchronized void messageSeller(String seller, String customer, String message) {
-
+    public static synchronized Message createMessage(String seller, String customer, String message) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
         LocalDateTime now = LocalDateTime.now();
         String currentDateTime = dtf.format(now);
         String date = currentDateTime.substring(0, 10);
         String time = currentDateTime.substring(11);
-        Message message1 = new Message(seller, customer, message, date, time);
+        return new Message(seller, customer, message, date, time);
+    }
 
+    public static synchronized void messageSeller(String seller, String customer, String message) {
+        Message message1 = createMessage(seller, customer, message);
         try (PrintWriter pw = new PrintWriter(new FileWriter("conversation_data/" + seller + "_" + customer + "_Messages.csv", true))) {
-            pw.println(message1.toString());
+            pw.println(message1);
         } catch (IOException e) {
             System.out.println("That does not work!");
         }
@@ -401,13 +409,7 @@ public class Server {
     }
 
     public static synchronized void messageCustomer(String seller, String customer, String message) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm");
-        LocalDateTime now = LocalDateTime.now();
-        String currentDateTime = dtf.format(now);
-        String date = currentDateTime.substring(0, 10);
-        String time = currentDateTime.substring(11);
-        Message message1 = new Message(customer, seller, message, date, time);
-
+        Message message1 = createMessage(seller, customer, message);
         String fileName = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
         try (PrintWriter pw = new PrintWriter(new FileWriter(fileName, true))) {
             pw.println(message1);
@@ -417,7 +419,7 @@ public class Server {
     }
 
     private static class clientManager implements Runnable {
-        private Socket socket;
+        private final Socket socket;
 
         public clientManager(Socket socket) {
             this.socket = socket;
@@ -425,24 +427,22 @@ public class Server {
 
         @Override
         public void run() {
-            while (true) {
-                try {
-                    PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            try {
+                PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), false);
+                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                    // Read request from  client
-                    String request;
-                    while (true) {
-                        request = br.readLine();
-                        if (request != null) {
-                            if (!request.isEmpty()) break;
-                        }
+                // Read request from  client
+                String request;
+                while (true) {
+                    request = br.readLine();
+                    if (request != null) {
+                        if (!request.isEmpty()) break;
                     }
-                    System.out.println("Received request: " + request);
-                    requests(request, printWriter);
-                } catch (IOException e) {
-                    System.out.println(e.getMessage());
                 }
+                System.out.println("Received request: " + request);
+                requests(request, printWriter);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -464,6 +464,21 @@ public class Server {
         } catch (IOException e) {
             return false;
         }
+        return processUser(user, sellers);
+    }
+
+    // uses isUser to see if it is a user, then returns true if is a seller,
+    // returns false if it is a customer
+    private static boolean ifSeller(String user) {
+        boolean isUser = isUser(user);
+        if (isUser) {
+            ArrayList<String> sellers = new ArrayList<>();
+            return processUser(user, sellers);
+        }
+        return false;
+    }
+
+    private static boolean processUser(String user, ArrayList<String> sellers) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -481,62 +496,32 @@ public class Server {
         return false;
     }
 
-    // uses isUser to see if it is a user, then returns true if is a seller,
-    // returns false if it is a customer
-    private static boolean ifSeller(String user) {
-        boolean isUser = isUser(user);
-        if (isUser) {
-            ArrayList<String> sellers = new ArrayList<>();
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    sellers.add(line);
+    public static synchronized boolean editMessage(String seller, String customer, String messageToEdit, String editedMessage) {
+        ArrayList<String> fileContents = getFileContents(seller, customer, messageToEdit);
+        if (fileContents != null) {
+            for (int i = 0; i < fileContents.size(); i++) {
+                String[] messageParts = fileContents.get(i).split(",");
+                String messageContent = messageParts[2];
+                if (messageContent.equals(messageToEdit)) {
+                    messageParts[2] = editedMessage;
+                    String toAdd = "";
+                    toAdd += messageParts[0] + "," + messageParts[1] + "," + messageParts[2] + "," + messageParts[3] + "," + messageParts[4];
+                    fileContents.set(i, toAdd);
                 }
-                for (String s : sellers) {
-                    String seller = s.split("-")[0];
-                    if (seller.equals(user)) {
-                        return true;
-                    }
+            }
+            // overwrites file
+            String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
+            try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
+                for (String fileContent : fileContents) {
+                    pw.println(fileContent);
                 }
             } catch (IOException e) {
                 return false;
             }
+            return true;
+        } else {
             return false;
         }
-        return false;
-    }
-
-    public static synchronized boolean editMessage(String seller, String customer, String messageToEdit, String editedMessage) {
-        String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
-        // has to copy file contents, then delete file, then rewrite file
-        ArrayList<String> fileContents = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                fileContents.add(line);
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        for (int i = 0; i < fileContents.size(); i++) {
-            String[] messageParts = fileContents.get(i).split(",");
-            String messageContent = messageParts[2];
-            if (messageContent.equals(messageToEdit)) {
-                messageParts[2] = editedMessage;
-                String toAdd = "";
-                toAdd += messageParts[0] + "," + messageParts[1] + "," + messageParts[2] + "," + messageParts[3] + "," + messageParts[4];
-                fileContents.set(i, toAdd);
-            }
-        }
-        // overwrites file
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, false))) {
-            for (String fileContent : fileContents) {
-                pw.println(fileContent);
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
     }
 }
 
