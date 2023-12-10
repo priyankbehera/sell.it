@@ -109,7 +109,7 @@ Functionality:
 Relationship:
 - Extends JPanel
 
-## 10. WelcomePanel
+## 9. WelcomePanel
 
 Functionality: 
 - Initializes the welcome panel with components such as logo, login fields, buttons, and a success message label.
@@ -124,7 +124,7 @@ Relationships:
 
 ## Other Classes
 
-## 6. Main Class
+## 10. Main Class
 
 Functionality: 
 - Acts as the control center for the Sell.it messaging platform.
@@ -133,7 +133,7 @@ Functionality:
 Relationships:
 - Utilizes all of the classes
 
-## 7. Message 
+## 11. Message 
 
 Functionality: 
 - Represents a message with attributes such as sender, receiver, message content, date sent, and time sent.
@@ -142,7 +142,7 @@ Functionality:
 Relationships: 
 - none
 
-## 8. Server
+## 12. Server
 
 Functionality:
 - Server class that handles requests from the client. This allows all data handling to be done server-side, increasing security and limiting the amount of data sent to the client.
