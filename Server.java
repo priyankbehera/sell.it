@@ -336,7 +336,8 @@ public class Server {
         ArrayList<String> list = new ArrayList<>();
         boolean isPresent = false;
         String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename = folderName + "/CustomersList.csv";
+        String filename = ifSeller ? "/CustomersList.csv" : "/SellersList.csv";
+        filename = folderName + filename;
         try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = bfr.readLine()) != null) {

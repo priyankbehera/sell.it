@@ -59,11 +59,11 @@ public class WelcomePanel extends JPanel {
         continueButton.setBounds(392, 432, 120, 24);
         add(continueButton);
 
-        JLabel messageLabel = new JLabel("Or if you are a new user, please create an account.");
+        JLabel messageLabel = new JLabel("                Or if you are a new user...");
         messageLabel.setBounds(367, 592, 290, 24);
         add(messageLabel);
 
-        createAccButton = new JButton("Create Account");
+        createAccButton = new JButton("Create An Account");
         createAccButton.setBounds(432, 622, 160, 24);
         add(createAccButton);
 

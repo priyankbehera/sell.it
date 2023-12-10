@@ -74,7 +74,7 @@ public class Main {
                             welcomePanel.getSuccessMessage().setText("Invalid credentials. Please try again.");
                         }
                     } else {
-                        welcomePanel.getSuccessMessage().setText("Please enter an email and password to continue.");
+                        welcomePanel.getSuccessMessage().setText("Please enter an email and password.");
                     }
                 });
 
@@ -97,9 +97,17 @@ public class Main {
                             accountType = 0;
                         } else if (userType.equals("Seller")) {
                             accountType = 1;
+                        }
+
+                        // send request to server
+                        String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
+                        boolean success = createAccountRequest(requestString, pw, br);
+                        System.out.println("Account created: " + success);
+                        if ( success && accountType == 1 ) {
                             //seller  Pop up window for seller to add a store
                             try {
                                 String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+
                                 String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                                 if (store.equals("") || description.equals("")) {
                                     JOptionPane.showMessageDialog(null, "Please enter a valid name");
@@ -126,12 +134,6 @@ public class Main {
                                 //ignore
                             }
                         }
-
-                        // send request to server
-                        String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
-                        boolean success = createAccountRequest(requestString, pw, br);
-                        System.out.println("Account created: " + success);
-
                         // display results
                         if (success) {
                             // send back to log in
