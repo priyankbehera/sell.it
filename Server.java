@@ -138,6 +138,7 @@ public class Server {
                 String customer = args[1];
                 String messageToEdit = args[2];
                 String editedMessage = args[3];
+
                 boolean success = editMessage(seller, customer, messageToEdit, editedMessage);
                 printWriter.println(success);
                 printWriter.flush();
