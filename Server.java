@@ -78,30 +78,10 @@ public class Server {
                 String seller = args[0];
                 String customer = args[1];
                 ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
-                ArrayList<String> censoredKeywords;
-
-                // Checks to see if the user is a seller or a customer and retrieves censored keywords
-                if (ifSeller) {
-                    censoredKeywords = getCensoredKeywords(seller);
-                } else {
-                    censoredKeywords = getCensoredKeywords(customer);
-                }
-
-                if (censoredKeywords != null) {
-                    for (String message : messageList) {
-                        for (String censoredKeyword : censoredKeywords) {
-                            if (message.equalsIgnoreCase("message")) {
-                                message = message.replace(censoredKeyword, "[redacted]");
-                            }
-                        }
-                        printWriter.println(message);
-                        printWriter.flush();
-                    }
-                } else {
-                    for (String message: messageList) {
-                        printWriter.println(message);
-                        printWriter.flush();
-                    }
+                for (String message : messageList) {
+                    message = removeCensoredKeywords(message, seller, customer, ifSeller);
+                    printWriter.println(message);
+                    printWriter.flush();
                 }
 
                 //prints end string to represent end of conversation
@@ -224,7 +204,8 @@ public class Server {
             case "setKeyword" -> {
                 String user = args[0];
                 String keyword = args[1];
-                boolean success = setCensoredKeyword(user, keyword);
+                String replacement = args[2];
+                boolean success = setCensoredKeyword(user, keyword, replacement);
                 printWriter.println(success);
                 printWriter.flush();
             }
@@ -294,6 +275,41 @@ public class Server {
             return false;
         }
         return true;
+    }
+
+    public static synchronized String removeCensoredKeywords(String message, String seller, String customer, boolean ifSeller) {
+        String uppercaseMessage = message.toUpperCase();
+
+        ArrayList<Integer> beginIndexes = new ArrayList<>();
+        ArrayList<Integer> endIndexes = new ArrayList<>();
+
+        ArrayList<String> censoredKeywords;
+        ArrayList<String> replacements;
+
+        if (ifSeller) {
+            censoredKeywords = getCensoredKeywords(seller);
+            replacements = getCensoredKeywordReplacements(seller);
+        } else {
+            censoredKeywords = getCensoredKeywords(customer);
+            replacements = getCensoredKeywordReplacements(customer);
+        }
+
+        if (censoredKeywords != null && replacements != null) {
+            for (String censoredKeyword : censoredKeywords) {
+                String uppercaseKeyword = censoredKeyword.toUpperCase();
+                if (uppercaseMessage.contains(uppercaseKeyword)) {
+                    beginIndexes.add(uppercaseMessage.indexOf(uppercaseKeyword));
+                    endIndexes.add(uppercaseMessage.indexOf(uppercaseKeyword) + uppercaseKeyword.length());
+                }
+            }
+            StringBuilder stringBuilder = new StringBuilder(message);
+            for (int i = 0; i < beginIndexes.size(); i++) {
+                stringBuilder.replace(beginIndexes.get(i), endIndexes.get(i), replacements.get(i));
+            }
+            return stringBuilder.toString();
+        } else {
+            return message;
+        }
     }
 
     public static synchronized boolean deleteAccount(boolean accountType, String email) {
@@ -739,10 +755,16 @@ public class Server {
     }
 
     // Writes the user's censored keyword to a file
-    public static synchronized boolean setCensoredKeyword(String user, String keyword) {
-        String filename = "keywords_data/" + user + "_censoredKeywords.csv";
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+    public static synchronized boolean setCensoredKeyword(String user, String keyword, String replacement) {
+        String filename1 = "keywords_data/" + user + "_censoredKeywords.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename1, true))) {
             pw.println(keyword);
+        } catch (IOException e) {
+            return false;
+        }
+        String filename2 = "keywords_data/" + user + "_censoredKeywordReplacements.csv";
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filename2, true))) {
+            pw.println(replacement);
         } catch (IOException e) {
             return false;
         }
@@ -762,6 +784,21 @@ public class Server {
             return null;
         }
         return censoredKeywords;
+    }
+
+    // Retrieves the replacements for the user's censored keywords
+    public static ArrayList<String> getCensoredKeywordReplacements(String user) {
+        ArrayList<String> keywordReplacements = new ArrayList<String>();
+        String filename = "keywords_data/" + user + "_censoredKeywordReplacements.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                keywordReplacements.add(line);
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return keywordReplacements;
     }
 
     // sends arraylist of messages to client
