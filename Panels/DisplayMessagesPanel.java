@@ -409,6 +409,10 @@ public class DisplayMessagesPanel extends JPanel {
     }
     private void exportFileAction(String seller, String customer, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("CSV Files (*.csv)", "csv");
+        fileChooser.setFileFilter(txtFilter);
+
         int userChoice = fileChooser.showSaveDialog(this);
 
         if (userChoice == JFileChooser.APPROVE_OPTION) {
