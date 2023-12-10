@@ -441,9 +441,10 @@ public class DisplayMessagesPanel extends JPanel {
 
     private void importFileAction(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
         JFileChooser fileChooser = new JFileChooser();
-
+        fileChooser.setAcceptAllFileFilterUsed(false);
         FileNameExtensionFilter txtFilter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
         fileChooser.setFileFilter(txtFilter);
+
 
         int result = fileChooser.showOpenDialog(null);
 
