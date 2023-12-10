@@ -12,15 +12,20 @@ import java.util.ArrayList;
 
 /**
  * PJ-05 -- Sell.it
+ * <p>
  * Server class that handles requests from the client.
  * This allows all data handling to be done server-side, increasing
  * security and limiting the amount of data sent to the client.
  * NOTE: To handle requests, the server is sent a string.
  * The first word is the name of the request (eg, "login").
  * The other words are function arguments, delimited by commas.
+ *
  * The hostname is localhost
  * The serverSocket is 4242
- **/
+ *
+ * @author Matthew Allen, Priyank Behera
+ * @version December 10, 2023
+ */
 public class Server {
     private static final int portNumber = 4242;
 
@@ -516,7 +521,9 @@ public class Server {
                 stores.add(line);
             }
         } catch (IOException e) {
-            return false;
+            pw.println("###NOSTORES###");
+            pw.flush();
+            return true;
         }
 
         try {

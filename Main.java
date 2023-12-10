@@ -9,6 +9,16 @@ import java.io.PrintWriter;
 import java.io.*;
 import java.net.*;
 
+/**
+ * PJ-5 -- Sell.it
+ * <p>
+ * This is the main class that handles the client side of the application.
+ * All GUI components are created and handled here.
+ *
+ *
+ * @author Brayden Reimann, Priyank Behera, Shreya Gupta, and Matthew Allen 26047-L25
+ * @version December 10, 2023
+ */
 public class Main {
 
     // Adjust portNumber and hostName if needed
@@ -168,8 +178,9 @@ public class Main {
                 mainframe.setVisible(true);
             });
         } catch (IOException e) { // Throws error if unable to connect to server
-            System.out.println("Unable to connect to server.");
-            System.out.println("Make sure the server is running before starting the client.");
+            JOptionPane.showMessageDialog(null, "Unable to connect to server. Make sure server"
+                            + " is running before launching the client.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

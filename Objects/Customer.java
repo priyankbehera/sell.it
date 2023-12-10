@@ -6,11 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 /**
- * PJ-04 -- Sell.it
+ * PJ-05 -- Sell.it
  * <p>
- * Contains methods for messaging sellers, adding customers to the customer list,
- * retrieving the list of stores, and determining if an email belongs to a seller.
- * Manages customer related functions like interacting with sellers.
+ *     contains credentials of customers and methods to get and set.
  *
  * @author Brayden Reimann, 26047-L25
  * @version November 11, 2023

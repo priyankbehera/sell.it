@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * PJ-04 -- Sell.it
+ * PJ-05 -- Sell.it
  * <p>
- * Makes a generic user with the attributes email, conversation history, and a list of messages.
- * Handles user login, manages the user's conversation history, and log's the users conversations.
+ * Makes a generic user with the attributes email, conversation history,
+ * and a list of messages.
  *
  * @author Brayden Reimann and Shreya Gupta, 26047-L25
  * @version November 11, 2023

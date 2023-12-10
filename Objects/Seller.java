@@ -7,11 +7,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 /**
- * PJ-04 -- Sell.it
+ * PJ-05 -- Sell.it
  * <p>
- * Contains methods for messaging customers, adding sellers to the sellers list,
- * retrieving the list of customers, and determining if an email belongs to a customer.
- * Manages seller related functions like interacting with customers.
+ *     contains credentials of sellers and methods to get and set.
  *
  * @author Brayden Reimann, 26047-L25
  * @version November 11, 2023

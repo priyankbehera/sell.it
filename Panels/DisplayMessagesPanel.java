@@ -9,6 +9,16 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.*;
 import java.util.ArrayList;
+/**
+ * PJ-5 -- Sell.it
+ * <p>
+ *     this class contains the panel that displays conversations and also
+ *     contains the menubar on top for actions like export, import, etc.
+ *
+ *
+ * @author  Priyank Behera 26047-L25
+ * @version December 10, 2023
+ */
 public class DisplayMessagesPanel extends JPanel {
     private JTextArea conversationArea;
     private JTextField inputField;
@@ -66,6 +76,9 @@ public class DisplayMessagesPanel extends JPanel {
                 while ((line = br.readLine()) != null) {
                     if (line.equals("end")) {
                         break;
+                    } else if (line.equals("###NOSTORES###")) {
+                        JOptionPane.showMessageDialog(null, "Seller has no stores, try selecting a different seller.");
+                        return;
                     } else {
                         storeList.add(line);
                     }

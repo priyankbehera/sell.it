@@ -9,6 +9,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * PJ-05 -- Sell.it
+ * <p>
+ *
+ * This class creates the MenuPanel which controls the list
+ * of users to be selected. It also contains other features like search and block.
+ *
+ *
+ * @author Shreya Gupta, 26047-L25
+ * @version December 10, 2023
+ */
+
 public class MenuPanel extends JPanel {
     private JList<String> messageList;
     private final JTextField searchField;
@@ -290,12 +302,36 @@ public class MenuPanel extends JPanel {
         invisibleItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 // @TODO Add functionality
             }
         });
 
         // Make the popup menu visible
         popupMenu.show(component, 0, component.getHeight());
+    }
+
+
+    private void setInvisible(PrintWriter pw, BufferedReader br) {
+        String selectedUser = messageList.getSelectedValue();
+        if (selectedUser != null) {
+            int choice = JOptionPane.showConfirmDialog(
+                    null,
+                    "Are you sure you want to become invisible to " + selectedUser + "?\nThey will not be able to see your account.",
+                    "Confirm",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+                if (requestBlock(currentUser, selectedUser, br, pw)) {
+                    JOptionPane.showMessageDialog(null, "You are now invisible to: " + selectedUser);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error becoming invisible.");
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a user to block.");
+        }
     }
 
     private void blockSelectedUser(PrintWriter pw, BufferedReader br) {

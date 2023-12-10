@@ -9,6 +9,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * PJ-05 -- Sell.it
+ * <p>
+ * This class stores the components for the create account panel.
+ *
+ *
+ * @author Brayden Reimann, 26047-L25
+ * @version December 10, 2023
+ */
 public class CreateAccPanel extends JPanel {
     JTextField emailText;
     JPasswordField passwordField;

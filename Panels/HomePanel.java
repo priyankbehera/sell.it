@@ -8,11 +8,27 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.ArrayList;
-
+/**
+ * PJ-05 -- Sell.it
+ * <p>
+ *
+ * This class creates the MenuPanel which controls the list
+ * of users to be selected. It also contains other features like search and block.
+ *
+ *
+ * @author Priyank Behera, Brayden Reimann 26047-L25
+ * @version December 10, 2023
+ */
 public class HomePanel extends JPanel {
     private MenuPanel menuPanel;
+    private PrintWriter pw;
+    private BufferedReader br;
 
     public HomePanel(String user, boolean ifSeller, PrintWriter pw, BufferedReader br) {
+
+        this.pw = pw;
+        this.br = br;
+
         // setting the layout manager
         setLayout(new BorderLayout());
 
@@ -60,44 +76,34 @@ public class HomePanel extends JPanel {
     }
 
     // getting the user list
-    public String[] getList(boolean ifSeller) {
-        ArrayList<String> list = new ArrayList<>();
-        String[] users;
-        String[] empty = {"empty"};
-        if (ifSeller) {
-            String filename = "customer_data/CustomersList.csv";
-            try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-                String line;
-                while ( (line = bfr.readLine()) != null ) {
-                    list.add(line);
+    private String[] getList(boolean ifSeller) {
+        // send request to server
+        String request = "getUsers," + ifSeller;
+
+        try {
+            pw.println(request);
+            pw.flush();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.isEmpty()) {
+                    break;
                 }
-                users = new String[list.size()];
-                for ( int i = 0; i < users.length; i++ ) {
-                    users[i] = list.get(i).split(",")[0];
-                }
-                return users;
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error - IOException");
-                return empty;
             }
-        } else {
-            String filename = "seller_data/SellersList.csv";
-            try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-                String line;
-                while ( (line = bfr.readLine()) != null ) {
-                    list.add(line);
-                }
-                users = new String[list.size()];
-                for ( int i = 0; i < users.length; i++ ) {
-                    users[i] = list.get(i).split(",")[0];
-                }
-                return users;
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error - IOException");
-                return empty;
-            }
+            String[] users = line.split(",");
+
+
+            // removes blocked users
+            // remove null users from array
+            return users;
+
+        } catch (IOException e) {
+            return null;
         }
+
+
     }
-}
+    }
+
 
 

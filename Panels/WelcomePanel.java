@@ -7,6 +7,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * PJ-05 -- Sell.it
+ * <p>
+ * this class creates and stores the welcome panel which
+ * prompts a user to sign in or create an account.
+ *
+ *
+ * @author Brayden Reimann, 26047-L25
+ * @version December 10, 2023
+ */
 public class WelcomePanel extends JPanel {
     JTextField emailText;
     JPasswordField passwordField;

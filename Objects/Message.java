@@ -1,7 +1,7 @@
 package Objects;
 
 /**
- * PJ-04 -- Sell.it
+ * PJ-05 -- Sell.it
  * <p>
  * This class represents a message with attributes such as sender,
  * receiver, message content, date sent, and time sent.
