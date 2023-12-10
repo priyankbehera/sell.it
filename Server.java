@@ -690,7 +690,8 @@ public class Server {
         String time = currentDateTime.substring(11);
         Message message1 = new Message(seller, customer, message, date, time);
 
-        try (PrintWriter pw = new PrintWriter(new FileWriter("conversation_data/" + seller + "_" + customer + "_Messages.csv", true))) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter("conversation_data/" + seller + "_" + customer
+                + "_Messages.csv", true))) {
             pw.println(message1.toString());
         } catch (IOException e) {
             System.out.println("That does not work!");
@@ -853,7 +854,8 @@ public class Server {
         } catch (FileNotFoundException e) {
             messageList.add("You have no message history with this user");
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error in Program, please refresh", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error in Program, please refresh",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
         return messageList;
     }
@@ -972,7 +974,8 @@ public class Server {
         return false;
     }
 
-    public static synchronized boolean editMessage(String seller, String customer, String messageToEdit, String editedMessage) {
+    public static synchronized boolean editMessage(String seller, String customer, String messageToEdit,
+                                                   String editedMessage) {
         String filename = "conversation_data/" + seller + "_" + customer + "_Messages.csv";
         // has to copy file contents, then delete file, then rewrite file
         ArrayList<String> fileContents = new ArrayList<>();
@@ -990,7 +993,8 @@ public class Server {
             if (messageContent.equals(messageToEdit)) {
                 messageParts[2] = editedMessage;
                 String toAdd = "";
-                toAdd += messageParts[0] + "," + messageParts[1] + "," + messageParts[2] + "," + messageParts[3] + "," + messageParts[4];
+                toAdd += messageParts[0] + "," + messageParts[1] + "," + messageParts[2] + ","
+                        + messageParts[3] + "," + messageParts[4];
                 fileContents.set(i, toAdd);
             }
         }
