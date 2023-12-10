@@ -444,7 +444,6 @@ public class MenuPanel extends JPanel {
 
     }
 
-
     private void createJList(String[] people) {
         DefaultListModel<String> model = new DefaultListModel<>();
         for (String person : people) {
