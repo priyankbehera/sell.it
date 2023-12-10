@@ -148,8 +148,15 @@ public class DisplayMessagesPanel extends JPanel {
 
                 JOptionPane.showMessageDialog(null, panel, "Edit Message", JOptionPane.PLAIN_MESSAGE);
                 // gets selected message
+
+
+                // if they click x or cancel, selectedMessage will be null
+
                 String selectedMessage = messageList.getSelectedValue();
-                if (selectedMessage != null) {
+                if (selectedMessage == null) {
+                    return;
+                }
+
                     String selectedMessage1 = selectedMessage.split(": ")[1];
                     if ( !selectedMessage.split(": ")[0].equals("You") ) {
                         JOptionPane.showMessageDialog(null, "You can only edit your own message",
@@ -166,10 +173,6 @@ public class DisplayMessagesPanel extends JPanel {
                         pw.flush();
                         System.out.println("Request sent: " + requestString);
                     }
-                } else {
-                    JOptionPane.showMessageDialog(null, "Please select an option",
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                }
                 // gets server response
                 try {
                     String line;
