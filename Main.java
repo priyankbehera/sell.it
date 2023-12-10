@@ -100,15 +100,18 @@ public class Main {
                         }
 
                         // send request to server
-                        String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail() + "," + createAccPanel.getPassword();
+                        String requestString = "createAccount," + accountType + "," + createAccPanel.getEmail()
+                                + "," + createAccPanel.getPassword();
                         boolean success = createAccountRequest(requestString, pw, br);
                         System.out.println("Account created: " + success);
                         if ( success && accountType == 1 ) {
                             //seller  Pop up window for seller to add a store
                             try {
-                                String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
+                                String store = JOptionPane.showInputDialog(null,
+                                        "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
 
-                                String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                                String description = JOptionPane.showInputDialog(null,
+                                        "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                                 if (store.equals("") || description.equals("")) {
                                     JOptionPane.showMessageDialog(null, "Please enter a valid name");
                                 } else {
@@ -137,12 +140,15 @@ public class Main {
                         // display results
                         if (success) {
                             // send back to log in
-                            JOptionPane.showMessageDialog(null, "Account created, please log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null, "Account created, please log in.",
+                                    "Success", JOptionPane.INFORMATION_MESSAGE);
                             createAccPanel.resetPanel(); // Resets the Create Account panel
                             mainframe.setContentPane(welcomePanel);
                         } else {
                             createAccPanel.getSuccessMessage().setText("Account already exists. Please log in.");
-                            JOptionPane.showMessageDialog(null, "Account already exists, Please log in or try a different email.", "Error", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(null,
+                                    "Account already exists, Please log in or try a different email.",
+                                    "Error", JOptionPane.INFORMATION_MESSAGE);
                         }
                         mainframe.revalidate();
                         mainframe.repaint();

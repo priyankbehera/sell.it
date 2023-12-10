@@ -85,10 +85,12 @@ public class DisplayMessagesPanel extends JPanel {
                 Font font = new Font("Monospace", Font.BOLD, 15);
                 storeJList.setFont(font);
 
-                JOptionPane.showMessageDialog(null, scrollPane, seller + "'s stores", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, scrollPane, seller + "'s stores",
+                        JOptionPane.PLAIN_MESSAGE);
 
                 } catch (Exception d) {
-                    JOptionPane.showMessageDialog(null, "Seller has no stores, try selecting a different seller.");
+                    JOptionPane.showMessageDialog(null,
+                            "Seller has no stores, try selecting a different seller.");
                 }
 
             }
@@ -100,8 +102,10 @@ public class DisplayMessagesPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 // popup for store name and description
                 try {
-                    String store = JOptionPane.showInputDialog(null, "Enter store name: ", "Continue", JOptionPane.QUESTION_MESSAGE);
-                    String description = JOptionPane.showInputDialog(null, "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
+                    String store = JOptionPane.showInputDialog(null, "Enter store name: ",
+                            "Continue", JOptionPane.QUESTION_MESSAGE);
+                    String description = JOptionPane.showInputDialog(null,
+                            "Enter store description: ", "Create Store", JOptionPane.QUESTION_MESSAGE);
                     if (store.equals("") || description.equals("")) {
                         JOptionPane.showMessageDialog(null, "Please enter a valid name");
                     } else {
@@ -167,7 +171,8 @@ public class DisplayMessagesPanel extends JPanel {
                         if (!editField.getText().equals("")) {
                             messageToEdit = editField.getText();
                         }
-                        String requestString = "editMessage," + seller + "," + customer + "," + selectedMessage1 + "," + messageToEdit;
+                        String requestString = "editMessage," + seller + "," + customer + "," + selectedMessage1 + ","
+                                + messageToEdit;
                         // send request to server
                         pw.println(requestString);
                         pw.flush();
@@ -210,7 +215,8 @@ public class DisplayMessagesPanel extends JPanel {
                 JList<String> messageList = new JList<>(messages1);
                 JScrollPane scrollPane = new JScrollPane(messageList);
                 scrollPane.setPreferredSize(new Dimension(300, 400));
-                JOptionPane.showMessageDialog(null, scrollPane, "Delete Message", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(null, scrollPane, "Delete Message",
+                        JOptionPane.PLAIN_MESSAGE);
                 // gets selected message
                 String selectedMessage = messageList.getSelectedValue();
                 if ( selectedMessage == null ) {
@@ -333,7 +339,8 @@ public class DisplayMessagesPanel extends JPanel {
     // if ifSeller == true, the user is seller
     // if ifSeller == false, then the user is customer
 
-    private void requestConversationHistory(String seller, String customer, boolean ifSeller, BufferedReader br, PrintWriter pw) {
+    private void requestConversationHistory(String seller, String customer, boolean ifSeller, BufferedReader br,
+                                            PrintWriter pw) {
         // send request to server
         String requestString = "getConversationHistory," + seller + "," + customer + "," + ifSeller;
         pw.println(requestString);
@@ -404,10 +411,12 @@ public class DisplayMessagesPanel extends JPanel {
 
             if (!responseBoolean) {
                 // Joption pane error
-                JOptionPane.showMessageDialog(null, "You've been blocked by this user. Cannot send message.");
+                JOptionPane.showMessageDialog(null,
+                        "You've been blocked by this user. Cannot send message.");
             }
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "You've been blocked by this user. Cannot send message.");
+            JOptionPane.showMessageDialog(null,
+                    "You've been blocked by this user. Cannot send message.");
         }
     }
     private void exportFileAction(String seller, String customer, BufferedReader br, PrintWriter pw) {

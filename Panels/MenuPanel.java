@@ -147,24 +147,32 @@ public class MenuPanel extends JPanel {
                 String keyword = "";
                 String replacementKeyword = "";
                 while (!hasKeyword) {
-                    keyword = JOptionPane.showInputDialog(null, "Please enter a keyword:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
+                    keyword = JOptionPane.showInputDialog(null,
+                            "Please enter a keyword:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
                     if (keyword.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Error: Your keyword cannot be empty.");
+                        JOptionPane.showMessageDialog(null,
+                                "Error: Your keyword cannot be empty.");
                     } else {
                         hasKeyword = true;
                     }
                 }
-                int choice = JOptionPane.showConfirmDialog(null, "Would you like to create a custom replacement for this keyword?", "Censor a Keyword", JOptionPane.YES_NO_OPTION);
+                int choice = JOptionPane.showConfirmDialog(null,
+                        "Would you like to create a custom replacement for this keyword?",
+                        "Censor a Keyword", JOptionPane.YES_NO_OPTION);
                 if (choice == JOptionPane.YES_OPTION) {
-                    replacementKeyword = JOptionPane.showInputDialog(null, "Please enter a replacement:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
+                    replacementKeyword = JOptionPane.showInputDialog(null,
+                            "Please enter a replacement:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
                 } else if (choice == JOptionPane.NO_OPTION || choice == JOptionPane.CLOSED_OPTION) {
                     replacementKeyword = ("*".repeat(keyword.length()));
                 }
                 if (setCensoredKeyword(currentUser, keyword, replacementKeyword, br, pw)) {
-                    String message = "Keyword " + '"' + keyword + '"' + " successfully replaced with " + '"' + replacementKeyword + '"' + "!";
-                    JOptionPane.showMessageDialog(null, message, "Censor a Keyword", JOptionPane.INFORMATION_MESSAGE);
+                    String message = "Keyword " + '"' + keyword + '"' + " successfully replaced with " + '"'
+                            + replacementKeyword + '"' + "!";
+                    JOptionPane.showMessageDialog(null, message, "Censor a Keyword",
+                            JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Error: Unable to censor keyword", "Censor a Keyword", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Error: Unable to censor keyword",
+                            "Censor a Keyword", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -176,7 +184,8 @@ public class MenuPanel extends JPanel {
                 int choice = JOptionPane.showConfirmDialog(
                         null,
                         "Are you sure you want to edit your account?\n" +
-                                "This will only have an affect on future messages. Current messages will be lost.\nNOTE: If only password is changed, all data will remain.",
+                                "This will only have an affect on future messages. Current messages will be lost." +
+                                "\nNOTE: If only password is changed, all data will remain.",
                         "Confirm Delete Account",
                         JOptionPane.YES_NO_OPTION
                 );
