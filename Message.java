@@ -29,41 +29,6 @@ public class Message {
         this.timeSent = timeSent;
     }
 
-    // Getters
-
-    public String getSender() {
-        return sender;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public String getDateSent() {
-        return dateSent;
-    }
-
-    public String getTimeSent() {
-        return timeSent;
-    }
-
-    // Setters
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     @Override
     public String toString() {
         return sender + "," + receiver + "," + message + "," + dateSent + "," + timeSent;
