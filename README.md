@@ -18,23 +18,10 @@ Matthew Allen -- Submitted Vocareum workspace
 ## 1. Customer Class
 
 Functionality:
-- Contains methods for messaging sellers, adding customers to the customer list, retrieving the list of stores, and determining if an email belongs to a seller.
-- Manages customer-related functionalities like interacting with sellers and maintaining a list of stores.
-- The messageSeller method allows the customer to send a message to a seller. It appends the message to the conversation history file associated with the seller.
-- The addCustomers method takes in a customer as a parameter and adds it to the file "CustomersList.txt"
-- The getStoresList method retrieves a list of stores from the "SellersList.csv" file.
-- The getStoresSeller method searches the "SellersList.csv" file to find the seller whose store matches the provided store name and then returns the email of the corresponding seller.
-- The isSeller method checks the "SellerList.txt" file to determine if the provided email belongs to a seller. It returns true if the email corresponds to a seller, otherwise false.
-- The viewSentStatistics method retrieves and displays statistics related to messages sent by the customer.
-- The viewRecievedStatistics method counts counts the number of messages received in each conversation and sorts the results based on the specified order.
-- The readCustomerConversation method reads and formats the conversation history from a given file.
-- The getConversation method retrieves the entire conversation history of the customer.
-- The findCommonWords method analyzes the conversation history to find the most common words.
-
+- The class provides multiple constructors for creating instances of the Customer class. These constructors seem to allow different ways of initializing a Customer object, including specifying email, conversation log information, and password.
 
 Relationships:
 - Extends the User class and represents a customer user.
-- Uses Message class for sending messages to sellers.
 
 ## 2. Message Class
 
@@ -48,37 +35,18 @@ Relationships:
 ## 3. Seller Class
 
 Functionality:
-- Contains methods for messaging customers, adding sellers to the seller list, retrieving the list of customers, and determining if an email belongs to a customer.
-- Manages seller-related functionalities like interacting with customers and maintaining a list of customers.
-- The mess method allows the seller to send a message to a customer. It does this by appending the message to the conversation history file associated with the customer.
-- The addSellerList method takes in a customer as a parameter and adds it to the file "CustomersList.txt"
-- The getCustomersList reads the "CustomersList.csv" file to extract customer emails and returns an ArrayList<String> containing the emails of the customers.
-- The messageCustomer method creates a new message object, using date and time as retrieved by LocalDateTime. After creating the method, a String representation of the message is added to the file "customer.getemail() + '_Messages'", which contains all the customers' messages.
-- The isCustomer method checks the "CustomersList.txt" file to determine if the provided email belongs to a customer and returns true if the email corresponds to a customer, otherwise false.
-- The readSellerConversation method reads the conversation history from the file seller_customer_Messages.csv
-- The viewSentStatistics method retrieves and displays statistics related to messages sent by the seller.
-- The viewRecievedStatistics method counts counts the number of messages received in each conversation and sorts the results based on the specified order.
-- The findCommonWords method analyzes the conversation history to find the most common words.
+- The class provides constructors for creating instances of the Seller class. These constructors allow different ways of initializing a Seller object, including specifying email, conversation log information, store, and password.
+- The getStores method is a getter method for retrieving the value of the store field.
+- The getEmail gets the email associated with the seller.
   
 Relationships:
 - Extends the User class and represents a seller user.
-- Uses Message class for sending messages to customers.
 
 ## 4. User Class
 
 Functionality: 
-- Makes a generic user with the attributes of email, conversation history, and a list of messages.
-- Handles user login: checking whether the user is a customer or seller, and viewing received messages.
-- Manages the user's conversation history, including logging conversations and reading from conversation history files.
-- The LogConversation method allows you to log a user's conversation, pass in the file and email as parameters. The method will then print the name of the logFile to the user's src.Conversation History in append mode. If the conversation is successfully logged, hasConversationHistory will be set to true.
-- The isCustomerOrSeller method takes in a user object as a parameter, and then searches for the users' email in the list of customers and list of sellers. The method returns "src.Customer" if the user is a customer and "src.Seller" if the user is a seller. Otherwise, it returns null.
-- The readConversation method is responsible for reading and parsing the content of a conversation file associated with the user.
-- The viewReceivedMessages method in the User class is responsible for displaying messages that the user has received. It does this by checking whether the user has an existing conversation history. If the user does not have a conversation history, it prints an error message indicating that no conversation history is available.
-- The blockUser function is used to block another user. It takes the email of the user to be blocked.
-- The isBlocked method checks if a given user with the specified email is blocked by the current user.
-- The removeFromConversationHistory method removes the conversation history associated with a blocked user. It takes the email of the blocked user, searches for conversation history files containing that email, and deletes them.
-- The becomeInvisible method and the becomeVisible method allow the user to either become visible or invisible to the other user.
-- The isInvisible method verifies whether the user is currently marked as invisible and false otherwise. 
+- Makes a generic user with the attributes of email, conversation log information, and password.
+- Getter methods getEmail, hasConversationHistory, and getConversationHistoryFile allow access to the values of the corresponding fields.
 
 Relationships:
 - Inherited by Customer and Seller classes, sharing common functionality.
@@ -86,27 +54,73 @@ Relationships:
 
 ## Panels Folder
 
-## 5. DisplayMessagesPanel
+## 5. CreateAccPanel
+- Panel for creating a new account
+- Continue Button: Initiates the account creation process.
+- Return to Sign in Button: Allows users to navigate back to the sign-in page.
+- The resetPanel method clears the text fields and resets the drop-down menu, allowing the panel to be reused for multiple account creation attempts.
+- The accessor methods getEmail, getPassword, and getAccountType provides methods to retrieve user input from the email, password, and account type fields.
+- The accessor methods getContinueButton, getReturnLoginButton, and getSuccessMessage provides methods to access the buttons and success message label from other classes.
+
+Relationships:
+- extends JPanel
+
+## 6. DisplayMessagesPanel
 
 Functionality: 
+- Panel designed for displaying and interacting with messages
+- Includes various buttons for actions such as viewing stores, adding a store, editing messages, deleting messages, exporting messages, and importing messages.
 - The requestConversationHistory method sends a request to the server for the conversation history between the seller and customer.
 - The sendMessageRequest method sends a message request to the server which includes the sender, recipient, and the message content.
+- The exportFileAction method prompts the user to select a location to export the messages and sends a request to the server for exporting messages.
+- The importFileAction method prompts the user to select a file to import messages and sends a request to the server for importing messages.
+- Uses a timer to periodically update the conversation area by requesting the latest conversation history from the server.
 
 Relationships: 
+- extends JPanel
 
-## 6. MenuPanel
+## 7. HomePanel
 
 Functionality:
+- Responsible for displaying messages and interacting with users.
+- Creates an instance of MenuPanel and adds it to the west side of the layout.
+- Creates instances of DisplayMessagesPanel for each user and adds them to the card panel.
+- The getList method retrieves the list of users from the CSV file and then reads the user data from the appropriate file (CustomersList.csv or SellersList.csv).
+
+Relationships: 
+- MenuPanel
+- DisplayMessagesPanel
+
+## 8. MenuPanel
+
+Functionality:
+- Provides functionality for displaying a list of users, searching for users, and accessing various user-related actions through a popup menu. 
+- Uses a Timer to periodically refresh the user list.
 - The showMenuPopup method creates and displays a popup menu when the "More" button is clicked.
-- The displayMessageStatistics method gets selected user's message statistics (sent, received, common words) and displays them in a JOptionPane
 - The blockSelectedUser method blocks the selected user and removes them from the conversation history
 - The removeFromConversationHistory method removes the blocked user's conversation history files.
 - The searchUser method searches for a user with the given name in the customer or seller data file.
 - The getList method retrieves a list of users from the respective data file.
 - The createJList method creates a JList with the given array of people and sets it as the model for the messageList
-- The sortSentMessages method retrieves and displays sorted sent or received messages statistics.
+- The setCensoredKeyword method sets a censored keyword for the current user.
+- The requestBlock method sends a request to the server to block a user.
+- The requestBlockedUsers method sends a request to the server to get a list of blocked users for the current user.
 
 Relationship:
+- Extends JPanel
+
+## 10. WelcomePanel
+
+Functionality: 
+- Initializes the welcome panel with components such as logo, login fields, buttons, and a success message label.
+- The getEmail method provides access to the entered email in the text field.
+- The getPassword method provides access to the entered password in the password field.
+- The getContinueButton method provides access to the "Continue" button.
+- The getCreateAccButton method provides access to the "Create An Account" button.
+- The getSuccessMessage method provides access to the success message label.
+
+Relationships: 
+- extends JPanel
 
 ## Other Classes
 
@@ -119,7 +133,16 @@ Functionality:
 Relationships:
 - Utilizes all of the classes
 
-## 7. Server
+## 7. Message 
+
+Functionality: 
+- Represents a message with attributes such as sender, receiver, message content, date sent, and time sent.
+- The constructor initializes a Message object with the provided sender, receiver, message content, date sent, and time sent.
+
+Relationships: 
+- none
+
+## 8. Server
 
 Functionality:
 - Server class that handles requests from the client. This allows all data handling to be done server-side, increasing security and limiting the amount of data sent to the client.
@@ -137,7 +160,6 @@ Functionality:
 - The ifSeller method uses isUser to determine if the user is a seller.
 
 Relationships: 
-
-## Testing:
+- Utilizes all of the classes
 
 
