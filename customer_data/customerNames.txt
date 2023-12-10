@@ -1,4 +1,9 @@
-Bob-password
-Stewart-password
-Steve-password
+testcustomer-password
+matt-password
+test@gmail.com-password
 priyank-password
+priyank-password
+reimann@purdue.edu-doIgo2PurdorIU
+fsd-adf
+Joe-Dirt
+Don-Don
