@@ -449,26 +449,31 @@ public class DisplayMessagesPanel extends JPanel {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            String requestString = "importFile," + seller + "," + customer + "," + ifSeller + "," + selectedFile;
-            pw.println(requestString);
-            pw.flush();
+            if (selectedFile.getAbsolutePath().endsWith(".txt")) {
+                String requestString = "importFile," + seller + "," + customer + "," + ifSeller + "," + selectedFile;
+                pw.println(requestString);
+                pw.flush();
 
-            try {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    if (!line.isEmpty()) {
-                        break;
+                try {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        if (!line.isEmpty()) {
+                            break;
+                        }
                     }
-                }
-                boolean responseBoolean = Boolean.parseBoolean(line);
+                    boolean responseBoolean = Boolean.parseBoolean(line);
 
-                if (!responseBoolean) {
+                    if (!responseBoolean) {
+                        JOptionPane.showMessageDialog(null, "Error importing messages.");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Messages imported successfully");
+                    }
+                } catch (IOException e) {
                     JOptionPane.showMessageDialog(null, "Error importing messages.");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Messages imported successfully");
                 }
-            } catch (IOException e ) {
-                JOptionPane.showMessageDialog(null, "Error importing messages.");
+            } else {
+                JOptionPane.showMessageDialog(null, "Please select a .txt file only", "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
