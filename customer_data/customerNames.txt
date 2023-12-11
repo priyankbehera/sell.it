@@ -1,8 +1,3 @@
-testcustomer-password
-matt-password
-test@gmail.com-password
-priyank-password
-priyank-password
-reimann@purdue.edu-doIgo2PurdorIU
-Joe-Dirt
-Don-Don
+customerOne-password
+customerTwo-password
+customerThree-password
