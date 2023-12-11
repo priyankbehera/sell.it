@@ -3,7 +3,8 @@
 
 ### Created by: Brayden Reimann, Shreya Gupta, Priyank Behera, and Matthew Allen.
 
-Shreya Gupta -- Submitted Report on Brightspace;
+Brayden Reimann -- Submitted Report on Brightspace;
+Shreya Gupta -- Submitted Presentation on Brightspace;
 Matthew Allen -- Submitted Vocareum workspace
 
 ## RUN:
