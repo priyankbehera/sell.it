@@ -1,11 +1,7 @@
 # Project-5
 # Sell.it - A marketplace messaging platform
 
-### Created by: Brayden Reimann, Shreya Gupta, Priyank Behera, and Matthew Allen.
-
-Brayden Reimann -- Submitted Report on Brightspace;
-Shreya Gupta -- Submitted Presentation on Brightspace;
-Matthew Allen -- Submitted Vocareum workspace
+### Created by: Priyank Behera
 
 ## RUN:
 - Compliling Instructions: `mkdir out && javac -d out -sourcepath src src/*.java`
