@@ -9,18 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * PJ-05 -- Sell.it
- * <p>
- *
- * This class creates the MenuPanel which controls the list
- * of users to be selected. It also contains other features like search and block.
- *
- *
- * @author Shreya Gupta, 26047-L25
- * @version December 10, 2023
- */
-
 public class MenuPanel extends JPanel {
     private JList<String> messageList;
     private final JTextField searchField;
@@ -137,9 +125,6 @@ public class MenuPanel extends JPanel {
     private void showMenuPopup(Component component, PrintWriter pw, BufferedReader br) {
         JPopupMenu popupMenu = new JPopupMenu();
 
-        JMenuItem censorKeywords = new JMenuItem("Censor keywords");
-        popupMenu.add(censorKeywords);
-
         JMenuItem blockUserItem = new JMenuItem("Block User");
         popupMenu.add(blockUserItem);
 
@@ -151,43 +136,6 @@ public class MenuPanel extends JPanel {
 
         JMenuItem editAccount = new JMenuItem("Edit Account");
         popupMenu.add(editAccount);
-
-        censorKeywords.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                boolean hasKeyword = false;
-                String keyword = "";
-                String replacementKeyword = "";
-                while (!hasKeyword) {
-                    keyword = JOptionPane.showInputDialog(null,
-                            "Please enter a keyword:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
-                    if (keyword.isEmpty()) {
-                        JOptionPane.showMessageDialog(null,
-                                "Error: Your keyword cannot be empty.");
-                    } else {
-                        hasKeyword = true;
-                    }
-                }
-                int choice = JOptionPane.showConfirmDialog(null,
-                        "Would you like to create a custom replacement for this keyword?",
-                        "Censor a Keyword", JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.YES_OPTION) {
-                    replacementKeyword = JOptionPane.showInputDialog(null,
-                            "Please enter a replacement:", "Censor a Keyword", JOptionPane.PLAIN_MESSAGE);
-                } else if (choice == JOptionPane.NO_OPTION || choice == JOptionPane.CLOSED_OPTION) {
-                    replacementKeyword = ("*".repeat(keyword.length()));
-                }
-                if (setCensoredKeyword(currentUser, keyword, replacementKeyword, br, pw)) {
-                    String message = "Keyword " + '"' + keyword + '"' + " successfully replaced with " + '"'
-                            + replacementKeyword + '"' + "!";
-                    JOptionPane.showMessageDialog(null, message, "Censor a Keyword",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error: Unable to censor keyword",
-                            "Censor a Keyword", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
 
         editAccount.addActionListener(new ActionListener() {
             @Override

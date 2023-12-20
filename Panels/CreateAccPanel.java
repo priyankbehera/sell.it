@@ -35,10 +35,10 @@ public class CreateAccPanel extends JPanel {
 
         // Create components
         try {
-            BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
+            BufferedImage iconImage = ImageIO.read(new File("Images/marketplacecropped.png"));
             ImageIcon logo = new ImageIcon(iconImage);
             JLabel imageLabel = new JLabel(logo);
-            imageLabel.setBounds(362, 200, 300, 125);
+            imageLabel.setBounds(212, 10, 600, 480);
             add(imageLabel);
         } catch (IOException e) {
             JLabel imageLabel = new JLabel("Unable to load image.");
@@ -47,12 +47,14 @@ public class CreateAccPanel extends JPanel {
         }
 
         JLabel loginLabel = new JLabel("Create Account");
-        loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
+        loginLabel.setFont(new Font("Josefin Slab", Font.PLAIN, 24));
         loginLabel.setBounds(392, 332, 200, 30);
+        loginLabel.setForeground(Color.WHITE);
         add(loginLabel);
 
         JLabel emailLabel = new JLabel("Email:");
         emailLabel.setBounds(392, 372, 80, 24);
+        emailLabel.setForeground(Color.WHITE);
         add(emailLabel);
 
         emailText = new JTextField(20);
@@ -61,6 +63,7 @@ public class CreateAccPanel extends JPanel {
 
         JLabel passwordLabel = new JLabel("Password:");
         passwordLabel.setBounds(392, 402, 80, 24);
+        passwordLabel.setForeground(Color.WHITE);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
@@ -69,6 +72,7 @@ public class CreateAccPanel extends JPanel {
 
         JLabel accountTypeLabel = new JLabel("Account Type:");
         accountTypeLabel.setBounds(392, 432, 124, 24);
+        accountTypeLabel.setForeground(Color.WHITE);
         add(accountTypeLabel);
 
         // Drop down menu for selecting account type
@@ -122,5 +126,20 @@ public class CreateAccPanel extends JPanel {
 
     public JLabel getSuccessMessage() {
         return this.successMessage;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame mainframe = new JFrame();
+            mainframe.setSize(1024, 768);
+            mainframe.setLocationRelativeTo(null);
+            mainframe.setResizable(false);
+            mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            Color color = new Color(27, 50, 84);
+            CreateAccPanel createAccPanel = new CreateAccPanel(color);
+            mainframe.setContentPane(createAccPanel);
+            mainframe.setVisible(true);
+        });
     }
 }

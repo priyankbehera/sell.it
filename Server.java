@@ -6,6 +6,10 @@ import javax.swing.*;
 import java.lang.reflect.Array;
 import java.net.*;
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -19,7 +23,6 @@ import java.util.ArrayList;
  * NOTE: To handle requests, the server is sent a string.
  * The first word is the name of the request (eg, "login").
  * The other words are function arguments, delimited by commas.
- *
  * The hostname is localhost
  * The serverSocket is 4242
  *
@@ -84,7 +87,6 @@ public class Server {
                 String customer = args[1];
                 ArrayList<String> messageList = getConversationHistory(seller, customer, ifSeller);
                 for (String message : messageList) {
-                    message = removeCensoredKeywords(message, seller, customer, ifSeller);
                     printWriter.println(message);
                     printWriter.flush();
                 }
@@ -207,14 +209,6 @@ public class Server {
                 printWriter.println(success);
                 printWriter.flush();
             }
-            case "setKeyword" -> {
-                String user = args[0];
-                String keyword = args[1];
-                String replacement = args[2];
-                boolean success = setCensoredKeyword(user, keyword, replacement);
-                printWriter.println(success);
-                printWriter.flush();
-            }
         }
     }
 
@@ -283,40 +277,6 @@ public class Server {
         return true;
     }
 
-    public static synchronized String removeCensoredKeywords(String message, String seller, String customer, boolean ifSeller) {
-        String uppercaseMessage = message.toUpperCase();
-
-        ArrayList<Integer> beginIndexes = new ArrayList<>();
-        ArrayList<Integer> endIndexes = new ArrayList<>();
-
-        ArrayList<String> censoredKeywords;
-        ArrayList<String> replacements;
-
-        if (ifSeller) {
-            censoredKeywords = getCensoredKeywords(seller);
-            replacements = getCensoredKeywordReplacements(seller);
-        } else {
-            censoredKeywords = getCensoredKeywords(customer);
-            replacements = getCensoredKeywordReplacements(customer);
-        }
-
-        if (censoredKeywords != null && replacements != null) {
-            for (String censoredKeyword : censoredKeywords) {
-                String uppercaseKeyword = censoredKeyword.toUpperCase();
-                if (uppercaseMessage.contains(uppercaseKeyword)) {
-                    beginIndexes.add(uppercaseMessage.indexOf(uppercaseKeyword));
-                    endIndexes.add(uppercaseMessage.indexOf(uppercaseKeyword) + uppercaseKeyword.length());
-                }
-            }
-            StringBuilder stringBuilder = new StringBuilder(message);
-            for (int i = 0; i < beginIndexes.size(); i++) {
-                stringBuilder.replace(beginIndexes.get(i), endIndexes.get(i), replacements.get(i));
-            }
-            return stringBuilder.toString();
-        } else {
-            return message;
-        }
-    }
 
     public static synchronized boolean deleteAccount(boolean accountType, String email) {
         String filename1;
@@ -599,37 +559,46 @@ public class Server {
     public static synchronized String login(String email, String password) {
         boolean isUser = isUser(email);
         if (isUser) {
-            ArrayList<String> customers = new ArrayList<>();
-            ArrayList<String> sellers = new ArrayList<>();
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("customer_data/customerNames.txt"))) {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    customers.add(line);
-                }
-                for (String s : customers) {
-                    String customer = s.split("-")[0];
-                    String passwordToCheck = s.split("-")[1];
-                    if (customer.equals(email) && passwordToCheck.equals(password)) {
-                        return "true,false";
-                    }
-                }
-            } catch (IOException e) {
-                return "false";
-            }
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    sellers.add(line);
-                }
-                for (String s : sellers) {
-                    String seller = s.split("-")[0];
-                    String passwordToCheck = s.split("-")[1];
-                    if (seller.equals(email) && passwordToCheck.equals(password)) {
+            String url = "jdbc:mysql://localhost:3306/giraffe";
+            String username = "root";
+            String databasePassword = "Sanupinu23";
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+
+                Connection connection = DriverManager.getConnection(url, username, databasePassword);
+
+                Statement statement = connection.createStatement();
+
+                ResultSet resultSet = statement.executeQuery("select * from sellersList");
+
+                while (resultSet.next()) {
+                    String usernameToCheck = resultSet.getString(2);
+                    String passwordToCheck = resultSet.getString(3);
+                    if ( usernameToCheck.equals(email) && passwordToCheck.equals(password) ) {
                         return "true,true";
                     }
                 }
-            } catch (IOException e) {
-                return "false";
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+
+                Connection connection = DriverManager.getConnection(url, username, databasePassword);
+
+                Statement statement = connection.createStatement();
+
+                ResultSet resultSet = statement.executeQuery("select * from customersList");
+
+                while (resultSet.next()) {
+                    String usernameToCheck = resultSet.getString(2);
+                    String passwordToCheck = resultSet.getString(3);
+                    if ( usernameToCheck.equals(email) && passwordToCheck.equals(password) ) {
+                        return "true,false";
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return "false";
@@ -683,8 +652,7 @@ public class Server {
     }
 
     public static synchronized boolean messageSeller(String seller, String customer, String message) {
-
-        // wont send message if receipient blocked sender
+        // wont send message if recipient blocked sender
         boolean blocked = checkBlocked(customer, seller);
         if (!blocked) {
             return false;
@@ -762,53 +730,6 @@ public class Server {
             return false;
         }
         return true;
-    }
-
-    // Writes the user's censored keyword to a file
-    public static synchronized boolean setCensoredKeyword(String user, String keyword, String replacement) {
-        String filename1 = "keywords_data/" + user + "_censoredKeywords.csv";
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename1, true))) {
-            pw.println(keyword);
-        } catch (IOException e) {
-            return false;
-        }
-        String filename2 = "keywords_data/" + user + "_censoredKeywordReplacements.csv";
-        try (PrintWriter pw = new PrintWriter(new FileWriter(filename2, true))) {
-            pw.println(replacement);
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
-    }
-
-    // Retrieves the user's censored keywords from a file
-    public static ArrayList<String> getCensoredKeywords(String user) {
-        ArrayList<String> censoredKeywords = new ArrayList<String>();
-        String filename = "keywords_data/" + user + "_censoredKeywords.csv";
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                censoredKeywords.add(line);
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return censoredKeywords;
-    }
-
-    // Retrieves the replacements for the user's censored keywords
-    public static ArrayList<String> getCensoredKeywordReplacements(String user) {
-        ArrayList<String> keywordReplacements = new ArrayList<String>();
-        String filename = "keywords_data/" + user + "_censoredKeywordReplacements.csv";
-        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                keywordReplacements.add(line);
-            }
-        } catch (IOException e) {
-            return null;
-        }
-        return keywordReplacements;
     }
 
     // sends arraylist of messages to client
@@ -923,60 +844,45 @@ public class Server {
     }
 
     private static boolean isUser(String user) {
-        ArrayList<String> customers = new ArrayList<>();
-        ArrayList<String> sellers = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("customer_data/customerNames.txt"))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                customers.add(line);
-            }
-            for (String s : customers) {
-                String customer = s.split("-")[0];
-                if (customer.equals(user)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sellers.add(line);
-            }
-            for (String s : sellers) {
-                String seller = s.split("-")[0];
-                if (seller.equals(user)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            return false;
-        }
-        return false;
-    }
+        String url = "jdbc:mysql://localhost:3306/giraffe";
+        String username = "root";
+        String password = "Sanupinu23";
 
-    // uses isUser to see if it is a user, then returns true if is a seller,
-    // returns false if it is a customer
-    private static boolean ifSeller(String user) {
-        boolean isUser = isUser(user);
-        if (isUser) {
-            ArrayList<String> sellers = new ArrayList<>();
-            try (BufferedReader bufferedReader = new BufferedReader(new FileReader("seller_data/sellerNames.txt"))) {
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    sellers.add(line);
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection connection = DriverManager.getConnection(url, username, password);
+
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery("select * from sellersList");
+
+            while (resultSet.next()) {
+                String name = resultSet.getString(2);
+                if (name.equals(user)) {
+                    return true;
                 }
-                for (String s : sellers) {
-                    String seller = s.split("-")[0];
-                    if (seller.equals(user)) {
-                        return true;
-                    }
-                }
-            } catch (IOException e) {
-                return false;
             }
-            return false;
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection connection = DriverManager.getConnection(url, username, password);
+
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery("select * from customersList");
+
+            while (resultSet.next()) {
+                String name = resultSet.getString(2);
+                if (name.equals(user)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e);
         }
         return false;
     }

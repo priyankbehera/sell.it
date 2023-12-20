@@ -33,10 +33,10 @@ public class WelcomePanel extends JPanel {
 
         // Create components
         try {
-            BufferedImage iconImage = ImageIO.read(new File("Images/OriginalSizeLogo.png"));
+            BufferedImage iconImage = ImageIO.read(new File("Images/marketplace logo.png"));
             ImageIcon logo = new ImageIcon(iconImage);
             JLabel imageLabel = new JLabel(logo);
-            imageLabel.setBounds(362, 200, 300, 125);
+            imageLabel.setBounds(212, -20, 600, 480);
             add(imageLabel);
         } catch (IOException e) {
             JLabel imageLabel = new JLabel("Unable to load image.");
@@ -45,31 +45,35 @@ public class WelcomePanel extends JPanel {
         }
 
         JLabel loginLabel = new JLabel("Sign in");
-        loginLabel.setFont(new Font("Arial", Font.PLAIN, 24));
-        loginLabel.setBounds(392, 332, 100, 30);
+        loginLabel.setFont(new Font("Josefin Slab", Font.PLAIN, 24));
+        loginLabel.setBounds(392, 372, 100, 30);
+        loginLabel.setForeground(Color.WHITE);
         add(loginLabel);
 
         JLabel emailLabel = new JLabel("Email:");
-        emailLabel.setBounds(392, 372, 80, 24);
+        emailLabel.setBounds(392, 412, 80, 24);
+        emailLabel.setForeground(Color.WHITE);
         add(emailLabel);
 
         emailText = new JTextField(20);
-        emailText.setBounds(482, 372, 160, 24);
+        emailText.setBounds(482, 412, 160, 24);
         add(emailText);
 
         JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setBounds(392, 402, 80, 24);
+        passwordLabel.setBounds(392, 442, 80, 24);
+        passwordLabel.setForeground(Color.WHITE);
         add(passwordLabel);
 
         passwordField = new JPasswordField();
-        passwordField.setBounds(482, 402, 160, 24);
+        passwordField.setBounds(482, 442, 160, 24);
         add(passwordField);
 
         continueButton = new JButton("Continue");
-        continueButton.setBounds(392, 432, 120, 24);
+        continueButton.setBounds(392, 492, 120, 24);
         add(continueButton);
 
         JLabel messageLabel = new JLabel("                Or if you are a new user...");
+        messageLabel.setForeground(Color.WHITE);
         messageLabel.setBounds(367, 592, 290, 24);
         add(messageLabel);
 
@@ -102,5 +106,20 @@ public class WelcomePanel extends JPanel {
 
     public JLabel getSuccessMessage() {
         return this.successMessage;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame mainframe = new JFrame();
+            mainframe.setSize(1024, 768);
+            mainframe.setLocationRelativeTo(null);
+            mainframe.setResizable(false);
+            mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            Color color = new Color(27, 50, 84);
+            WelcomePanel welcomePanel = new WelcomePanel(color);
+            mainframe.setContentPane(welcomePanel);
+            mainframe.setVisible(true);
+        });
     }
 }

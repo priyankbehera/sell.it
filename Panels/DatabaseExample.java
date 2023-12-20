@@ -36,6 +36,5 @@ public class DatabaseExample {
         } catch (Exception e) {
             System.out.println(e);
         }
-
     }
 }

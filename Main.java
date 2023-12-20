@@ -9,16 +9,6 @@ import java.io.PrintWriter;
 import java.io.*;
 import java.net.*;
 
-/**
- * PJ-5 -- Sell.it
- * <p>
- * This is the main class that handles the client side of the application.
- * All GUI components are created and handled here.
- *
- *
- * @author Brayden Reimann, Priyank Behera, Shreya Gupta, and Matthew Allen 26047-L25
- * @version December 10, 2023
- */
 public class Main {
 
     // Adjust portNumber and hostName if needed
@@ -29,14 +19,13 @@ public class Main {
         // Connects to server
         try {
             Socket socket = new Socket(hostName, portNumber);
-
             // input & output for server
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), false);
             BufferedReader br = new BufferedReader((new InputStreamReader(socket.getInputStream())));
 
             // Creates the main frame
             SwingUtilities.invokeLater(() -> {
-                JFrame mainframe = new JFrame("Send.it");
+                JFrame mainframe = new JFrame("Sell.it");
                 mainframe.setLayout(new BorderLayout());
 
                 // Set the icon for the frame
@@ -53,9 +42,12 @@ public class Main {
                 mainframe.setResizable(false);
                 mainframe.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+                // color blue
+                Color color = new Color(27,50,84);
+
                 // Create an instance of panels
-                WelcomePanel welcomePanel = new WelcomePanel(new Color(240, 240, 240));
-                CreateAccPanel createAccPanel = new CreateAccPanel(new Color(240, 240, 240));
+                WelcomePanel welcomePanel = new WelcomePanel(color);
+                CreateAccPanel createAccPanel = new CreateAccPanel(color);
 
                 // Set the Panels.WelcomePanel as the content pane of the main frame
                 mainframe.setContentPane(welcomePanel);
@@ -82,9 +74,11 @@ public class Main {
                             mainframe.repaint();
                         } else {
                             welcomePanel.getSuccessMessage().setText("Invalid credentials. Please try again.");
+                            welcomePanel.getSuccessMessage().setForeground(Color.WHITE);
                         }
                     } else {
                         welcomePanel.getSuccessMessage().setText("Please enter an email and password.");
+                        welcomePanel.getSuccessMessage().setForeground(Color.WHITE);
                     }
                 });
 

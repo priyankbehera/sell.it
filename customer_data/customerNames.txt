@@ -1,3 +1,4 @@
 customerOne-password
 customerTwo-password
 customerThree-password
+priyank@gmail.com-password
