@@ -36,7 +36,7 @@ public class Main {
                     mainframe.setIconImage(null);
                 }
 
-                // Sets  frame
+                // Sets frame
                 mainframe.setSize(1024, 768);
                 mainframe.setLocationRelativeTo(null);
                 mainframe.setResizable(false);

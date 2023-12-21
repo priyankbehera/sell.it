@@ -92,18 +92,13 @@ public class HomePanel extends JPanel {
             }
             String[] users = line.split(",");
 
-
-            // removes blocked users
-            // remove null users from array
             return users;
 
         } catch (IOException e) {
             return null;
         }
-
-
     }
-    }
+}
 
 
 

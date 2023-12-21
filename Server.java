@@ -369,45 +369,52 @@ public class Server {
     }
 
     public static synchronized boolean getList(boolean ifSeller, PrintWriter pw) {
-        ArrayList<String> menuList = new ArrayList<>();
-        String folderName = ifSeller ? "customer_data" : "seller_data";
-        String filename;
+        String url = "jdbc:mysql://localhost:3306/giraffe";
+        String username = "root";
+        String password = "Sanupinu23";
         if (ifSeller) {
-            filename = folderName + "/CustomersList.csv";
-        } else {
-            filename = folderName + "/SellersList.csv";
-        }
-        try (BufferedReader bfr = new BufferedReader(new FileReader(filename))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                menuList.add(line);
-            }
-            String[] menuArray = new String[menuList.size()];
-            for (int i = 0; i < menuArray.length; i++) {
-                String customerName = menuList.get(i).split(",")[0];
-/*                if (!isVisible && isUserBlocked(customerName, currentUser)) {
-                    continue;
-                }*/
-                menuArray[i] = customerName;
-            }
-
-            // send to client
             try {
-                String list = "";
-                for (String s : menuArray) {
-                    list += s + ",";
+                Class.forName("com.mysql.cj.jdbc.Driver");
+
+                Connection connection = DriverManager.getConnection(url, username, password);
+
+                Statement statement = connection.createStatement();
+
+                ResultSet resultSet = statement.executeQuery("select * from customersList");
+                String toPrint = "";
+                while (resultSet.next()) {
+                    String temp = resultSet.getString(2);
+                    toPrint += temp + ",";
                 }
-                list = list.substring(0, list.length() - 1); //removes trailing comma
-                pw.println(list);
+                pw.println(toPrint);
                 pw.flush();
+                return true;
             } catch (Exception e) {
+                System.out.println(e);
                 return false;
             }
+        } else {
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
 
-        } catch (IOException e) {
-            return false;
+                Connection connection = DriverManager.getConnection(url, username, password);
+
+                Statement statement = connection.createStatement();
+
+                ResultSet resultSet = statement.executeQuery("select * from sellersList");
+                String toPrint = "";
+                while (resultSet.next()) {
+                    String temp = resultSet.getString(2);
+                    toPrint += temp + ",";
+                }
+                pw.println(toPrint);
+                pw.flush();
+                return true;
+            } catch (Exception e) {
+                System.out.println(e);
+                return false;
+            }
         }
-        return true;
     }
 
     public static synchronized boolean addStore(String seller, String storeName, String description) {

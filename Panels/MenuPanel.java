@@ -15,22 +15,14 @@ public class MenuPanel extends JPanel {
     private final JButton moreButton;
     private boolean searchButtonClicked = false;
     private boolean seeAllButtonClicked = false;
-    private final Set<String> blockedUsers = new HashSet<>();
     private boolean isVisible = true;
-    /*
-        private final String blockedUsersFile;
-        private final String blockedByUsersFile;
-        private ArrayList<String> blockedUsersList;
-    */
     private String currentUser;
-    // private final String invisibleUsersFile;
-    private ArrayList<String> invisibleUsersList;
 
     public JList getMessageList() {
         return messageList;
     }
 
-    //global printwriter
+    //global printWriter
     private PrintWriter pw;
     private BufferedReader br;
 
@@ -305,27 +297,6 @@ public class MenuPanel extends JPanel {
         }
     }
 
-    private boolean setCensoredKeyword(String user, String keyword, String replacement, BufferedReader br, PrintWriter pw) {
-        String request = "setKeyword," + user + "," + keyword + "," + replacement;
-        boolean success = false;
-        try {
-            pw.println(request);
-            pw.flush();
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.isEmpty()) {
-                    break;
-                }
-            }
-            success = Boolean.parseBoolean(line);
-
-        } catch (IOException e) {
-            return false;
-        }
-        return success;
-    }
-
     private boolean requestBlock(String blocker, String toBlock, BufferedReader br, PrintWriter pw) {
         String request = "blockUser," + blocker + "," + toBlock;
         boolean success = false;
@@ -444,5 +415,4 @@ public class MenuPanel extends JPanel {
         }
         messageList.setModel(model);
     }
-
 }
