@@ -188,24 +188,22 @@ public class SellerHomeTestPanel extends JPanel {
 
         // adding the scroll panel code
         GridLayout gridLayout = new GridLayout(0, 2);
-        gridLayout.setHgap(20);
-        gridLayout.setVgap(20);
+        gridLayout.setHgap(40);
+        gridLayout.setVgap(40);
         scrollPanel.setLayout(gridLayout);
 
-        Border border = BorderFactory.createLineBorder(Color.white, 20);
+        Border border = BorderFactory.createLineBorder(Color.white, 40);
         scrollPanel.setBorder(border);
         scrollPanel.setBackground(Color.white);
+        // a variable that should be put as a parameter
+        String[] imagePath = {"Images/circular_image.png", "Images/byProduct.png", "Images/editStores.png"};
+        // another variable to put as a parameter
+        String[] storeNames = {"Marketplace", "Product", "Writing by Sara"};
+
         // Add some components to the panel
-        for (int i = 1; i <= 10; i++) {
-            JPanel panel = new JPanel();
-            panel.setPreferredSize(new Dimension(200, 350)); // Set preferred size
-            panel.setBackground(lightBeige);
-            Font font = new Font("Smiley Sans", Font.PLAIN, 24);
-            JLabel label = new JLabel("Panel" + i);
-            label.setFont(font);
-            label.setForeground(blue);
-            panel.add(label);
-            scrollPanel.add(panel);
+        for (int i = 0; i < 3; i++) {
+           MiniStoreTestPanel miniStoreTestPanel = new MiniStoreTestPanel(storeNames[i], imagePath[i]);
+           scrollPanel.add(miniStoreTestPanel);
         }
 
         ImageIcon imageIcon = null;

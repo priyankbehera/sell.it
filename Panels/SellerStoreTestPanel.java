@@ -1,13 +1,8 @@
 package Panels;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class SellerStoreTestPanel extends JPanel {
     // important buttons to add action listeners
@@ -30,8 +25,20 @@ public class SellerStoreTestPanel extends JPanel {
     public static JButton confirmButton;
     public static CircularButton deleteButton;
     public static CircularButton editProductButton;
+    public static CircularButton logoButton;
+    public static CircularButton circularYourAccountButton;
+    public static CircularButton circularBackButton;
 
     // getters to add action listeners
+    public static CircularButton getLogoButton() {
+        return logoButton;
+    }
+    public static CircularButton getCircularYourAccountButton() {
+        return circularYourAccountButton;
+    }
+    public static CircularButton getCircularBackButton() {
+        return circularBackButton;
+    }
     public static CircularButton getAddButton() {
         return addButton;
     }
@@ -143,23 +150,54 @@ public class SellerStoreTestPanel extends JPanel {
         circularImageButtonPanel.setForeground(darkBlue);
 
         // Add circular buttons with images
-        CircularButton logoButton = new CircularButton("Images/circular_image.png", 100);
-        CircularButton circularBackButton = new CircularButton("Images/circular_image.png", 100);
-        CircularButton circularYourAccountButton = new CircularButton("Images/circular_image.png", 100);
-
-
-        // Add buttons to the panel
-        circularImageButtonPanel.add(logoButton);
-        circularImageButtonPanel.add(circularBackButton);
-        circularImageButtonPanel.add(circularYourAccountButton);
-
+        logoButton = new CircularButton("Images/circular_image.png", 100);
         marketplace = new JButton("About Us");
-        circularImageButtonPanel.add(marketplace);
+        marketplace.setForeground(Color.white);
+        marketplace.setBorderPainted(false); // Set to false to remove the border around the text
+        marketplace.setContentAreaFilled(false);
+        JPanel panelOneA = new JPanel();
+        panelOneA.setBackground(darkBlue);
+        panelOneA.setLayout(new BorderLayout());
+        JPanel panelOneTemp = new JPanel();
+        panelOneTemp.setPreferredSize(new Dimension(100,100));
+        panelOneTemp.setBackground(darkBlue);
+        panelOneTemp.add(logoButton);
+        panelOneA.add(panelOneTemp, BorderLayout.CENTER);
+        panelOneA.add(marketplace, BorderLayout.SOUTH);
+        logo.add(panelOneA);
 
+        circularBackButton = new CircularButton("Images/back_button.png", 100);
         backButton = new JButton("Back");
-        circularImageButtonPanel.add(backButton);
+        backButton.setForeground(Color.white);
+        backButton.setBorderPainted(false);
+        backButton.setContentAreaFilled(false);
+        JPanel panelTwoA = new JPanel();
+        panelTwoA.setBackground(darkBlue);
+        panelTwoA.setLayout(new BorderLayout());
+        JPanel panelTwoTemp = new JPanel();
+        panelTwoTemp.setPreferredSize(new Dimension(100,100));
+        panelTwoTemp.setBackground(darkBlue);
+        panelTwoTemp.add(circularBackButton);
+        panelTwoA.add(panelTwoTemp, BorderLayout.CENTER);
+        panelTwoA.add(backButton, BorderLayout.SOUTH);
+        logo.add(panelTwoA);
+
+        circularYourAccountButton = new CircularButton("Images/yourAccount.png", 100);
         yourAccountButton = new JButton("Your Account");
-        circularImageButtonPanel.add(yourAccountButton);
+        yourAccountButton.setForeground(Color.white);
+        yourAccountButton.setBorderPainted(false);
+        yourAccountButton.setContentAreaFilled(false);
+        JPanel panelThreeA = new JPanel();
+        panelThreeA.setBackground(darkBlue);
+        panelThreeA.setLayout(new BorderLayout());
+        JPanel panelThreeTemp = new JPanel();
+        panelThreeTemp.setPreferredSize(new Dimension(100,100));
+        panelThreeTemp.setBackground(darkBlue);
+        panelThreeTemp.add(circularYourAccountButton);
+        panelThreeA.add(panelThreeTemp, BorderLayout.CENTER);
+        panelThreeA.add(yourAccountButton, BorderLayout.SOUTH);
+        logo.add(panelThreeA);
+
         circularImageButtonPanel.setBackground(darkBlue);
         logo.add(circularImageButtonPanel);
 
@@ -202,13 +240,24 @@ public class SellerStoreTestPanel extends JPanel {
         // confirms as "confirm" button
         Font buttonFont = new Font("Smiley Sans", Font.PLAIN, 14);
 
+//        marketplace = new JButton("About Us");
+//        marketplace.setForeground(Color.white);
+//        marketplace.setBorderPainted(false); // Set to false to remove the border around the text
+//        marketplace.setContentAreaFilled(false);
+
         editButton = new JButton("Edit");
         editButton.setFont(buttonFont);
-        editButton.setForeground(Color.black);
+        editButton.setForeground(Color.WHITE);
+        editButton.setBorderPainted(false);
+        editButton.setContentAreaFilled(false);
+        editButton.setFocusPainted(false);
 
         confirmButton = new JButton("Confirm");
         confirmButton.setFont(buttonFont);
-        confirmButton.setForeground(Color.black);
+        confirmButton.setForeground(Color.WHITE);
+        confirmButton.setBorderPainted(false);
+        confirmButton.setContentAreaFilled(false);
+        confirmButton.setFocusPainted(false);
 
         JPanel buttonsContainer = new JPanel();
         buttonsContainer.setBackground(darkBlue);
@@ -250,19 +299,13 @@ public class SellerStoreTestPanel extends JPanel {
         gridLayout.setHgap(20);
         productsListContainer.setLayout(gridLayout);
 
-        Dimension panelSize = new Dimension(50,350);
+        // @Todo add mouse listeners to wait for clicks on these panels when made
+        // @Todo also add an array of the panels that need to be named, their names, etc
+        MiniProductTestPanel panelOne = new MiniProductTestPanel("Product One", 15, "Images/circular_image.png");
 
-        JPanel panelOne = new JPanel();
-        panelOne.setPreferredSize(panelSize);
-        panelOne.setBackground(beige);
+        MiniProductTestPanel panelTwo = new MiniProductTestPanel("Product Two", 10, "Images/inbox.png");
 
-        JPanel panelTwo = new JPanel();
-        panelTwo.setPreferredSize(panelSize);
-        panelTwo.setBackground(beige);
-
-        JPanel panelThree = new JPanel();
-        panelThree.setPreferredSize(panelSize);
-        panelThree.setBackground(beige);
+        MiniProductTestPanel panelThree = new MiniProductTestPanel("Product Three", 12, "Images/Social.png");
 
         productsListContainer.add(panelOne);
         productsListContainer.add(panelTwo);
@@ -305,11 +348,11 @@ public class SellerStoreTestPanel extends JPanel {
         productActionsLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonPanel.add(productActionsLabel);
 
-        buttonPanel.add(Box.createRigidArea(new Dimension(0,30)));
+        buttonPanel.add(Box.createRigidArea(new Dimension(0,40)));
 
         JPanel buttonPanelToAdd = new JPanel();
         Dimension size = productActions.getSize();
-        FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER, 0,10);
+        FlowLayout flowLayout = new FlowLayout(FlowLayout.CENTER, 0,0);
         buttonPanelToAdd.setLayout(flowLayout);
 
         buttonPanelToAdd.setPreferredSize(size);
@@ -320,37 +363,57 @@ public class SellerStoreTestPanel extends JPanel {
         JPanel addButtonPanel = new JPanel();
         addButtonPanel.setLayout(new BorderLayout());
         addButtonPanel.setBackground(lightBlue);
+        JPanel tempPanel = new JPanel();
+        tempPanel.setBackground(lightBlue);
+        tempPanel.setPreferredSize(new Dimension(100,100));
         addButton = new CircularButton("Images/add.png", 100);
-        addButtonPanel.add(addButton, BorderLayout.CENTER);
+        tempPanel.add(addButton);
+        addButtonPanel.add(tempPanel, BorderLayout.CENTER);
 
         addLinearButton = new JButton("Add Product");
+        addLinearButton.setFont(buttonFont);
+        addLinearButton.setForeground(Color.WHITE);
+        addLinearButton.setBorderPainted(false);
+        addLinearButton.setContentAreaFilled(false);
+        addLinearButton.setFocusPainted(false);
         addButtonPanel.add(addLinearButton, BorderLayout.SOUTH);
         buttonPanelToAdd.add(addButtonPanel);
 
-        buttonPanelToAdd.add(Box.createRigidArea(new Dimension(0,75)));
-
-        //@TODO change the image path to edit image
         JPanel editButtonPanel = new JPanel();
         editButtonPanel.setLayout(new BorderLayout());
         editButtonPanel.setBackground(lightBlue);
-        editProductButton = new CircularButton("Images/add.png", 100);
-        editButtonPanel.add(editProductButton, BorderLayout.CENTER);
+        JPanel tempPanelOne = new JPanel();
+        tempPanelOne.setBackground(lightBlue);
+        tempPanelOne.setPreferredSize(new Dimension(100,100));
+        editProductButton = new CircularButton("Images/editStores.png", 100);
+        tempPanelOne.add(editProductButton);
+        editButtonPanel.add(tempPanelOne, BorderLayout.CENTER);
 
         editLinearButton = new JButton("Edit Product");
+        editLinearButton.setFont(buttonFont);
+        editLinearButton.setForeground(Color.WHITE);
+        editLinearButton.setBorderPainted(false);
+        editLinearButton.setContentAreaFilled(false);
+        editLinearButton.setFocusPainted(false);
         editButtonPanel.add(editLinearButton, BorderLayout.SOUTH);
         buttonPanelToAdd.add(editButtonPanel);
-
-        buttonPanelToAdd.add(Box.createRigidArea(new Dimension(0,75)));
 
         JPanel deleteButtonPanel = new JPanel();
         deleteButtonPanel.setLayout(new BorderLayout());
         deleteButtonPanel.setBackground(lightBlue);
-        deleteButton = new CircularButton("Images/add.png", 100);
-        deleteButtonPanel.add(deleteButton, BorderLayout.CENTER);
+        JPanel tempPanelTwo = new JPanel();
+        tempPanelTwo.setBackground(lightBlue);
+        tempPanelTwo.setPreferredSize(new Dimension(100,100));
+        deleteButton = new CircularButton("Images/delete.png", 100);
+        tempPanelTwo.add(deleteButton);
+        deleteButtonPanel.add(tempPanelTwo, BorderLayout.CENTER);
 
-        Font font = new Font("Smiley Sans", Font.PLAIN, 12);
         deleteLinearButton = new JButton("Delete Product");
-        deleteLinearButton.setFont(font);
+        deleteLinearButton.setFont(buttonFont);
+        deleteLinearButton.setForeground(Color.WHITE);
+        deleteLinearButton.setBorderPainted(false);
+        deleteLinearButton.setContentAreaFilled(false);
+        deleteLinearButton.setFocusPainted(false);
         deleteButtonPanel.add(deleteLinearButton, BorderLayout.SOUTH);
         buttonPanelToAdd.add(deleteButtonPanel);
 
@@ -388,27 +451,36 @@ public class SellerStoreTestPanel extends JPanel {
         salesPanelOne.setLayout(new BorderLayout());
         JPanel circularProductContainer = new JPanel();
         circularProductContainer.setBackground(beige);
-        circularProductButton = new CircularButton("Images/Social.png", 100);
+        circularProductButton = new CircularButton("Images/byProduct.png", 100);
         circularProductButton.setBackground(beige);
         // button font
         Font salesButtonFont = new Font("Smiley Sans", Font.PLAIN, 12);
         productButton = new JButton("Product");
-        productButton.setFont(salesButtonFont);
+        productButton.setFont(buttonFont);
+        productButton.setForeground(darkBlue);
+        productButton.setBorderPainted(false);
+        productButton.setOpaque(false);
+        productButton.setFocusPainted(false);
         circularProductContainer.setPreferredSize(new Dimension(100,100));
         circularProductContainer.add(circularProductButton);
         salesPanelOne.add(circularProductContainer, BorderLayout.CENTER);
         salesPanelOne.add(productButton, BorderLayout.SOUTH);
         salesPanelMain.add(salesPanelOne);
 
+
         JPanel salesPanelTwo = new JPanel();
         salesPanelTwo.setBackground(beige);
         salesPanelTwo.setLayout(new BorderLayout());
         JPanel circularValueContainer = new JPanel();
         circularValueContainer.setBackground(beige);
-        circularValueButton = new CircularButton("Images/Social.png", 100);
+        circularValueButton = new CircularButton("Images/value.png", 100);
         circularValueButton.setBackground(beige);
         valuesButton = new JButton("Value");
-        valuesButton.setFont(salesButtonFont);
+        valuesButton.setFont(buttonFont);
+        valuesButton.setForeground(darkBlue);
+        valuesButton.setBorderPainted(false);
+        valuesButton.setContentAreaFilled(false);
+        valuesButton.setFocusPainted(false);
         circularValueContainer.setPreferredSize(new Dimension(100,100));
         circularValueContainer.add(circularValueButton);
         salesPanelTwo.add(circularValueContainer, BorderLayout.CENTER);
@@ -422,8 +494,20 @@ public class SellerStoreTestPanel extends JPanel {
         circularCustomerContainer.setBackground(beige);
         circularCustomerButton = new CircularButton("Images/Social.png", 100);
         circularCustomerButton.setBackground(beige);
+
+        editLinearButton = new JButton("Edit Product");
+        editLinearButton.setFont(buttonFont);
+        editLinearButton.setForeground(Color.WHITE);
+        editLinearButton.setBorderPainted(false);
+        editLinearButton.setContentAreaFilled(false);
+        editLinearButton.setFocusPainted(false);
+
         customerButton = new JButton("Customer");
-        customerButton.setFont(salesButtonFont);
+        customerButton.setFont(buttonFont);
+        customerButton.setForeground(darkBlue);
+        customerButton.setBorderPainted(false);
+        customerButton.setContentAreaFilled(false);
+        customerButton.setFocusPainted(false);
         circularCustomerContainer.setPreferredSize(new Dimension(100,100));
         circularCustomerContainer.add(customerButton);
         salesPanelThree.add(circularCustomerButton, BorderLayout.CENTER);
@@ -449,5 +533,4 @@ public class SellerStoreTestPanel extends JPanel {
             mainframe.setVisible(true);
         });
     }
-
 }
